@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { User, MessageCircle, X, Heart, Star } from "lucide-react";
+import { User, MessageCircle, X, Heart, Star, Settings } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -103,10 +103,11 @@ export default function Discover() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setLocation("/matches")}
+          onClick={() => setLocation("/setup")}
           className="rounded-full bg-gray-200"
+          title="Update Profile"
         >
-          <User className="h-5 w-5 text-gray-600" />
+          <Settings className="h-5 w-5 text-gray-600" />
         </Button>
         <h1 className="text-xl font-bold music-gradient bg-clip-text text-transparent">
           VibeCheck
@@ -116,11 +117,9 @@ export default function Discover() {
           size="icon"
           onClick={() => setLocation("/matches")}
           className="rounded-full bg-gray-200 relative"
+          title="View Matches"
         >
           <MessageCircle className="h-5 w-5 text-gray-600" />
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-music-pink text-white text-xs rounded-full flex items-center justify-center">
-            3
-          </span>
         </Button>
       </div>
 

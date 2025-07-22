@@ -49,6 +49,15 @@ export default function ProfileSetup() {
     });
   };
 
+  // Prepare initial data from current user for editing
+  const initialProfileData = currentUser ? {
+    favoriteGenres: currentUser.favoriteGenres || [],
+    favoriteArtists: currentUser.favoriteArtists || [],
+    favoriteSongs: currentUser.favoriteSongs || [],
+    topDefiningTracks: currentUser.topDefiningTracks || [],
+    bio: currentUser.bio || ""
+  } : undefined;
+
   if (!currentUser) {
     return <div>Loading...</div>;
   }
@@ -70,6 +79,7 @@ export default function ProfileSetup() {
       <MusicProfileBuilder
         onComplete={handleProfileComplete}
         isLoading={updateProfileMutation.isPending}
+        initialData={initialProfileData}
       />
     </div>
   );
