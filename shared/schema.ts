@@ -15,6 +15,8 @@ export const users = pgTable("users", {
   favoriteArtists: text("favorite_artists").array(),
   favoriteSongs: text("favorite_songs").array(),
   topDefiningTracks: text("top_defining_tracks").array(),
+  personalityType: text("personality_type"),
+  personalityTraits: text("personality_traits").array(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

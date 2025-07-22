@@ -18,8 +18,10 @@ import {
   X,
   Search,
   Disc3,
-  Radio
+  Radio,
+  Brain
 } from "lucide-react";
+import MusicPersonalityQuiz from "./music-personality-quiz";
 
 const MUSIC_GENRES = [
   "Pop", "Rock", "Hip-Hop", "Electronic", "Indie", "Jazz", "Country", "R&B",
@@ -101,6 +103,8 @@ interface MusicProfileData {
   discoveryPreference: string;
   musicMood: string;
   bio: string;
+  personalityType?: string;
+  personalityTraits?: string[];
 }
 
 interface MusicProfileBuilderProps {
@@ -122,6 +126,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
     discoveryPreference: "algorithm",
     musicMood: "varied",
     bio: "",
+    personalityType: "",
+    personalityTraits: [],
     ...initialData
   });
 
@@ -130,7 +136,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
     song: ""
   });
 
-  const totalSteps = 6;
+  const totalSteps = 7;
   const progress = (step / totalSteps) * 100;
 
   const updateProfileData = (updates: Partial<MusicProfileData>) => {
@@ -171,7 +177,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
       case 3: return profileData.favoriteSongs.length >= 2;
       case 4: return profileData.topDefiningTracks.length >= 3;
       case 5: return profileData.listeningHabits.length >= 2;
-      case 6: return profileData.bio.length >= 20;
+      case 6: return true; // Music personality quiz (optional)
+      case 7: return profileData.bio.length >= 20;
       default: return true;
     }
   };
@@ -545,8 +552,30 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             </div>
           )}
 
-          {/* Step 6: Bio & Final Details */}
+          {/* Step 6: Music Personality Quiz */}
           {step === 6 && (
+            <div className="space-y-6">
+              <MusicPersonalityQuiz
+                onComplete={(personality, answers) => {
+                  updateProfileData({
+                    personalityType: personality.type,
+                    personalityTraits: personality.traits
+                  });
+                  nextStep();
+                }}
+                onSkip={() => {
+                  updateProfileData({
+                    personalityType: "explorer",
+                    personalityTraits: ["Open minded", "Curiosity driven"]
+                  });
+                  nextStep();
+                }}
+              />
+            </div>
+          )}
+
+          {/* Step 7: Bio & Final Details */}
+          {step === 7 && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
                 <Star className="w-12 h-12 mx-auto text-music-purple" />
@@ -587,6 +616,11 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                       <span className="font-medium text-music-orange ml-1">{profileData.favoriteSongs.length}</span> songs,
                       <span className="font-medium text-purple-600 ml-1">{profileData.topDefiningTracks.length}</span> defining tracks
                     </div>
+                    {profileData.personalityType && (
+                      <div className="text-sm text-gray-600">
+                        Music Personality: <span className="font-medium text-music-blue">{profileData.personalityType.replace('_', ' ')}</span>
+                      </div>
+                    )}
                     <div className="text-sm text-gray-600">
                       Concert experience: {profileData.concertExperience} shows
                     </div>

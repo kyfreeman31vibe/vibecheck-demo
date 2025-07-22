@@ -45,6 +45,8 @@ export default function ProfileSetup() {
       favoriteArtists: profileData.favoriteArtists,
       favoriteSongs: profileData.favoriteSongs,
       topDefiningTracks: profileData.topDefiningTracks,
+      personalityType: profileData.personalityType,
+      personalityTraits: profileData.personalityTraits,
       bio: profileData.bio
     });
   };
@@ -55,6 +57,8 @@ export default function ProfileSetup() {
     favoriteArtists: currentUser.favoriteArtists || [],
     favoriteSongs: currentUser.favoriteSongs || [],
     topDefiningTracks: currentUser.topDefiningTracks || [],
+    personalityType: currentUser.personalityType || "",
+    personalityTraits: currentUser.personalityTraits || [],
     bio: currentUser.bio || ""
   } : undefined;
 
