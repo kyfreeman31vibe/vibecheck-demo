@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Music } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -84,7 +84,18 @@ export default function ProfileSetup() {
         <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 transition-colors duration-300">
           {initialProfileData && initialProfileData.favoriteGenres.length > 0 ? "Edit Profile" : "Setup Your Profile"}
         </h2>
-        <ThemeToggle />
+        <div className="flex space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setLocation("/integrations")}
+            className="text-purple-600 border-purple-300 hover:bg-purple-50 dark:text-purple-400 dark:border-purple-600 dark:hover:bg-purple-900/20"
+          >
+            <Music className="w-4 h-4 mr-1" />
+            Connect Music
+          </Button>
+          <ThemeToggle />
+        </div>
       </div>
 
       <MusicProfileBuilder

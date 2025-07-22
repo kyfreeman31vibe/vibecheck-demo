@@ -12,6 +12,7 @@ import Match from "@/pages/match";
 import Matches from "@/pages/matches";
 import Chat from "@/pages/chat";
 import Events from "@/pages/events";
+import Integrations from "@/pages/integrations";
 
 function Router() {
   return (
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/matches" component={Matches} />
       <Route path="/chat/:matchId" component={Chat} />
       <Route path="/events" component={Events} />
+      <Route path="/integrations" component={Integrations} />
       <Route component={NotFound} />
     </Switch>
   );
