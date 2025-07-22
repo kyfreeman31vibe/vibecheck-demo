@@ -392,12 +392,12 @@ export default function MusicPersonalityQuiz({ onComplete, onSkip }: MusicPerson
   }
 
   return (
-    <div className="max-w-md mx-auto p-3 space-y-5">
+    <div className="max-w-sm mx-auto p-2 space-y-4">
       {/* Header */}
-      <div className="text-center space-y-3 px-1">
-        <div className="flex items-center justify-center space-x-2">
-          <Brain className="w-5 h-5 text-music-purple" />
-          <h1 className="text-lg font-bold text-gray-800">Music Personality Quiz</h1>
+      <div className="text-center space-y-2 px-1">
+        <div className="flex items-center justify-center space-x-1">
+          <Brain className="w-4 h-4 text-music-purple" />
+          <h1 className="text-base font-bold text-gray-800">Music Personality Quiz</h1>
         </div>
         <div className="space-y-2">
           <Progress value={progress} className="h-2" />
@@ -407,23 +407,23 @@ export default function MusicPersonalityQuiz({ onComplete, onSkip }: MusicPerson
         </div>
       </div>
 
-      <Card className="mx-2">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base text-center leading-relaxed px-1">
+      <Card className="mx-1">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm text-center leading-tight px-1">
             {currentQ.question}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2 px-3 pb-6">
+        <CardContent className="space-y-2 px-2 pb-6">
           {currentQ.options.map((option, index) => (
             <Button
               key={index}
               variant="outline"
               onClick={() => handleAnswer(currentQ.id, option.value)}
-              className="w-full text-left justify-start h-auto py-2.5 px-2.5 hover:border-music-purple hover:bg-music-purple/5 transition-all border-2 min-h-[3rem]"
+              className="w-full text-left justify-start h-auto py-2 px-2 hover:border-music-purple hover:bg-music-purple/5 transition-all border min-h-[2.5rem]"
             >
-              <div className="flex items-start space-x-2.5 w-full">
-                <div className="w-4 h-4 rounded-full border-2 border-gray-300 flex-shrink-0 mt-1" />
-                <span className="text-gray-700 text-xs leading-relaxed flex-1 text-left break-words">
+              <div className="flex items-start space-x-2 w-full">
+                <div className="w-3 h-3 rounded-full border border-gray-300 flex-shrink-0 mt-0.5" />
+                <span className="text-gray-700 text-[10px] leading-tight flex-1 text-left break-words overflow-hidden">
                   {option.text}
                 </span>
               </div>
