@@ -4,6 +4,7 @@ import { User, MessageCircle, Heart, Calendar } from "lucide-react";
 
 export default function BottomNavigation() {
   const [location, setLocation] = useLocation();
+  console.log("BottomNavigation rendered, current location:", location);
 
   const navItems = [
     {
@@ -33,17 +34,17 @@ export default function BottomNavigation() {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
-      <div className="max-w-md mx-auto px-4 py-2">
-        <div className="flex justify-around">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-purple-300 shadow-xl" style={{ zIndex: 1000, minHeight: '80px' }}>
+      <div className="max-w-md mx-auto px-4 py-3">
+        <div className="flex justify-around items-center">
           {navItems.map((item, index) => (
             <Button
               key={index}
               variant="ghost"
               onClick={() => setLocation(item.path)}
-              className={`flex flex-col items-center space-y-1 py-2 px-3 rounded-lg transition-colors ${
+              className={`flex flex-col items-center justify-center space-y-1 py-2 px-3 rounded-lg transition-colors min-w-[60px] ${
                 item.isActive 
-                  ? "text-music-purple bg-music-purple/10" 
+                  ? "text-purple-600 bg-purple-100" 
                   : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
               }`}
             >
