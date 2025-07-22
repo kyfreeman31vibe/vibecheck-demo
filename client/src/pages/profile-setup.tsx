@@ -6,11 +6,12 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import MusicProfileBuilder from "@/components/music-profile-builder";
+import type { User } from "@shared/schema";
 
 export default function ProfileSetup() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("currentUser") || "{}");
@@ -72,7 +73,8 @@ export default function ProfileSetup() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setLocation("/")}
+          onClick={() => setLocation("/discover")}
+          title="Back to Discover"
         >
           <ArrowLeft className="h-6 w-6" />
         </Button>

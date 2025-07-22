@@ -82,16 +82,53 @@ export default function Discover() {
 
   if (!currentProfile) {
     return (
-      <div className="h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center p-6">
-          <div className="w-16 h-16 mx-auto mb-4 music-gradient rounded-full flex items-center justify-center">
-            <Heart className="w-8 h-8 text-white" />
-          </div>
-          <h2 className="text-xl font-bold text-gray-800 mb-2">No more profiles!</h2>
-          <p className="text-gray-600 mb-4">Check back later for new matches</p>
-          <Button onClick={() => refetch()} className="music-gradient-purple-pink text-white">
-            Refresh
+      <div className="h-screen bg-gray-50 flex flex-col">
+        {/* Header with navigation */}
+        <div className="flex items-center justify-between p-4 bg-white shadow-sm">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setLocation("/setup")}
+            className="rounded-full bg-gray-200"
+            title="Update Profile"
+          >
+            <Settings className="h-5 w-5 text-gray-600" />
           </Button>
+          <h1 className="text-xl font-bold music-gradient bg-clip-text text-transparent">
+            VibeCheck
+          </h1>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setLocation("/matches")}
+            className="rounded-full bg-gray-200 relative"
+            title="View Matches"
+          >
+            <MessageCircle className="h-5 w-5 text-gray-600" />
+          </Button>
+        </div>
+
+        {/* Empty state */}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center p-6">
+            <div className="w-16 h-16 mx-auto mb-4 music-gradient rounded-full flex items-center justify-center">
+              <Heart className="w-8 h-8 text-white" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-800 mb-2">No more profiles!</h2>
+            <p className="text-gray-600 mb-4">You've seen everyone available. Check back later for new matches!</p>
+            <div className="space-y-3">
+              <Button onClick={() => refetch()} className="music-gradient-purple-pink text-white w-full">
+                Refresh for New Users
+              </Button>
+              <Button 
+                onClick={() => setLocation("/matches")} 
+                variant="outline" 
+                className="w-full"
+              >
+                View Your Matches
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     );

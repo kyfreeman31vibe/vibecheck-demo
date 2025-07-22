@@ -5,12 +5,13 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, Music, Send, MoreVertical } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import type { User } from "@shared/schema";
 
 export default function Chat() {
   const [, setLocation] = useLocation();
   const { matchId } = useParams();
   const queryClient = useQueryClient();
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
