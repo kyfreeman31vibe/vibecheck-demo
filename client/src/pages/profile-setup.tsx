@@ -21,7 +21,7 @@ export default function ProfileSetup() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await apiRequest("PUT", `/api/users/${currentUser.id}`, data);
+      const response = await apiRequest("PUT", `/api/users/${currentUser?.id}`, data);
       return response.json();
     },
     onSuccess: (user) => {
@@ -79,7 +79,9 @@ export default function ProfileSetup() {
         >
           <ArrowLeft className="h-6 w-6" />
         </Button>
-        <h2 className="text-xl font-bold text-gray-800">Setup Your Profile</h2>
+        <h2 className="text-xl font-bold text-gray-800">
+          {initialProfileData && initialProfileData.favoriteGenres.length > 0 ? "Edit Profile" : "Setup Your Profile"}
+        </h2>
         <div className="w-6"></div>
       </div>
 

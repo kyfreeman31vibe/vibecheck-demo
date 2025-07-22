@@ -4,7 +4,6 @@ import { User, MessageCircle, Heart, Calendar } from "lucide-react";
 
 export default function BottomNavigation() {
   const [location, setLocation] = useLocation();
-  console.log("BottomNavigation rendered, current location:", location);
 
   const navItems = [
     {

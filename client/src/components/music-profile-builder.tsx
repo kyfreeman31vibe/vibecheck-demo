@@ -115,6 +115,7 @@ interface MusicProfileBuilderProps {
 
 export default function MusicProfileBuilder({ onComplete, isLoading, initialData }: MusicProfileBuilderProps) {
   const [step, setStep] = useState(1);
+  const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState<MusicProfileData>({
     favoriteGenres: [],
     favoriteArtists: [],
@@ -127,9 +128,23 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
     musicMood: "varied",
     bio: "",
     personalityType: "",
-    personalityTraits: [],
-    ...initialData
+    personalityTraits: []
   });
+
+  // Initialize with existing data and check if user is editing
+  useEffect(() => {
+    if (initialData) {
+      setProfileData(prev => ({
+        ...prev,
+        ...initialData
+      }));
+      
+      // Check if profile is already complete
+      if (initialData.favoriteGenres && initialData.favoriteGenres.length > 0) {
+        setIsEditing(true);
+      }
+    }
+  }, [initialData]);
 
   const [searchInputs, setSearchInputs] = useState({
     artist: "",
@@ -191,11 +206,166 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
     }
   };
 
+  const goBackToSummary = () => {
+    if (isEditing) {
+      setStep(1);
+      // Reset to summary view
+      setIsEditing(true);
+    }
+  };
+
   const prevStep = () => {
     if (step > 1) {
       setStep(step - 1);
+    } else if (isEditing) {
+      // Go back to summary view
+      setIsEditing(true);
+      setStep(1);
     }
   };
+
+  // Show completed profile summary if editing
+  if (isEditing && step === 1) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 space-y-6">
+        <div className="text-center space-y-4">
+          <div className="flex items-center justify-center space-x-2">
+            <Music className="w-6 h-6 text-music-purple" />
+            <h1 className="text-2xl font-bold text-gray-800">Your Music Profile</h1>
+          </div>
+          <p className="text-gray-600">Your profile is complete! You can edit any section below.</p>
+        </div>
+
+        {/* Profile Summary Cards */}
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Music className="w-5 h-5 text-music-purple" />
+                <span>Favorite Genres ({profileData.favoriteGenres.length})</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {profileData.favoriteGenres.map((genre, index) => (
+                  <Badge key={index} variant="secondary">{genre}</Badge>
+                ))}
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-3"
+                onClick={() => {
+                  setIsEditing(false);
+                  setStep(1);
+                }}
+              >
+                Edit Genres
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Mic className="w-5 h-5 text-music-purple" />
+                <span>Favorite Artists ({profileData.favoriteArtists.length})</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {profileData.favoriteArtists.slice(0, 6).map((artist, index) => (
+                  <Badge key={index} variant="secondary">{artist}</Badge>
+                ))}
+                {profileData.favoriteArtists.length > 6 && (
+                  <Badge variant="outline">+{profileData.favoriteArtists.length - 6} more</Badge>
+                )}
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-3"
+                onClick={() => {
+                  setIsEditing(false);
+                  setStep(2);
+                }}
+              >
+                Edit Artists
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Heart className="w-5 h-5 text-music-purple" />
+                <span>Profile Bio</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-700 text-sm mb-3">{profileData.bio || "No bio yet"}</p>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  setIsEditing(false);
+                  setStep(7);
+                }}
+              >
+                Edit Bio
+              </Button>
+            </CardContent>
+          </Card>
+
+          {profileData.personalityType && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Brain className="w-5 h-5 text-music-purple" />
+                  <span>Music Personality</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Badge className="music-gradient-purple-pink text-white mb-2">
+                  {profileData.personalityType}
+                </Badge>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => {
+                    setIsEditing(false);
+                    setStep(6);
+                  }}
+                >
+                  Retake Quiz
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        <div className="flex space-x-4">
+          <Button 
+            onClick={() => {
+              setIsEditing(false);
+              setStep(1);
+            }} 
+            variant="outline"
+            className="flex-1"
+          >
+            Edit Step by Step
+          </Button>
+          <Button 
+            onClick={() => onComplete(profileData)}
+            disabled={isLoading}
+            className="flex-1 music-gradient-purple-pink text-white"
+          >
+            {isLoading ? "Updating..." : "Save Changes"}
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">

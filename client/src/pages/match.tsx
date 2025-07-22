@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { useLocation, useParams } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Heart, Music } from "lucide-react";
+import BottomNavigation from "@/components/bottom-navigation";
 
 export default function Match() {
   const [, setLocation] = useLocation();
   const { matchId } = useParams();
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("currentUser") || "{}");
@@ -26,7 +27,7 @@ export default function Match() {
   }
 
   return (
-    <div className="relative h-screen music-gradient flex flex-col items-center justify-center text-white p-6">
+    <div className="relative h-screen music-gradient flex flex-col items-center justify-center text-white p-6 pb-20">
       <div className="absolute inset-0 bg-black bg-opacity-30"></div>
 
       <div className="relative z-10 text-center">
@@ -85,6 +86,8 @@ export default function Match() {
           </Button>
         </div>
       </div>
+
+      <BottomNavigation />
     </div>
   );
 }
