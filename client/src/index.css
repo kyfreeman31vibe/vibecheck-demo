@@ -86,6 +86,10 @@
     color: var(--music-orange);
   }
   
+  .text-music-blue {
+    color: var(--music-blue);
+  }
+  
   .bg-music-purple {
     background-color: var(--music-purple);
   }
