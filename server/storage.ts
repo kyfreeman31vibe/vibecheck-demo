@@ -5,6 +5,8 @@ import {
   type Message, type InsertMessage,
   type Swipe, type InsertSwipe
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and, or, not, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -224,4 +226,149 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database Storage Implementation
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+
+  async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set(updates)
+      .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users);
+  }
+
+  async getUsersForDiscovery(userId: number, limit = 10): Promise<User[]> {
+    // Get all users this person has already swiped on
+    const swipedUsers = await db
+      .select({ targetId: swipes.targetId })
+      .from(swipes)
+      .where(eq(swipes.swiperId, userId));
+    
+    const swipedUserIds = swipedUsers.map(s => s.targetId);
+    
+    // Get users excluding current user and already swiped users
+    if (swipedUserIds.length > 0) {
+      return await db
+        .select()
+        .from(users)
+        .where(
+          and(
+            not(eq(users.id, userId)),
+            not(inArray(users.id, swipedUserIds))
+          )
+        )
+        .limit(limit);
+    } else {
+      return await db
+        .select()
+        .from(users)
+        .where(not(eq(users.id, userId)))
+        .limit(limit);
+    }
+  }
+
+  async createMatch(match: InsertMatch): Promise<Match> {
+    const [newMatch] = await db
+      .insert(matches)
+      .values(match)
+      .returning();
+    return newMatch;
+  }
+
+  async getMatch(userId1: number, userId2: number): Promise<Match | undefined> {
+    const [match] = await db
+      .select()
+      .from(matches)
+      .where(
+        or(
+          and(eq(matches.userId1, userId1), eq(matches.userId2, userId2)),
+          and(eq(matches.userId1, userId2), eq(matches.userId2, userId1))
+        )
+      );
+    return match || undefined;
+  }
+
+  async getUserMatches(userId: number): Promise<Match[]> {
+    return await db
+      .select()
+      .from(matches)
+      .where(
+        and(
+          or(eq(matches.userId1, userId), eq(matches.userId2, userId)),
+          eq(matches.matched, true)
+        )
+      );
+  }
+
+  async updateMatch(id: number, updates: Partial<InsertMatch>): Promise<Match | undefined> {
+    const [match] = await db
+      .update(matches)
+      .set(updates)
+      .where(eq(matches.id, id))
+      .returning();
+    return match || undefined;
+  }
+
+  async createMessage(message: InsertMessage): Promise<Message> {
+    const [newMessage] = await db
+      .insert(messages)
+      .values(message)
+      .returning();
+    return newMessage;
+  }
+
+  async getMatchMessages(matchId: number): Promise<Message[]> {
+    return await db
+      .select()
+      .from(messages)
+      .where(eq(messages.matchId, matchId))
+      .orderBy(messages.createdAt);
+  }
+
+  async createSwipe(swipe: InsertSwipe): Promise<Swipe> {
+    const [newSwipe] = await db
+      .insert(swipes)
+      .values(swipe)
+      .returning();
+    return newSwipe;
+  }
+
+  async getUserSwipes(userId: number): Promise<Swipe[]> {
+    return await db
+      .select()
+      .from(swipes)
+      .where(eq(swipes.swiperId, userId));
+  }
+
+  async hasUserSwiped(swiperId: number, targetId: number): Promise<boolean> {
+    const [swipe] = await db
+      .select()
+      .from(swipes)
+      .where(and(eq(swipes.swiperId, swiperId), eq(swipes.targetId, targetId)));
+    return !!swipe;
+  }
+}
+
+export const storage = new DatabaseStorage();

@@ -23,13 +23,14 @@ Preferred communication style: Simple, everyday language.
 - **Runtime**: Node.js with Express.js framework
 - **Language**: TypeScript with ES modules
 - **API Pattern**: RESTful API design
-- **Data Storage**: In-memory storage (MemStorage class) with planned PostgreSQL integration
+- **Data Storage**: PostgreSQL database with Drizzle ORM integration
 - **Session Management**: Express sessions with PostgreSQL session store
 - **Development**: Hot reload with Vite integration in development mode
 
 ### Database Design
 - **ORM**: Drizzle ORM with PostgreSQL dialect
 - **Schema**: Defined in shared/schema.ts with Zod validation
+- **Storage**: DatabaseStorage class implementing IStorage interface
 - **Tables**:
   - `users`: User profiles with music preferences (genres, artists, songs)
   - `matches`: User matching records with compatibility scores
@@ -110,3 +111,15 @@ Preferred communication style: Simple, everyday language.
 - Database connection pooling through Neon serverless
 - Static asset serving can be offloaded to CDN
 - Session storage in PostgreSQL for multi-instance support
+
+## Recent Changes
+
+### January 22, 2025
+- **Database Integration**: Successfully migrated from in-memory storage to PostgreSQL
+  - Created DatabaseStorage class implementing all IStorage methods
+  - Set up Drizzle ORM with Neon serverless PostgreSQL connection
+  - Pushed database schema with all required tables (users, matches, messages, swipes)
+  - All data is now persistent and production-ready
+- **App Rebranding**: Changed name from TuneMatch to VibeCheck throughout the application
+  - Updated all UI components, page titles, and documentation
+  - Maintained consistent branding across landing, discovery, and chat interfaces
