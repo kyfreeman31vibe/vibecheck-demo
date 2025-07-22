@@ -1,8 +1,21 @@
 import { Request, Response } from 'express';
+import session from 'express-session';
+
+interface RequestWithSession extends Request {
+  session: session.Session & Partial<session.SessionData> & {
+    spotifyTokens?: {
+      access_token: string;
+      refresh_token: string;
+      expires_in: number;
+      scope: string;
+    };
+    spotifyProfile?: any;
+  };
+}
 
 const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
-const SPOTIFY_REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI || 'http://localhost:5000/api/auth/spotify/callback';
+const SPOTIFY_REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI || `${process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : 'http://localhost:5000'}/api/auth/spotify/callback`;
 
 interface SpotifyTokens {
   access_token: string;
@@ -131,7 +144,7 @@ export class SpotifyService {
     res.redirect(authUrl);
   };
 
-  static handleCallback = async (req: Request, res: Response) => {
+  static handleCallback = async (req: RequestWithSession, res: Response) => {
     const { code, state } = req.query;
 
     if (state !== 'vibecheck-auth') {
@@ -157,7 +170,7 @@ export class SpotifyService {
     }
   };
 
-  static getPlaylists = async (req: Request, res: Response) => {
+  static getPlaylists = async (req: RequestWithSession, res: Response) => {
     const tokens = req.session.spotifyTokens;
     
     if (!tokens) {

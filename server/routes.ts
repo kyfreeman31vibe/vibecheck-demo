@@ -214,6 +214,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/auth/spotify", SpotifyService.initiateAuth);
   app.get("/api/auth/spotify/callback", SpotifyService.handleCallback);
   app.get("/api/spotify/playlists", SpotifyService.getPlaylists);
+  app.get("/api/spotify/status", (req: any, res) => {
+    res.json({ connected: !!req.session?.spotifyTokens });
+  });
   
   // Apple Music Routes
   app.get("/api/apple-music/developer-token", AppleMusicService.getDeveloperToken);
