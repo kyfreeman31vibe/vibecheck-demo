@@ -1,0 +1,185 @@
+import { Request, Response } from 'express';
+
+const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
+const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
+const SPOTIFY_REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI || 'http://localhost:5000/api/auth/spotify/callback';
+
+interface SpotifyTokens {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  scope: string;
+}
+
+interface SpotifyPlaylist {
+  id: string;
+  name: string;
+  description: string;
+  images: Array<{ url: string; height: number; width: number }>;
+  tracks: {
+    total: number;
+    items: Array<{
+      track: {
+        id: string;
+        name: string;
+        artists: Array<{ name: string }>;
+        album: { name: string };
+      };
+    }>;
+  };
+}
+
+export class SpotifyService {
+  private static getAuthUrl(): string {
+    const scopes = [
+      'playlist-read-private',
+      'playlist-read-collaborative',
+      'user-read-private',
+      'user-read-email'
+    ].join(' ');
+
+    const params = new URLSearchParams({
+      response_type: 'code',
+      client_id: SPOTIFY_CLIENT_ID!,
+      scope: scopes,
+      redirect_uri: SPOTIFY_REDIRECT_URI,
+      state: 'vibecheck-auth'
+    });
+
+    return `https://accounts.spotify.com/authorize?${params.toString()}`;
+  }
+
+  private static async exchangeCodeForTokens(code: string): Promise<SpotifyTokens> {
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Basic ${Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')}`
+      },
+      body: new URLSearchParams({
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri: SPOTIFY_REDIRECT_URI
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to exchange code for tokens');
+    }
+
+    return response.json();
+  }
+
+  private static async refreshAccessToken(refreshToken: string): Promise<SpotifyTokens> {
+    const response = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Basic ${Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')}`
+      },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to refresh access token');
+    }
+
+    return response.json();
+  }
+
+  private static async makeSpotifyRequest(endpoint: string, accessToken: string) {
+    const response = await fetch(`https://api.spotify.com/v1${endpoint}`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Spotify API error: ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  static async getUserPlaylists(accessToken: string): Promise<SpotifyPlaylist[]> {
+    const data = await this.makeSpotifyRequest('/me/playlists?limit=50', accessToken);
+    
+    // Get detailed playlist information including tracks
+    const playlistsWithTracks = await Promise.all(
+      data.items.map(async (playlist: any) => {
+        const tracks = await this.makeSpotifyRequest(`/playlists/${playlist.id}/tracks?limit=50`, accessToken);
+        return {
+          ...playlist,
+          tracks
+        };
+      })
+    );
+
+    return playlistsWithTracks;
+  }
+
+  static async getUserProfile(accessToken: string) {
+    return this.makeSpotifyRequest('/me', accessToken);
+  }
+
+  // Express route handlers
+  static initiateAuth = (req: Request, res: Response) => {
+    const authUrl = this.getAuthUrl();
+    res.redirect(authUrl);
+  };
+
+  static handleCallback = async (req: Request, res: Response) => {
+    const { code, state } = req.query;
+
+    if (state !== 'vibecheck-auth') {
+      return res.status(400).json({ error: 'Invalid state parameter' });
+    }
+
+    if (!code) {
+      return res.status(400).json({ error: 'Authorization code not provided' });
+    }
+
+    try {
+      const tokens = await this.exchangeCodeForTokens(code as string);
+      const profile = await this.getUserProfile(tokens.access_token);
+      
+      // Store tokens in session or database
+      req.session.spotifyTokens = tokens;
+      req.session.spotifyProfile = profile;
+
+      res.redirect('/setup?spotify=connected');
+    } catch (error) {
+      console.error('Spotify auth error:', error);
+      res.status(500).json({ error: 'Authentication failed' });
+    }
+  };
+
+  static getPlaylists = async (req: Request, res: Response) => {
+    const tokens = req.session.spotifyTokens;
+    
+    if (!tokens) {
+      return res.status(401).json({ error: 'Not authenticated with Spotify' });
+    }
+
+    try {
+      const playlists = await this.getUserPlaylists(tokens.access_token);
+      res.json(playlists);
+    } catch (error) {
+      console.error('Error fetching playlists:', error);
+      
+      // Try refreshing token if it's expired
+      try {
+        const newTokens = await this.refreshAccessToken(tokens.refresh_token);
+        req.session.spotifyTokens = newTokens;
+        const playlists = await this.getUserPlaylists(newTokens.access_token);
+        res.json(playlists);
+      } catch (refreshError) {
+        console.error('Token refresh failed:', refreshError);
+        res.status(401).json({ error: 'Spotify authentication expired' });
+      }
+    }
+  };
+}

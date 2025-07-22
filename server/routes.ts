@@ -3,6 +3,9 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertUserSchema, insertMessageSchema, insertSwipeSchema } from "@shared/schema";
 import { calculateMusicCompatibility } from "../client/src/lib/music-compatibility";
+import { SpotifyService } from "./integrations/spotify";
+import { AppleMusicService } from "./integrations/apple-music";
+import { EventsService } from "./integrations/events";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -204,6 +207,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(400).json({ message: "Failed to send message" });
     }
   });
+
+  // Music Integration Routes
+  
+  // Spotify Routes
+  app.get("/api/auth/spotify", SpotifyService.initiateAuth);
+  app.get("/api/auth/spotify/callback", SpotifyService.handleCallback);
+  app.get("/api/spotify/playlists", SpotifyService.getPlaylists);
+  
+  // Apple Music Routes
+  app.get("/api/apple-music/developer-token", AppleMusicService.getDeveloperToken);
+  app.get("/api/apple-music/playlists", AppleMusicService.getPlaylists);
+  app.get("/api/apple-music/search", AppleMusicService.searchMusic);
+  
+  // Events Routes
+  app.get("/api/events", EventsService.getEvents);
 
   const httpServer = createServer(app);
   return httpServer;
