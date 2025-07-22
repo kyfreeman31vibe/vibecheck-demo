@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import ProfileCard from "@/components/profile-card";
+import BottomNavigation from "@/components/bottom-navigation";
 import type { User as UserType } from "@shared/schema";
 
 export default function Discover() {
@@ -135,30 +136,12 @@ export default function Discover() {
   }
 
   return (
-    <div className="relative h-screen bg-gray-50">
+    <div className="relative h-screen bg-gray-50 pb-20">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-white shadow-sm">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setLocation("/setup")}
-          className="rounded-full bg-gray-200"
-          title="Update Profile"
-        >
-          <Settings className="h-5 w-5 text-gray-600" />
-        </Button>
+      <div className="flex items-center justify-center p-4 bg-white shadow-sm">
         <h1 className="text-xl font-bold music-gradient bg-clip-text text-transparent">
           VibeCheck
         </h1>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setLocation("/matches")}
-          className="rounded-full bg-gray-200 relative"
-          title="View Matches"
-        >
-          <MessageCircle className="h-5 w-5 text-gray-600" />
-        </Button>
       </div>
 
       {/* Card Stack Area */}
@@ -203,6 +186,8 @@ export default function Discover() {
           <Heart className="h-6 w-6 text-green-500" />
         </Button>
       </div>
+
+      <BottomNavigation />
     </div>
   );
 }

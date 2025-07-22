@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, Music, Send, MoreVertical } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import BottomNavigation from "@/components/bottom-navigation";
 import type { User } from "@shared/schema";
 
 export default function Chat() {
@@ -61,7 +62,7 @@ export default function Chat() {
   const partner = currentMatch.partner;
 
   return (
-    <div className="bg-white min-h-screen flex flex-col">
+    <div className="bg-white min-h-screen flex flex-col pb-20">
       {/* Chat Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
         <div className="flex items-center space-x-3">
@@ -183,6 +184,8 @@ export default function Chat() {
           </div>
         </form>
       </div>
+
+      <BottomNavigation />
     </div>
   );
 }

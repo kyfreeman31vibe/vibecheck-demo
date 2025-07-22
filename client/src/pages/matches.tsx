@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import BottomNavigation from "@/components/bottom-navigation";
 import type { User } from "@shared/schema";
 
 export default function Matches() {
@@ -38,7 +39,7 @@ export default function Matches() {
   const conversations = matches.filter(match => match.lastMessage);
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen pb-20">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
         <Button
@@ -124,6 +125,8 @@ export default function Matches() {
           )}
         </div>
       </div>
+
+      <BottomNavigation />
     </div>
   );
 }

@@ -10,6 +10,7 @@ import Discover from "@/pages/discover";
 import Match from "@/pages/match";
 import Matches from "@/pages/matches";
 import Chat from "@/pages/chat";
+import Events from "@/pages/events";
 
 function Router() {
   return (
@@ -20,6 +21,7 @@ function Router() {
       <Route path="/match/:matchId" component={Match} />
       <Route path="/matches" component={Matches} />
       <Route path="/chat/:matchId" component={Chat} />
+      <Route path="/events" component={Events} />
       <Route component={NotFound} />
     </Switch>
   );

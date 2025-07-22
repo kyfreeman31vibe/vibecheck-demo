@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import MusicProfileBuilder from "@/components/music-profile-builder";
+import BottomNavigation from "@/components/bottom-navigation";
 import type { User } from "@shared/schema";
 
 export default function ProfileSetup() {
@@ -68,7 +69,7 @@ export default function ProfileSetup() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-20">
       <div className="flex items-center justify-between p-4 bg-white shadow-sm">
         <Button
           variant="ghost"
@@ -87,6 +88,8 @@ export default function ProfileSetup() {
         isLoading={updateProfileMutation.isPending}
         initialData={initialProfileData}
       />
+
+      <BottomNavigation />
     </div>
   );
 }
