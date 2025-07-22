@@ -6,20 +6,21 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import ProfileCard from "@/components/profile-card";
+import type { User as UserType } from "@shared/schema";
 
 export default function Discover() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [currentUserIndex, setCurrentUserIndex] = useState(0);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState<UserType | null>(null);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("currentUser") || "{}");
     setCurrentUser(user);
   }, []);
 
-  const { data: users = [], isLoading, refetch } = useQuery({
+  const { data: users = [], isLoading, refetch } = useQuery<UserType[]>({
     queryKey: ["/api/discover", currentUser?.id],
     enabled: !!currentUser?.id,
   });
