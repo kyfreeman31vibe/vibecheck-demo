@@ -85,7 +85,7 @@ export default function Landing() {
         <div className="relative z-10 w-full max-w-sm">
           <div className="text-center mb-8">
             <Music className="w-16 h-16 mx-auto mb-4 animate-bounce-gentle" />
-            <h1 className="text-3xl font-bold mb-2">Join TuneMatch</h1>
+            <h1 className="text-3xl font-bold mb-2">Join VibeCheck</h1>
             <p className="text-lg opacity-90">Create your music profile</p>
           </div>
 
@@ -155,7 +155,7 @@ export default function Landing() {
           <div className="text-center mb-8">
             <Music className="w-16 h-16 mx-auto mb-4 animate-bounce-gentle" />
             <h1 className="text-3xl font-bold mb-2">Welcome Back</h1>
-            <p className="text-lg opacity-90">Sign in to TuneMatch</p>
+            <p className="text-lg opacity-90">Sign in to VibeCheck</p>
           </div>
 
           <Card className="bg-white/10 backdrop-blur-sm border-white/20">
@@ -206,7 +206,7 @@ export default function Landing() {
       <div className="relative z-10 text-center">
         <div className="mb-8">
           <Music className="w-16 h-16 mx-auto mb-4 animate-bounce-gentle" />
-          <h1 className="text-4xl font-bold mb-2">TuneMatch</h1>
+          <h1 className="text-4xl font-bold mb-2">VibeCheck</h1>
           <p className="text-xl opacity-90">Find love through music</p>
         </div>
 

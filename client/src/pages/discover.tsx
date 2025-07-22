@@ -109,7 +109,7 @@ export default function Discover() {
           <User className="h-5 w-5 text-gray-600" />
         </Button>
         <h1 className="text-xl font-bold music-gradient bg-clip-text text-transparent">
-          TuneMatch
+          VibeCheck
         </h1>
         <Button
           variant="ghost"

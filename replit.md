@@ -1,8 +1,8 @@
-# Music Dating App - System Architecture
+# VibeCheck - Music Dating App System Architecture
 
 ## Overview
 
-This is a full-stack music-themed dating application built with React + TypeScript frontend and Express.js backend. The app matches users based on their music preferences (genres, artists, songs) and allows them to chat with compatible matches. It features a modern mobile-first design using shadcn/ui components and Tailwind CSS.
+VibeCheck is a full-stack music-themed dating application built with React + TypeScript frontend and Express.js backend. The app matches users based on their music preferences (genres, artists, songs) and allows them to chat with compatible matches. It features a modern mobile-first design using shadcn/ui components and Tailwind CSS.
 
 ## User Preferences
 
