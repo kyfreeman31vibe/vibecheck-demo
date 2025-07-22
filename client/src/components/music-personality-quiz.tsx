@@ -319,34 +319,34 @@ export default function MusicPersonalityQuiz({ onComplete, onSkip }: MusicPerson
 
   if (showResult && result) {
     return (
-      <div className="max-w-2xl mx-auto p-6 space-y-6">
-        <div className="text-center space-y-4">
+      <div className="max-w-lg mx-auto p-4 space-y-6">
+        <div className="text-center space-y-4 px-2">
           <div className="flex items-center justify-center space-x-2">
-            <CheckCircle className="w-8 h-8 text-green-500" />
-            <h1 className="text-2xl font-bold text-gray-800">Your Music Personality</h1>
+            <CheckCircle className="w-7 h-7 text-green-500" />
+            <h1 className="text-xl font-bold text-gray-800">Your Music Personality</h1>
           </div>
           <Progress value={100} className="h-2" />
         </div>
 
-        <Card className="border-2 border-music-purple/20">
-          <CardHeader className="text-center">
-            <div className={`w-20 h-20 mx-auto rounded-full ${result.color} flex items-center justify-center text-white mb-4`}>
+        <Card className="border-2 border-music-purple/20 mx-4">
+          <CardHeader className="text-center pb-4">
+            <div className={`w-16 h-16 mx-auto rounded-full ${result.color} flex items-center justify-center text-white mb-3`}>
               {result.icon}
             </div>
-            <CardTitle className="text-2xl text-gray-800">{result.name}</CardTitle>
+            <CardTitle className="text-xl text-gray-800 leading-tight">{result.name}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <p className="text-gray-600 text-center leading-relaxed">
+          <CardContent className="space-y-5 px-5 pb-6">
+            <p className="text-gray-600 text-center leading-relaxed text-sm">
               {result.description}
             </p>
 
             <div>
-              <h3 className="font-semibold text-gray-800 mb-3">Your Musical Traits:</h3>
+              <h3 className="font-semibold text-gray-800 mb-3 text-sm">Your Musical Traits:</h3>
               <div className="flex flex-wrap gap-2">
                 {result.traits.map((trait, index) => (
                   <Badge 
                     key={index} 
-                    className="bg-music-purple/10 text-music-purple border-music-purple/20"
+                    className="bg-music-purple/10 text-music-purple border-music-purple/20 text-xs"
                   >
                     {trait}
                   </Badge>
@@ -354,22 +354,22 @@ export default function MusicPersonalityQuiz({ onComplete, onSkip }: MusicPerson
               </div>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
               <div className="flex items-start space-x-3">
-                <Music className="w-5 h-5 text-blue-600 mt-0.5" />
+                <Music className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="font-medium text-blue-800">Compatibility Boost</h4>
-                  <p className="text-sm text-blue-700 mt-1">
+                  <h4 className="font-medium text-blue-800 text-sm">Compatibility Boost</h4>
+                  <p className="text-xs text-blue-700 mt-1 leading-relaxed">
                     Your personality type will help us find matches who complement your music style and listening habits.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-2">
               <Button
                 onClick={handleComplete}
-                className="flex-1 music-gradient-purple-pink text-white"
+                className="w-full music-gradient-purple-pink text-white"
               >
                 Continue with This Personality
               </Button>
@@ -380,7 +380,7 @@ export default function MusicPersonalityQuiz({ onComplete, onSkip }: MusicPerson
                   setCurrentQuestion(0);
                   setAnswers({});
                 }}
-                className="px-4"
+                className="w-full"
               >
                 Retake Quiz
               </Button>
@@ -392,12 +392,12 @@ export default function MusicPersonalityQuiz({ onComplete, onSkip }: MusicPerson
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
+    <div className="max-w-lg mx-auto p-4 space-y-6">
       {/* Header */}
-      <div className="text-center space-y-4">
+      <div className="text-center space-y-4 px-2">
         <div className="flex items-center justify-center space-x-2">
           <Brain className="w-6 h-6 text-music-purple" />
-          <h1 className="text-2xl font-bold text-gray-800">Music Personality Quiz</h1>
+          <h1 className="text-xl font-bold text-gray-800">Music Personality Quiz</h1>
         </div>
         <div className="space-y-2">
           <Progress value={progress} className="h-2" />
@@ -407,23 +407,25 @@ export default function MusicPersonalityQuiz({ onComplete, onSkip }: MusicPerson
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg text-center">
+      <Card className="mx-4">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg text-center leading-relaxed px-2">
             {currentQ.question}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-3 px-4 pb-6">
           {currentQ.options.map((option, index) => (
             <Button
               key={index}
               variant="outline"
               onClick={() => handleAnswer(currentQ.id, option.value)}
-              className="w-full text-left justify-start h-auto py-4 px-4 hover:border-music-purple hover:bg-music-purple/5 transition-all"
+              className="w-full text-left justify-start h-auto py-3 px-3 hover:border-music-purple hover:bg-music-purple/5 transition-all border-2"
             >
-              <div className="flex items-center space-x-3">
-                <div className="w-6 h-6 rounded-full border-2 border-gray-300 flex-shrink-0" />
-                <span className="text-gray-700">{option.text}</span>
+              <div className="flex items-start space-x-3 w-full">
+                <div className="w-5 h-5 rounded-full border-2 border-gray-300 flex-shrink-0 mt-0.5" />
+                <span className="text-gray-700 text-sm leading-relaxed flex-1 text-left">
+                  {option.text}
+                </span>
               </div>
             </Button>
           ))}
@@ -431,11 +433,11 @@ export default function MusicPersonalityQuiz({ onComplete, onSkip }: MusicPerson
       </Card>
 
       {/* Skip option */}
-      <div className="text-center">
+      <div className="text-center px-4">
         <Button
           variant="ghost"
           onClick={onSkip}
-          className="text-gray-500 hover:text-gray-700"
+          className="text-gray-500 hover:text-gray-700 text-sm"
         >
           Skip personality quiz for now
         </Button>
