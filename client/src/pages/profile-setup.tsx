@@ -7,6 +7,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import MusicProfileBuilder from "@/components/music-profile-builder";
 import BottomNavigation from "@/components/bottom-navigation";
+import { ThemeToggle } from "@/components/theme-toggle";
 import type { User } from "@shared/schema";
 
 export default function ProfileSetup() {
@@ -69,20 +70,21 @@ export default function ProfileSetup() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="flex items-center justify-between p-4 bg-white shadow-sm">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 transition-colors duration-300">
+      <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 shadow-sm transition-colors duration-300">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setLocation("/discover")}
           title="Back to Discover"
+          className="text-gray-600 dark:text-gray-300"
         >
           <ArrowLeft className="h-6 w-6" />
         </Button>
-        <h2 className="text-xl font-bold text-gray-800">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 transition-colors duration-300">
           {initialProfileData && initialProfileData.favoriteGenres.length > 0 ? "Edit Profile" : "Setup Your Profile"}
         </h2>
-        <div className="w-6"></div>
+        <ThemeToggle />
       </div>
 
       <MusicProfileBuilder

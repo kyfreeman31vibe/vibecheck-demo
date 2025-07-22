@@ -51,12 +51,8 @@ export default function Landing() {
     },
     onSuccess: (user) => {
       localStorage.setItem("currentUser", JSON.stringify(user));
-      // Check if user has completed profile setup
-      if (user.favoriteGenres && user.favoriteGenres.length > 0) {
-        setLocation("/discover");
-      } else {
-        setLocation("/setup");
-      }
+      // Always redirect to profile page after login
+      setLocation("/setup");
     },
     onError: () => {
       toast({
