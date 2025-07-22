@@ -392,12 +392,12 @@ export default function MusicPersonalityQuiz({ onComplete, onSkip }: MusicPerson
   }
 
   return (
-    <div className="max-w-lg mx-auto p-4 space-y-6">
+    <div className="max-w-md mx-auto p-3 space-y-5">
       {/* Header */}
-      <div className="text-center space-y-4 px-2">
+      <div className="text-center space-y-3 px-1">
         <div className="flex items-center justify-center space-x-2">
-          <Brain className="w-6 h-6 text-music-purple" />
-          <h1 className="text-xl font-bold text-gray-800">Music Personality Quiz</h1>
+          <Brain className="w-5 h-5 text-music-purple" />
+          <h1 className="text-lg font-bold text-gray-800">Music Personality Quiz</h1>
         </div>
         <div className="space-y-2">
           <Progress value={progress} className="h-2" />
@@ -407,23 +407,23 @@ export default function MusicPersonalityQuiz({ onComplete, onSkip }: MusicPerson
         </div>
       </div>
 
-      <Card className="mx-4">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg text-center leading-relaxed px-2">
+      <Card className="mx-2">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base text-center leading-relaxed px-1">
             {currentQ.question}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 px-4 pb-6">
+        <CardContent className="space-y-2 px-3 pb-6">
           {currentQ.options.map((option, index) => (
             <Button
               key={index}
               variant="outline"
               onClick={() => handleAnswer(currentQ.id, option.value)}
-              className="w-full text-left justify-start h-auto py-3 px-3 hover:border-music-purple hover:bg-music-purple/5 transition-all border-2"
+              className="w-full text-left justify-start h-auto py-2.5 px-2.5 hover:border-music-purple hover:bg-music-purple/5 transition-all border-2 min-h-[3rem]"
             >
-              <div className="flex items-start space-x-3 w-full">
-                <div className="w-5 h-5 rounded-full border-2 border-gray-300 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700 text-sm leading-relaxed flex-1 text-left">
+              <div className="flex items-start space-x-2.5 w-full">
+                <div className="w-4 h-4 rounded-full border-2 border-gray-300 flex-shrink-0 mt-1" />
+                <span className="text-gray-700 text-xs leading-relaxed flex-1 text-left break-words">
                   {option.text}
                 </span>
               </div>
@@ -433,11 +433,11 @@ export default function MusicPersonalityQuiz({ onComplete, onSkip }: MusicPerson
       </Card>
 
       {/* Skip option */}
-      <div className="text-center px-4">
+      <div className="text-center px-2">
         <Button
           variant="ghost"
           onClick={onSkip}
-          className="text-gray-500 hover:text-gray-700 text-sm"
+          className="text-gray-500 hover:text-gray-700 text-xs"
         >
           Skip personality quiz for now
         </Button>
