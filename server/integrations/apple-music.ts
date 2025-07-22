@@ -116,7 +116,7 @@ export class AppleMusicService {
     }
   }
 
-  static async searchMusic(query: string, types: string[] = ['songs', 'artists', 'albums']) {
+  static async searchCatalog(query: string, types: string[] = ['songs', 'artists', 'albums']) {
     const params = new URLSearchParams({
       term: query,
       types: types.join(','),
@@ -166,7 +166,7 @@ export class AppleMusicService {
 
     try {
       const searchTypes = types ? (types as string).split(',') : ['songs', 'artists', 'albums'];
-      const results = await this.searchMusic(q as string, searchTypes);
+      const results = await this.searchCatalog(q as string, searchTypes);
       res.json(results);
     } catch (error) {
       console.error('Error searching Apple Music:', error);
