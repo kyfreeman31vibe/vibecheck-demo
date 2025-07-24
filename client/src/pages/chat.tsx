@@ -69,7 +69,7 @@ export default function Chat() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setLocation("/matches")}
+            onClick={() => setLocation("/messages")}
           >
             <ArrowLeft className="h-6 w-6" />
           </Button>

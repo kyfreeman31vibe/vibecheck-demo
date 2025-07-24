@@ -101,9 +101,9 @@ export default function Discover() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setLocation("/matches")}
+            onClick={() => setLocation("/messages")}
             className="rounded-full bg-gray-200 relative"
-            title="View Matches"
+            title="View Messages"
           >
             <MessageCircle className="h-5 w-5 text-gray-600" />
           </Button>

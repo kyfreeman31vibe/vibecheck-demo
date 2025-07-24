@@ -81,10 +81,10 @@ export default function Messages({ currentUser }: MessagesProps) {
               Start matching with people to begin conversations
             </p>
             <Button
-              onClick={() => setLocation("/matches")}
+              onClick={() => setLocation("/discover")}
               className="bg-music-purple hover:bg-music-purple/90 text-white"
             >
-              Find Matches
+              Start Discovering
             </Button>
           </div>
         )}
