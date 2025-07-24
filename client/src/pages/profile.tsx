@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Music, User, Settings, Edit3, LogOut } from "lucide-react";
@@ -14,6 +15,7 @@ interface ProfileProps {
 
 export default function Profile({ currentUser, onLogout }: ProfileProps) {
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
@@ -31,6 +33,10 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
 
   const handleLogout = () => {
     logoutMutation.mutate();
+  };
+
+  const handleEditProfile = () => {
+    setLocation("/setup");
   };
 
   return (
@@ -69,7 +75,7 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
                 <p className="text-gray-500 dark:text-gray-400">@{currentUser?.username}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{currentUser?.age} years old</p>
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={handleEditProfile}>
                 <Edit3 className="w-4 h-4" />
               </Button>
             </div>
@@ -138,11 +144,11 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
             <CardTitle className="text-lg text-gray-900 dark:text-gray-100">Account</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button variant="outline" className="w-full justify-start">
+            <Button variant="outline" className="w-full justify-start" onClick={handleEditProfile}>
               <Edit3 className="w-4 h-4 mr-2" />
               Edit Profile
             </Button>
-            <Button variant="outline" className="w-full justify-start">
+            <Button variant="outline" className="w-full justify-start" onClick={handleEditProfile}>
               <Music className="w-4 h-4 mr-2" />
               Music Preferences
             </Button>
