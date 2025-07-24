@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { Heart, ArrowLeft } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import BottomNavigation from "@/components/bottom-navigation";
 import type { User } from "@shared/schema";
@@ -126,7 +126,7 @@ export default function Matches() {
         </div>
       </div>
 
-      <BottomNavigation />
+      <BottomNavigation currentUser={currentUser} />
     </div>
   );
 }

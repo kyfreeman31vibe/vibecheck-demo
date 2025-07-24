@@ -1,56 +1,49 @@
 import { useLocation } from "wouter";
+import { Home, Heart, MessageCircle, Calendar, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { User, MessageCircle, Heart, Calendar } from "lucide-react";
 
-export default function BottomNavigation() {
+interface BottomNavigationProps {
+  currentUser: any;
+}
+
+export default function BottomNavigation({ currentUser }: BottomNavigationProps) {
   const [location, setLocation] = useLocation();
 
+  if (!currentUser) return null;
+
   const navItems = [
-    {
-      icon: <User className="w-5 h-5" />,
-      label: "Profile",
-      path: "/setup",
-      isActive: location === "/setup"
-    },
-    {
-      icon: <MessageCircle className="w-5 h-5" />,
-      label: "Messages",
-      path: "/matches",
-      isActive: location === "/matches" || location.startsWith("/chat")
-    },
-    {
-      icon: <Heart className="w-5 h-5" />,
-      label: "Matches",
-      path: "/discover",
-      isActive: location === "/discover" || location.startsWith("/match")
-    },
-    {
-      icon: <Calendar className="w-5 h-5" />,
-      label: "Events",
-      path: "/events",
-      isActive: location === "/events"
-    }
+    { path: "/", icon: Home, label: "Home" },
+    { path: "/matches", icon: Heart, label: "Matches" },
+    { path: "/messages", icon: MessageCircle, label: "Messages" },
+    { path: "/events", icon: Calendar, label: "Events" },
+    { path: "/profile", icon: User, label: "Profile" },
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t-2 border-purple-300 dark:border-purple-600 shadow-xl transition-colors duration-300" style={{ zIndex: 1000, minHeight: '80px' }}>
-      <div className="max-w-md mx-auto px-4 py-3">
+    <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg">
+      <div className="max-w-md mx-auto px-2 py-2">
         <div className="flex justify-around items-center">
-          {navItems.map((item, index) => (
-            <Button
-              key={index}
-              variant="ghost"
-              onClick={() => setLocation(item.path)}
-              className={`flex flex-col items-center justify-center space-y-1 py-2 px-3 rounded-lg transition-all duration-300 min-w-[60px] ${
-                item.isActive 
-                  ? "text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/30" 
-                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-              }`}
-            >
-              {item.icon}
-              <span className="text-xs font-medium">{item.label}</span>
-            </Button>
-          ))}
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location === item.path;
+            
+            return (
+              <Button
+                key={item.path}
+                variant="ghost"
+                size="sm"
+                onClick={() => setLocation(item.path)}
+                className={`flex flex-col items-center space-y-1 p-2 h-auto min-w-0 ${
+                  isActive 
+                    ? "text-music-purple" 
+                    : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                }`}
+              >
+                <Icon className={`w-5 h-5 ${isActive ? "fill-current" : ""}`} />
+                <span className="text-xs font-medium">{item.label}</span>
+              </Button>
+            );
+          })}
         </div>
       </div>
     </div>
