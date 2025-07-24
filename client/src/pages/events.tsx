@@ -77,14 +77,12 @@ const SAMPLE_EVENTS: MusicEvent[] = [
   }
 ];
 
-export default function Events() {
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [selectedGenre, setSelectedGenre] = useState<string>("All");
+interface EventsProps {
+  currentUser: any;
+}
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("currentUser") || "{}");
-    setCurrentUser(user);
-  }, []);
+export default function Events({ currentUser }: EventsProps) {
+  const [selectedGenre, setSelectedGenre] = useState<string>("All");
 
   const userGenres = currentUser?.favoriteGenres || [];
   const genres = ["All", ...Array.from(new Set(SAMPLE_EVENTS.map(event => event.genre)))];
@@ -220,7 +218,7 @@ export default function Events() {
         </div>
       </div>
 
-      <BottomNavigation />
+      <BottomNavigation currentUser={currentUser} />
     </div>
   );
 }

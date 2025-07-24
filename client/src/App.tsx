@@ -79,7 +79,13 @@ function Router() {
         )}
       </Route>
       <Route path="/chat/:matchId" component={Chat} />
-      <Route path="/events" component={Events} />
+      <Route path="/events">
+        {currentUser ? (
+          <Events currentUser={currentUser} />
+        ) : (
+          <Landing />
+        )}
+      </Route>
       <Route path="/integrations" component={Integrations} />
       <Route component={NotFound} />
     </Switch>
