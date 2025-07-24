@@ -165,11 +165,16 @@ export default function MusicIntegrations({ onPlaylistsSelected, selectedPlaylis
                     Connect
                   </Button>
                   <Button 
-                    onClick={() => window.open('/api/spotify/test-auth', '_blank')}
+                    onClick={() => {
+                      console.log('Testing direct Spotify auth...');
+                      // Try the direct auth URL that we know works
+                      const authUrl = 'https://accounts.spotify.com/authorize?response_type=code&client_id=d7198f9e336348ceb1b1615b25c1bbcb&scope=playlist-read-private+playlist-read-collaborative+user-read-private+user-read-email&redirect_uri=https%3A%2F%2Fab7ff0bf-642e-4081-b073-49b276cb902c-00-3h1hz8la95x3x.spock.replit.dev%2Fapi%2Fauth%2Fspotify%2Fcallback&state=vibecheck-auth';
+                      window.open(authUrl, '_blank');
+                    }}
                     variant="outline"
                     size="sm"
                   >
-                    Test
+                    Direct
                   </Button>
                 </div>
               )}
