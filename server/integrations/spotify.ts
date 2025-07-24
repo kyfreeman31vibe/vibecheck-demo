@@ -158,28 +158,45 @@ export class SpotifyService {
   };
 
   static handleCallback = async (req: RequestWithSession, res: Response) => {
-    const { code, state } = req.query;
+    console.log('=== Spotify Callback Received ===');
+    console.log('Query params:', req.query);
+    
+    const { code, state, error } = req.query;
+
+    if (error) {
+      console.error('Spotify auth error from callback:', error);
+      return res.redirect('/profile-setup?error=spotify_denied');
+    }
 
     if (state !== 'vibecheck-auth') {
-      return res.status(400).json({ error: 'Invalid state parameter' });
+      console.error('Invalid state parameter. Expected: vibecheck-auth, Got:', state);
+      return res.redirect('/profile-setup?error=invalid_state');
     }
 
     if (!code) {
-      return res.status(400).json({ error: 'Authorization code not provided' });
+      console.error('No authorization code provided');
+      return res.redirect('/profile-setup?error=no_code');
     }
+
+    console.log('Valid authorization code received, exchanging for tokens...');
 
     try {
       const tokens = await this.exchangeCodeForTokens(code as string);
+      console.log('Token exchange successful');
+      
       const profile = await this.getUserProfile(tokens.access_token);
+      console.log('User profile retrieved:', profile.display_name);
       
       // Store tokens in session or database
       req.session.spotifyTokens = tokens;
       req.session.spotifyProfile = profile;
+      console.log('Tokens and profile stored in session');
 
-      res.redirect('/setup?spotify=connected');
+      console.log('Redirecting to profile setup with success...');
+      res.redirect('/profile-setup?connected=spotify');
     } catch (error) {
       console.error('Spotify auth error:', error);
-      res.status(500).json({ error: 'Authentication failed' });
+      res.redirect('/profile-setup?error=auth_failed');
     }
   };
 
