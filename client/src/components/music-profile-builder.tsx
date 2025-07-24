@@ -222,7 +222,14 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
       console.log('EXACT profileData being sent to onComplete:', profileData);
       console.log('profileData.profilePhotos array:', profileData.profilePhotos);
       
-      onComplete(profileData);
+      // Force ensure photos are included in the completion data
+      const completionData = {
+        ...profileData,
+        profilePhotos: profileData.profilePhotos || []
+      };
+      
+      console.log('Completion data with photos forced:', completionData.profilePhotos?.length || 0);
+      onComplete(completionData);
     }
   };
 
@@ -416,7 +423,11 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                 photos={profileData.profilePhotos || []}
                 onPhotosChange={(photos) => {
                   console.log('Photos changed in music profile builder:', photos.length);
-                  updateProfileData({ profilePhotos: photos });
+                  console.log('Setting profilePhotos to:', photos);
+                  setProfileData(prev => ({
+                    ...prev,
+                    profilePhotos: photos
+                  }));
                 }}
                 maxPhotos={5}
               />
