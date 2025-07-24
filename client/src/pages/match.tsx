@@ -4,15 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Heart, Music } from "lucide-react";
 import BottomNavigation from "@/components/bottom-navigation";
 
-export default function Match() {
+interface MatchProps {
+  currentUser: any;
+}
+
+export default function Match({ currentUser }: MatchProps) {
   const [, setLocation] = useLocation();
   const { matchId } = useParams();
-  const [currentUser, setCurrentUser] = useState<any>(null);
-
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("currentUser") || "{}");
-    setCurrentUser(user);
-  }, []);
 
   const handleSendMessage = () => {
     setLocation(`/chat/${matchId}`);
@@ -87,7 +85,7 @@ export default function Match() {
         </div>
       </div>
 
-      <BottomNavigation />
+      <BottomNavigation currentUser={currentUser} />
     </div>
   );
 }

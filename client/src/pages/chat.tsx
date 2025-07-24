@@ -8,17 +8,15 @@ import { apiRequest } from "@/lib/queryClient";
 import BottomNavigation from "@/components/bottom-navigation";
 import type { User } from "@shared/schema";
 
-export default function Chat() {
+interface ChatProps {
+  currentUser: any;
+}
+
+export default function Chat({ currentUser }: ChatProps) {
   const [, setLocation] = useLocation();
   const { matchId } = useParams();
   const queryClient = useQueryClient();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("currentUser") || "{}");
-    setCurrentUser(user);
-  }, []);
 
   const { data: messages = [], refetch } = useQuery({
     queryKey: ["/api/messages", matchId],
@@ -185,7 +183,7 @@ export default function Chat() {
         </form>
       </div>
 
-      <BottomNavigation />
+      <BottomNavigation currentUser={currentUser} />
     </div>
   );
 }

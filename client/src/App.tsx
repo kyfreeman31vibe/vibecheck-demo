@@ -69,8 +69,20 @@ function Router() {
         )}
       </Route>
       <Route path="/setup" component={ProfileSetup} />
-      <Route path="/discover" component={Discover} />
-      <Route path="/match/:matchId" component={Match} />
+      <Route path="/discover">
+        {currentUser ? (
+          <Discover currentUser={currentUser} />
+        ) : (
+          <Landing />
+        )}
+      </Route>
+      <Route path="/match/:matchId">
+        {currentUser ? (
+          <Match currentUser={currentUser} />
+        ) : (
+          <Landing />
+        )}
+      </Route>
       <Route path="/matches">
         {currentUser ? (
           <Matches currentUser={currentUser} />
@@ -78,7 +90,13 @@ function Router() {
           <Landing />
         )}
       </Route>
-      <Route path="/chat/:matchId" component={Chat} />
+      <Route path="/chat/:matchId">
+        {currentUser ? (
+          <Chat currentUser={currentUser} />
+        ) : (
+          <Landing />
+        )}
+      </Route>
       <Route path="/events">
         {currentUser ? (
           <Events currentUser={currentUser} />
@@ -86,7 +104,13 @@ function Router() {
           <Landing />
         )}
       </Route>
-      <Route path="/integrations" component={Integrations} />
+      <Route path="/integrations">
+        {currentUser ? (
+          <Integrations currentUser={currentUser} />
+        ) : (
+          <Landing />
+        )}
+      </Route>
       <Route component={NotFound} />
     </Switch>
   );

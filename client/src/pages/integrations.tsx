@@ -11,16 +11,14 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
-export default function Integrations() {
-  const [currentUser, setCurrentUser] = useState<any>(null);
+interface IntegrationsProps {
+  currentUser: any;
+}
+
+export default function Integrations({ currentUser }: IntegrationsProps) {
   const [selectedPlaylists, setSelectedPlaylists] = useState<any[]>([]);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("currentUser") || "{}");
-    setCurrentUser(user);
-  }, []);
 
   const logoutMutation = useMutation({
     mutationFn: async () => {

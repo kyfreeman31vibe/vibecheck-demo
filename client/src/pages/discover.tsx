@@ -9,17 +9,15 @@ import ProfileCard from "@/components/profile-card";
 import BottomNavigation from "@/components/bottom-navigation";
 import type { User as UserType } from "@shared/schema";
 
-export default function Discover() {
+interface DiscoverProps {
+  currentUser: any;
+}
+
+export default function Discover({ currentUser }: DiscoverProps) {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [currentUserIndex, setCurrentUserIndex] = useState(0);
-  const [currentUser, setCurrentUser] = useState<UserType | null>(null);
-
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("currentUser") || "{}");
-    setCurrentUser(user);
-  }, []);
 
   const { data: users = [], isLoading, refetch } = useQuery<UserType[]>({
     queryKey: ["/api/discover", currentUser?.id],
@@ -187,7 +185,7 @@ export default function Discover() {
         </Button>
       </div>
 
-      <BottomNavigation />
+      <BottomNavigation currentUser={currentUser} />
     </div>
   );
 }
