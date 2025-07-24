@@ -33,15 +33,17 @@ export default function MusicIntegrations({ onPlaylistsSelected, selectedPlaylis
   );
 
   // Check connection status
-  const { data: spotifyConnected } = useQuery({
+  const { data: spotifyStatus } = useQuery<{ connected: boolean }>({
     queryKey: ["/api/spotify/status"],
     retry: false
   });
 
+  const spotifyConnected = spotifyStatus?.connected || false;
+
   // Fetch Spotify playlists
   const { data: spotifyPlaylists = [], isLoading: spotifyLoading, refetch: refetchSpotify } = useQuery<Playlist[]>({
     queryKey: ["/api/spotify/playlists"],
-    enabled: !!spotifyConnected,
+    enabled: spotifyConnected,
     retry: false
   });
 
