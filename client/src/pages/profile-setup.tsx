@@ -65,22 +65,27 @@ export default function ProfileSetup() {
   });
 
   const handleProfileComplete = (profileData: any) => {
-    console.log('Profile complete - saving data:', {
-      profilePhotos: profileData.profilePhotos?.length || 0,
+    console.log('Profile complete - received data:', profileData);
+    console.log('Profile photos specifically:', {
+      profilePhotos: profileData.profilePhotos,
+      length: profileData.profilePhotos?.length || 0,
       firstPhoto: profileData.profilePhotos?.[0]?.substring(0, 50)
     });
     
-    updateProfileMutation.mutate({
-      favoriteGenres: profileData.favoriteGenres,
-      favoriteArtists: profileData.favoriteArtists,
-      favoriteSongs: profileData.favoriteSongs,
-      topDefiningTracks: profileData.topDefiningTracks,
-      personalityType: profileData.personalityType,
-      personalityTraits: profileData.personalityTraits,
-      bio: profileData.bio,
+    const dataToSave = {
+      favoriteGenres: profileData.favoriteGenres || [],
+      favoriteArtists: profileData.favoriteArtists || [],
+      favoriteSongs: profileData.favoriteSongs || [],
+      topDefiningTracks: profileData.topDefiningTracks || [],
+      personalityType: profileData.personalityType || "",
+      personalityTraits: profileData.personalityTraits || [],
+      bio: profileData.bio || "",
       profilePhotos: profileData.profilePhotos || [],
       profilePicture: (profileData.profilePhotos && profileData.profilePhotos.length > 0) ? profileData.profilePhotos[0] : null
-    });
+    };
+    
+    console.log('Data being sent to API:', dataToSave);
+    updateProfileMutation.mutate(dataToSave);
   };
 
   // Prepare initial data from current user for editing

@@ -212,6 +212,11 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
     if (step < totalSteps) {
       setStep(step + 1);
     } else {
+      console.log('Completing profile with data:', {
+        profilePhotos: profileData.profilePhotos?.length || 0,
+        hasPhotos: !!profileData.profilePhotos && profileData.profilePhotos.length > 0,
+        firstPhoto: profileData.profilePhotos?.[0]?.substring(0, 50)
+      });
       onComplete(profileData);
     }
   };
