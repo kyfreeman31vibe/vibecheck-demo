@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Music } from "lucide-react";
+import { ArrowLeft, Music, LogOut } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -40,6 +40,28 @@ export default function ProfileSetup() {
         variant: "destructive",
       });
     },
+  });
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", "/api/auth/logout");
+      return response.json();
+    },
+    onSuccess: () => {
+      localStorage.removeItem("currentUser");
+      toast({
+        title: "Signed out",
+        description: "You have been successfully signed out"
+      });
+      setLocation("/");
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to sign out",
+        variant: "destructive"
+      });
+    }
   });
 
   const handleProfileComplete = (profileData: any) => {
@@ -93,6 +115,16 @@ export default function ProfileSetup() {
           >
             <Music className="w-4 h-4 mr-1" />
             Connect Music
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => logoutMutation.mutate()}
+            title="Sign Out"
+            className="text-gray-600 dark:text-gray-300"
+            disabled={logoutMutation.isPending}
+          >
+            <LogOut className="h-5 w-5" />
           </Button>
           <ThemeToggle />
         </div>
