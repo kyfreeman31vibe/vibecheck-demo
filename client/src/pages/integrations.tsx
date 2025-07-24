@@ -5,18 +5,44 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BottomNavigation from "@/components/bottom-navigation";
 import MusicIntegrations from "@/components/music-integrations";
 import EventsIntegration from "@/components/events-integration";
-import { Link, Music, Calendar, ArrowLeft } from "lucide-react";
+import { Link, Music, Calendar, ArrowLeft, LogOut } from "lucide-react";
 import { useLocation } from "wouter";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Integrations() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [selectedPlaylists, setSelectedPlaylists] = useState<any[]>([]);
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("currentUser") || "{}");
     setCurrentUser(user);
   }, []);
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", "/api/auth/logout");
+      return response.json();
+    },
+    onSuccess: () => {
+      localStorage.removeItem("currentUser");
+      toast({
+        title: "Signed out",
+        description: "You have been successfully signed out"
+      });
+      setLocation("/");
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to sign out",
+        variant: "destructive"
+      });
+    }
+  });
 
   if (!currentUser) {
     return <div>Loading...</div>;
@@ -38,7 +64,16 @@ export default function Integrations() {
         <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 transition-colors duration-300">
           Music & Events
         </h2>
-        <div className="w-6"></div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => logoutMutation.mutate()}
+          title="Sign Out"
+          className="text-gray-600 dark:text-gray-300"
+          disabled={logoutMutation.isPending}
+        >
+          <LogOut className="h-5 w-5" />
+        </Button>
       </div>
 
       <div className="max-w-2xl mx-auto p-6">

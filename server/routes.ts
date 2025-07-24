@@ -226,6 +226,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Events Routes
   app.get("/api/events", EventsService.getEvents);
 
+  // Logout route - clears session and returns success
+  app.post("/api/auth/logout", (req: any, res) => {
+    req.session.destroy((err: any) => {
+      if (err) {
+        return res.status(500).json({ message: "Could not log out" });
+      }
+      res.clearCookie('connect.sid'); // Clear session cookie
+      res.json({ message: "Logged out successfully" });
+    });
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
