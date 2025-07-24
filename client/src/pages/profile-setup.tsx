@@ -72,7 +72,9 @@ export default function ProfileSetup() {
       topDefiningTracks: profileData.topDefiningTracks,
       personalityType: profileData.personalityType,
       personalityTraits: profileData.personalityTraits,
-      bio: profileData.bio
+      bio: profileData.bio,
+      profilePhotos: profileData.profilePhotos || [],
+      profilePicture: (profileData.profilePhotos && profileData.profilePhotos.length > 0) ? profileData.profilePhotos[0] : null
     });
   };
 
@@ -84,7 +86,8 @@ export default function ProfileSetup() {
     topDefiningTracks: currentUser.topDefiningTracks || [],
     personalityType: currentUser.personalityType || "",
     personalityTraits: currentUser.personalityTraits || [],
-    bio: currentUser.bio || ""
+    bio: currentUser.bio || "",
+    profilePhotos: currentUser.profilePhotos || []
   } : undefined;
 
   if (!currentUser) {

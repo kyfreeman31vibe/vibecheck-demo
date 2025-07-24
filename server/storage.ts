@@ -257,15 +257,42 @@ export class DatabaseStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const [user] = await db
       .insert(users)
-      .values(insertUser)
+      .values({
+        ...insertUser,
+        profilePhotos: insertUser.profilePhotos || [],
+        bio: insertUser.bio || null,
+        personalityType: insertUser.personalityType || null,
+        favoriteGenres: insertUser.favoriteGenres || [],
+        favoriteArtists: insertUser.favoriteArtists || [],
+        favoriteSongs: insertUser.favoriteSongs || [],
+        topDefiningTracks: insertUser.topDefiningTracks || [],
+        personalityTraits: insertUser.personalityTraits || []
+      })
       .returning();
     return user;
   }
 
   async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
+    const cleanUpdates: any = { ...updates };
+    
+    // Ensure privacy settings have proper typing if provided
+    if (cleanUpdates.privacySettings) {
+      cleanUpdates.privacySettings = {
+        profileVisibility: cleanUpdates.privacySettings.profileVisibility || "everyone",
+        ageVisibility: cleanUpdates.privacySettings.ageVisibility ?? true,
+        locationVisibility: cleanUpdates.privacySettings.locationVisibility ?? true,
+        lastSeenVisibility: cleanUpdates.privacySettings.lastSeenVisibility ?? true,
+        readReceipts: cleanUpdates.privacySettings.readReceipts ?? true,
+        onlineStatus: cleanUpdates.privacySettings.onlineStatus ?? true,
+        discoverable: cleanUpdates.privacySettings.discoverable ?? true,
+        showDistance: cleanUpdates.privacySettings.showDistance ?? true,
+        allowMessages: cleanUpdates.privacySettings.allowMessages || "everyone"
+      };
+    }
+    
     const [user] = await db
       .update(users)
-      .set(updates)
+      .set(cleanUpdates)
       .where(eq(users.id, id))
       .returning();
     return user || undefined;
