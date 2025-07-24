@@ -140,13 +140,20 @@ export class SpotifyService {
 
   // Express route handlers
   static initiateAuth = (req: Request, res: Response) => {
+    console.log('=== Spotify Auth Request ===');
+    console.log('Client ID configured:', !!SPOTIFY_CLIENT_ID);
+    console.log('Client Secret configured:', !!SPOTIFY_CLIENT_SECRET);
+    console.log('Redirect URI:', SPOTIFY_REDIRECT_URI);
+    
     if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET) {
+      console.error('Missing Spotify credentials');
       return res.status(500).json({ error: 'Spotify credentials not configured' });
     }
     
     const authUrl = this.getAuthUrl();
-    console.log('Spotify auth URL:', authUrl);
-    console.log('Spotify redirect URI:', SPOTIFY_REDIRECT_URI);
+    console.log('Generated auth URL:', authUrl);
+    console.log('Redirecting to Spotify...');
+    
     res.redirect(authUrl);
   };
 
