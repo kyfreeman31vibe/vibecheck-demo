@@ -165,17 +165,17 @@ export class SpotifyService {
 
     if (error) {
       console.error('Spotify auth error from callback:', error);
-      return res.redirect('/profile-setup?error=spotify_denied');
+      return res.redirect('/setup?error=spotify_denied');
     }
 
     if (state !== 'vibecheck-auth') {
       console.error('Invalid state parameter. Expected: vibecheck-auth, Got:', state);
-      return res.redirect('/profile-setup?error=invalid_state');
+      return res.redirect('/setup?error=invalid_state');
     }
 
     if (!code) {
       console.error('No authorization code provided');
-      return res.redirect('/profile-setup?error=no_code');
+      return res.redirect('/setup?error=no_code');
     }
 
     console.log('Valid authorization code received, exchanging for tokens...');
@@ -193,10 +193,10 @@ export class SpotifyService {
       console.log('Tokens and profile stored in session');
 
       console.log('Redirecting to profile setup with success...');
-      res.redirect('/profile-setup?connected=spotify');
+      res.redirect('/setup?connected=spotify');
     } catch (error) {
       console.error('Spotify auth error:', error);
-      res.redirect('/profile-setup?error=auth_failed');
+      res.redirect('/setup?error=auth_failed');
     }
   };
 
