@@ -218,18 +218,14 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
         firstPhoto: profileData.profilePhotos?.[0]?.substring(0, 50)
       });
       
-      // Ensure profilePhotos are preserved in the final data
-      const finalData = {
-        ...profileData,
-        profilePhotos: profileData.profilePhotos || photos
-      };
-      
-      console.log('Final data with photos preserved:', {
-        profilePhotos: finalData.profilePhotos?.length || 0,
-        hasPhotos: !!finalData.profilePhotos && finalData.profilePhotos.length > 0
+      // Photos should already be in profileData.profilePhotos
+      console.log('Final data before completion:', {
+        profilePhotosCount: profileData.profilePhotos?.length || 0,
+        hasPhotos: !!profileData.profilePhotos && profileData.profilePhotos.length > 0,
+        firstPhotoPreview: profileData.profilePhotos?.[0]?.substring(0, 50)
       });
       
-      onComplete(finalData);
+      onComplete(profileData);
     }
   };
 
