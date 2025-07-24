@@ -15,6 +15,8 @@ export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: P
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
+  console.log('PhotoUpload component rendered with photos:', photos.length);
+
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     
@@ -33,6 +35,9 @@ export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: P
       const newPhotos = await Promise.all(
         files.map(file => convertFileToBase64(file))
       );
+      
+      console.log('New photos added:', newPhotos.length);
+      console.log('Total photos after upload:', [...photos, ...newPhotos].length);
       
       onPhotosChange([...photos, ...newPhotos]);
       
@@ -105,6 +110,13 @@ export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: P
 
       {/* Photo Grid */}
       <div className="grid grid-cols-2 gap-4">
+        {/* Debug info */}
+        {photos.length > 0 && (
+          <div className="col-span-2 text-xs text-gray-500 bg-yellow-50 p-2 rounded">
+            Debug: {photos.length} photos loaded. First photo preview: {photos[0]?.substring(0, 50)}...
+          </div>
+        )}
+        
         {/* Existing Photos */}
         {photos.map((photo, index) => (
           <Card key={index} className="relative group overflow-hidden">
@@ -113,6 +125,13 @@ export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: P
                 src={photo}
                 alt={`Profile photo ${index + 1}`}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  console.error('Image failed to load:', photo.substring(0, 100));
+                  e.currentTarget.style.display = 'none';
+                }}
+                onLoad={() => {
+                  console.log('Image loaded successfully:', index);
+                }}
               />
               
               {/* Primary badge for first photo */}

@@ -159,7 +159,12 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
   const progress = (step / totalSteps) * 100;
 
   const updateProfileData = (updates: Partial<MusicProfileData>) => {
-    setProfileData(prev => ({ ...prev, ...updates }));
+    console.log('Updating profile data:', updates);
+    setProfileData(prev => {
+      const newData = { ...prev, ...updates };
+      console.log('New profile data:', newData);
+      return newData;
+    });
   };
 
   const toggleArrayItem = (array: string[], item: string, maxItems?: number) => {
@@ -399,7 +404,10 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
 
               <PhotoUpload
                 photos={profileData.profilePhotos || []}
-                onPhotosChange={(photos) => updateProfileData({ profilePhotos: photos })}
+                onPhotosChange={(photos) => {
+                  console.log('Photos changed in music profile builder:', photos.length);
+                  updateProfileData({ profilePhotos: photos });
+                }}
                 maxPhotos={5}
               />
             </div>
