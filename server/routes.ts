@@ -218,6 +218,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ connected: !!req.session?.spotifyTokens });
   });
   
+  // Debug endpoint to show current redirect URI
+  app.get("/api/spotify/debug", (req, res) => {
+    const redirectUri = process.env.SPOTIFY_REDIRECT_URI || `${process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : 'http://localhost:5000'}/api/auth/spotify/callback`;
+    res.json({
+      redirectUri,
+      domain: process.env.REPLIT_DEV_DOMAIN,
+      hasClientId: !!process.env.SPOTIFY_CLIENT_ID,
+      hasClientSecret: !!process.env.SPOTIFY_CLIENT_SECRET
+    });
+  });
+  
   // Apple Music Routes
   app.get("/api/apple-music/developer-token", AppleMusicService.getDeveloperToken);
   app.get("/api/apple-music/playlists", AppleMusicService.getPlaylists);
