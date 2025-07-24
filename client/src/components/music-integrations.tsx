@@ -48,8 +48,26 @@ export default function MusicIntegrations({ onPlaylistsSelected, selectedPlaylis
   });
 
   // Connect to Spotify
-  const connectSpotify = () => {
-    window.location.href = "/api/auth/spotify";
+  const connectSpotify = async () => {
+    console.log('Attempting to connect to Spotify...');
+    
+    try {
+      // First, let's get the config to debug
+      const configResponse = await fetch('/api/spotify/config');
+      const config = await configResponse.json();
+      console.log('Spotify config:', config);
+      
+      // Now redirect to Spotify
+      console.log('Redirecting to:', '/api/auth/spotify');
+      window.location.href = "/api/auth/spotify";
+    } catch (error) {
+      console.error('Error connecting to Spotify:', error);
+      toast({
+        title: "Connection Error",
+        description: "Failed to connect to Spotify. Check console for details.",
+        variant: "destructive"
+      });
+    }
   };
 
   // Connect to Apple Music

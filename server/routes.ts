@@ -219,13 +219,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Debug endpoint to show current redirect URI
-  app.get("/api/spotify/debug", (req, res) => {
+  app.get("/api/spotify/config", (req, res) => {
     const redirectUri = process.env.SPOTIFY_REDIRECT_URI || `${process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : 'http://localhost:5000'}/api/auth/spotify/callback`;
     res.json({
       redirectUri,
       domain: process.env.REPLIT_DEV_DOMAIN,
       hasClientId: !!process.env.SPOTIFY_CLIENT_ID,
-      hasClientSecret: !!process.env.SPOTIFY_CLIENT_SECRET
+      hasClientSecret: !!process.env.SPOTIFY_CLIENT_SECRET,
+      authUrl: `https://accounts.spotify.com/authorize?response_type=code&client_id=${process.env.SPOTIFY_CLIENT_ID}&scope=playlist-read-private+playlist-read-collaborative+user-read-private+user-read-email&redirect_uri=${encodeURIComponent(redirectUri)}&state=vibecheck-auth`
     });
   });
   
