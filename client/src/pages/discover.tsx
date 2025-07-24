@@ -129,6 +129,8 @@ export default function Discover({ currentUser }: DiscoverProps) {
             </div>
           </div>
         </div>
+        
+        <BottomNavigation currentUser={currentUser} />
       </div>
     );
   }
