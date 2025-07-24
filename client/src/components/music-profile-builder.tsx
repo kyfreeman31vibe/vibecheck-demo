@@ -218,12 +218,9 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
         firstPhoto: profileData.profilePhotos?.[0]?.substring(0, 50)
       });
       
-      // Photos should already be in profileData.profilePhotos
-      console.log('Final data before completion:', {
-        profilePhotosCount: profileData.profilePhotos?.length || 0,
-        hasPhotos: !!profileData.profilePhotos && profileData.profilePhotos.length > 0,
-        firstPhotoPreview: profileData.profilePhotos?.[0]?.substring(0, 50)
-      });
+      // Debug: Log the exact profileData object being passed
+      console.log('EXACT profileData being sent to onComplete:', profileData);
+      console.log('profileData.profilePhotos array:', profileData.profilePhotos);
       
       onComplete(profileData);
     }

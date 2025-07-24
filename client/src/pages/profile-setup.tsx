@@ -65,10 +65,14 @@ export default function ProfileSetup() {
   });
 
   const handleProfileComplete = (profileData: any) => {
+    console.log('Profile complete - received data type:', typeof profileData);
+    console.log('Profile complete - received data keys:', Object.keys(profileData));
     console.log('Profile complete - received data:', profileData);
     console.log('Profile photos specifically:', {
       profilePhotos: profileData.profilePhotos,
       length: profileData.profilePhotos?.length || 0,
+      type: typeof profileData.profilePhotos,
+      isArray: Array.isArray(profileData.profilePhotos),
       firstPhoto: profileData.profilePhotos?.[0]?.substring(0, 50)
     });
     
