@@ -96,8 +96,12 @@ export default function Landing() {
     },
     onSuccess: (user) => {
       localStorage.setItem("currentUser", JSON.stringify(user));
-      // Always redirect to profile page after login
-      setLocation("/setup");
+      setCurrentUser(user);
+      setShowLogin(false);
+      toast({
+        title: "Welcome back!",
+        description: "Successfully logged in to your account.",
+      });
     },
     onError: () => {
       toast({
