@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Music, Heart, MessageCircle, User, Settings, Zap, TrendingUp, Calendar } from "lucide-react";
+import { Music, Heart, MessageCircle, User, Settings, Zap, TrendingUp, Calendar, BarChart3 } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -264,14 +264,25 @@ export default function Landing() {
                 <p className="text-sm text-gray-500 dark:text-gray-400">Welcome back, {currentUser.name}</p>
               </div>
             </div>
-            <Button
-              onClick={handleLogout}
-              variant="ghost"
-              size="sm"
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-            >
-              <Settings className="w-4 h-4" />
-            </Button>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                title="Dashboard"
+              >
+                <BarChart3 className="w-4 h-4" />
+              </Button>
+              <Button
+                onClick={handleLogout}
+                variant="ghost"
+                size="sm"
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                title="Settings"
+              >
+                <Settings className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         </div>
 
