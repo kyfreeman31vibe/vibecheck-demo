@@ -67,13 +67,31 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
         <Card className="dark:bg-gray-800 dark:border-gray-700">
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-music-purple rounded-full flex items-center justify-center">
-                <User className="w-8 h-8 text-white" />
-              </div>
+              {currentUser?.profilePhotos && currentUser.profilePhotos.length > 0 ? (
+                <div className="w-16 h-16 rounded-full overflow-hidden ring-2 ring-music-purple/20">
+                  <img 
+                    src={currentUser.profilePhotos[0]} 
+                    alt={currentUser.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      console.error('Profile photo failed to load in profile page');
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="w-16 h-16 bg-music-purple rounded-full flex items-center justify-center">
+                  <User className="w-8 h-8 text-white" />
+                </div>
+              )}
               <div className="flex-1">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{currentUser?.name}</h2>
                 <p className="text-gray-500 dark:text-gray-400">@{currentUser?.username}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{currentUser?.age} years old</p>
+                {/* Debug info */}
+                <div className="text-xs text-gray-400 mt-1">
+                  Photos: {currentUser?.profilePhotos?.length || 0}
+                </div>
               </div>
               <Button variant="outline" size="sm" onClick={handleEditProfile}>
                 <Edit3 className="w-4 h-4" />

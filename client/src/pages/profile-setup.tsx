@@ -65,6 +65,11 @@ export default function ProfileSetup() {
   });
 
   const handleProfileComplete = (profileData: any) => {
+    console.log('Profile complete - saving data:', {
+      profilePhotos: profileData.profilePhotos?.length || 0,
+      firstPhoto: profileData.profilePhotos?.[0]?.substring(0, 50)
+    });
+    
     updateProfileMutation.mutate({
       favoriteGenres: profileData.favoriteGenres,
       favoriteArtists: profileData.favoriteArtists,
