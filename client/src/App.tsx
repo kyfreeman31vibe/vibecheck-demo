@@ -71,7 +71,13 @@ function Router() {
       <Route path="/setup" component={ProfileSetup} />
       <Route path="/discover" component={Discover} />
       <Route path="/match/:matchId" component={Match} />
-      <Route path="/matches" component={Matches} />
+      <Route path="/matches">
+        {currentUser ? (
+          <Matches currentUser={currentUser} />
+        ) : (
+          <Landing />
+        )}
+      </Route>
       <Route path="/chat/:matchId" component={Chat} />
       <Route path="/events" component={Events} />
       <Route path="/integrations" component={Integrations} />
