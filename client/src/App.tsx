@@ -20,6 +20,7 @@ import Matches from "@/pages/matches";
 import Chat from "@/pages/chat";
 import Events from "@/pages/events";
 import Integrations from "@/pages/integrations";
+import Settings from "@/pages/settings";
 
 function Router() {
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -107,6 +108,13 @@ function Router() {
       <Route path="/integrations">
         {currentUser ? (
           <Integrations currentUser={currentUser} />
+        ) : (
+          <Landing />
+        )}
+      </Route>
+      <Route path="/settings">
+        {currentUser ? (
+          <Settings currentUser={currentUser} />
         ) : (
           <Landing />
         )}

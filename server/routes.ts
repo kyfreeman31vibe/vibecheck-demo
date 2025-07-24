@@ -74,7 +74,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { password, ...userWithoutPassword } = updatedUser;
       res.json(userWithoutPassword);
     } catch (error) {
-      res.status(400).json({ message: "Update failed" });
+      res.status(400).json({ message: "Failed to update user" });
+    }
+  });
+
+  // Settings routes
+  app.put("/api/users/:id/notifications", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const notificationSettings = req.body;
+      
+      const updatedUser = await storage.updateUser(id, { notificationSettings });
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json({ success: true, notificationSettings: updatedUser.notificationSettings });
+    } catch (error) {
+      res.status(400).json({ message: "Failed to update notification settings" });
+    }
+  });
+
+  app.put("/api/users/:id/privacy", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const privacySettings = req.body;
+      
+      const updatedUser = await storage.updateUser(id, { privacySettings });
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json({ success: true, privacySettings: updatedUser.privacySettings });
+    } catch (error) {
+      res.status(400).json({ message: "Failed to update privacy settings" });
     }
   });
 

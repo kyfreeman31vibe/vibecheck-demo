@@ -152,7 +152,7 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
               <Music className="w-4 h-4 mr-2" />
               Music Preferences
             </Button>
-            <Button variant="outline" className="w-full justify-start">
+            <Button variant="outline" className="w-full justify-start" onClick={() => setLocation("/settings")}>
               <Settings className="w-4 h-4 mr-2" />
               Settings
             </Button>

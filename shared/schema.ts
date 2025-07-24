@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb, json } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -18,6 +18,39 @@ export const users = pgTable("users", {
   personalityType: text("personality_type"),
   personalityTraits: text("personality_traits").array(),
   createdAt: timestamp("created_at").defaultNow(),
+  // Account settings
+  email: text("email"),
+  address: text("address"),
+  birthday: text("birthday"),
+  phone: text("phone"),
+  // Notification settings
+  notificationSettings: json("notification_settings").$type<{
+    newMatches: boolean;
+    messages: boolean;
+    likes: boolean;
+    events: boolean;
+    marketing: boolean;
+    pushNotifications: boolean;
+    emailNotifications: boolean;
+    smsNotifications: boolean;
+  }>(),
+  // Privacy settings
+  privacySettings: json("privacy_settings").$type<{
+    profileVisibility: "everyone" | "matches-only" | "hidden";
+    ageVisibility: boolean;
+    locationVisibility: boolean;
+    lastSeenVisibility: boolean;
+    readReceipts: boolean;
+    onlineStatus: boolean;
+    discoverable: boolean;
+    showDistance: boolean;
+    allowMessages: "everyone" | "matches" | "verified";
+  }>(),
+  // Billing settings (for Stripe integration)
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+  subscriptionPlan: text("subscription_plan").default("free"),
+  subscriptionStatus: text("subscription_status").default("inactive"),
 });
 
 export const matches = pgTable("matches", {
