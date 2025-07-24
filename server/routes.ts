@@ -217,6 +217,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/spotify/status", (req: any, res) => {
     res.json({ connected: !!req.session?.spotifyTokens });
   });
+
+  // Dashboard endpoints
+  app.get("/api/dashboard/stats", async (req: any, res) => {
+    if (!req.session?.user) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const userId = req.session.user.id;
+      
+      // Get user's matches
+      const matches = await storage.getUserMatches(userId);
+      const totalMatches = matches.filter(m => m.matched).length;
+      
+      // Get user's messages for active chats
+      const messages = await storage.getUserMessages(userId);
+      const activeChats = new Set(messages.map((m: any) => m.matchId)).size;
+      
+      // Calculate average compatibility score
+      const compatibilityScores = matches.map(m => m.compatibilityScore);
+      const avgCompatibility = compatibilityScores.length > 0 
+        ? Math.round(compatibilityScores.reduce((a, b) => a + b, 0) / compatibilityScores.length)
+        : 0;
+      
+      // Calculate vibe score (based on matches and activity)
+      const vibeScore = Math.min(100, (totalMatches * 10) + (activeChats * 5) + avgCompatibility);
+      
+      res.json({
+        totalMatches,
+        activeChats,
+        compatibilityScore: avgCompatibility,
+        vibeScore
+      });
+    } catch (error) {
+      console.error("Error fetching dashboard stats:", error);
+      res.status(500).json({ error: "Failed to fetch dashboard stats" });
+    }
+  });
+
+  app.get("/api/dashboard/recent-matches", async (req: any, res) => {
+    if (!req.session?.user) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    try {
+      const userId = req.session.user.id;
+      const matches = await storage.getUserMatches(userId);
+      
+      // Get recent matches (last 5, matched only)
+      const recentMatches = matches
+        .filter(m => m.matched)
+        .sort((a, b) => new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime())
+        .slice(0, 5);
+      
+      // Get user details for each match
+      const matchesWithDetails = await Promise.all(
+        recentMatches.map(async (match) => {
+          const otherUserId = match.userId1 === userId ? match.userId2 : match.userId1;
+          const otherUser = await storage.getUserById(otherUserId);
+          return {
+            name: otherUser?.name || "Unknown",
+            compatibilityScore: match.compatibilityScore,
+            createdAt: match.createdAt
+          };
+        })
+      );
+      
+      res.json(matchesWithDetails);
+    } catch (error) {
+      console.error("Error fetching recent matches:", error);
+      res.status(500).json({ error: "Failed to fetch recent matches" });
+    }
+  });
   
 
   

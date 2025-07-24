@@ -11,6 +11,7 @@ import { eq, and, or, not, inArray } from "drizzle-orm";
 export interface IStorage {
   // User operations
   getUser(id: number): Promise<User | undefined>;
+  getUserById(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined>;
@@ -26,6 +27,7 @@ export interface IStorage {
   // Message operations
   createMessage(message: InsertMessage): Promise<Message>;
   getMatchMessages(matchId: number): Promise<Message[]>;
+  getUserMessages(userId: number): Promise<Message[]>;
 
   // Swipe operations
   createSwipe(swipe: InsertSwipe): Promise<Swipe>;
@@ -204,6 +206,20 @@ export class MemStorage implements IStorage {
       .sort((a, b) => a.createdAt!.getTime() - b.createdAt!.getTime());
   }
 
+  async getUserMessages(userId: number): Promise<Message[]> {
+    // Get all matches for the user first
+    const userMatches = await this.getUserMatches(userId);
+    const matchIds = userMatches.map(m => m.id);
+    
+    return Array.from(this.messages.values())
+      .filter(message => matchIds.includes(message.matchId))
+      .sort((a, b) => a.createdAt!.getTime() - b.createdAt!.getTime());
+  }
+
+  async getUserById(id: number): Promise<User | undefined> {
+    return this.getUser(id);
+  }
+
   async createSwipe(swipe: InsertSwipe): Promise<Swipe> {
     const id = this.currentSwipeId++;
     const newSwipe: Swipe = { 
@@ -345,6 +361,33 @@ export class DatabaseStorage implements IStorage {
       .from(messages)
       .where(eq(messages.matchId, matchId))
       .orderBy(messages.createdAt);
+  }
+
+  async getUserMessages(userId: number): Promise<Message[]> {
+    // Get all matches for the user first
+    const userMatches = await db
+      .select()
+      .from(matches)
+      .where(
+        and(
+          or(eq(matches.userId1, userId), eq(matches.userId2, userId)),
+          eq(matches.matched, true)
+        )
+      );
+    
+    if (userMatches.length === 0) return [];
+    
+    const matchIds = userMatches.map(m => m.id);
+    
+    return await db
+      .select()
+      .from(messages)
+      .where(inArray(messages.matchId, matchIds))
+      .orderBy(messages.createdAt);
+  }
+
+  async getUserById(id: number): Promise<User | undefined> {
+    return this.getUser(id);
   }
 
   async createSwipe(swipe: InsertSwipe): Promise<Swipe> {
