@@ -218,16 +218,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ connected: !!req.session?.spotifyTokens });
   });
   
-  // Debug endpoint to show current redirect URI
-  app.get("/api/spotify/config", (req, res) => {
+  // Test endpoint to directly access Spotify auth URL
+  app.get("/api/spotify/test-auth", (req, res) => {
     const redirectUri = process.env.SPOTIFY_REDIRECT_URI || `${process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : 'http://localhost:5000'}/api/auth/spotify/callback`;
-    res.json({
-      redirectUri,
-      domain: process.env.REPLIT_DEV_DOMAIN,
-      hasClientId: !!process.env.SPOTIFY_CLIENT_ID,
-      hasClientSecret: !!process.env.SPOTIFY_CLIENT_SECRET,
-      authUrl: `https://accounts.spotify.com/authorize?response_type=code&client_id=${process.env.SPOTIFY_CLIENT_ID}&scope=playlist-read-private+playlist-read-collaborative+user-read-private+user-read-email&redirect_uri=${encodeURIComponent(redirectUri)}&state=vibecheck-auth`
-    });
+    const authUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${process.env.SPOTIFY_CLIENT_ID}&scope=playlist-read-private+playlist-read-collaborative+user-read-private+user-read-email&redirect_uri=${encodeURIComponent(redirectUri)}&state=vibecheck-auth`;
+    
+    // Send HTML page that auto-redirects to Spotify
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Redirecting to Spotify...</title>
+      </head>
+      <body>
+        <p>Redirecting to Spotify authentication...</p>
+        <p>If you're not redirected automatically, <a href="${authUrl}">click here</a></p>
+        <script>
+          console.log('Auth URL:', '${authUrl}');
+          window.location.href = '${authUrl}';
+        </script>
+      </body>
+      </html>
+    `);
   });
   
   // Apple Music Routes

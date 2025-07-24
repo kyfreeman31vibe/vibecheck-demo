@@ -50,10 +50,27 @@ export default function MusicIntegrations({ onPlaylistsSelected, selectedPlaylis
   // Connect to Spotify
   const connectSpotify = () => {
     console.log('Attempting to connect to Spotify...');
-    console.log('Redirecting to:', '/api/auth/spotify');
     
-    // Direct redirect to Spotify auth
-    window.location.href = "/api/auth/spotify";
+    // Try opening in a new window first to bypass potential iframe restrictions
+    const authWindow = window.open('/api/auth/spotify', 'spotify-auth', 'width=600,height=700');
+    
+    // Fallback to same window if popup is blocked
+    if (!authWindow || authWindow.closed || typeof authWindow.closed == 'undefined') {
+      console.log('Popup blocked, using same window redirect');
+      window.location.href = "/api/auth/spotify";
+    } else {
+      console.log('Opened Spotify auth in new window');
+      
+      // Listen for the window to close (user completed auth)
+      const checkClosed = setInterval(() => {
+        if (authWindow.closed) {
+          clearInterval(checkClosed);
+          console.log('Auth window closed, refreshing status');
+          // Refresh the Spotify status
+          window.location.reload();
+        }
+      }, 1000);
+    }
   };
 
   // Connect to Apple Music
@@ -143,9 +160,18 @@ export default function MusicIntegrations({ onPlaylistsSelected, selectedPlaylis
                   Connected
                 </Badge>
               ) : (
-                <Button onClick={connectSpotify} size="sm" className="bg-green-500 hover:bg-green-600">
-                  Connect
-                </Button>
+                <div className="flex gap-2">
+                  <Button onClick={connectSpotify} size="sm" className="bg-green-500 hover:bg-green-600">
+                    Connect
+                  </Button>
+                  <Button 
+                    onClick={() => window.open('/api/spotify/test-auth', '_blank')}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Test
+                  </Button>
+                </div>
               )}
             </CardTitle>
           </CardHeader>
