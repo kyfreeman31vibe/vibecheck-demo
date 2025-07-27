@@ -226,6 +226,11 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
   const nextStep = () => {
     if (step < totalSteps) {
       console.log(`Moving from step ${step} to ${step + 1}, photos in profileData:`, profileData.profilePhotos?.length || 0);
+      console.log('Current profileData state at step transition:', {
+        step: step,
+        photos: profileData.profilePhotos?.length || 0,
+        firstPhoto: profileData.profilePhotos?.[0]?.substring(0, 30)
+      });
       setStep(step + 1);
     } else {
       console.log('=== PROFILE COMPLETION DEBUGGING ===');
@@ -270,6 +275,13 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
 
   // Show completed profile summary if editing
   if (isEditing && step === 1) {
+    console.log('=== RENDERING EDITING SUMMARY ===');
+    console.log('ProfileData in editing summary:', {
+      photos: profileData.profilePhotos?.length || 0,
+      firstPhoto: profileData.profilePhotos?.[0]?.substring(0, 30),
+      isArray: Array.isArray(profileData.profilePhotos)
+    });
+    
     return (
       <div className="max-w-2xl mx-auto p-6 space-y-6">
         <div className="text-center space-y-4">
@@ -315,7 +327,9 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                 size="sm" 
                 className="mt-3"
                 onClick={() => {
-                  console.log('Editing photos, current photos:', profileData.profilePhotos?.length || 0);
+                  console.log('=== EDITING PHOTOS BUTTON CLICKED ===');
+                  console.log('Current photos before editing:', profileData.profilePhotos?.length || 0);
+                  console.log('Full profileData before photo editing:', profileData);
                   setIsEditing(false);
                   setStep(1);
                 }}
