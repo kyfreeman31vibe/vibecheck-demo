@@ -22,10 +22,24 @@ export default function ProfileSetup() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: any) => {
+      console.log('=== MUTATION: Sending data to API ===');
+      console.log('Profile data being sent:', data);
+      console.log('Photos in mutation:', data.profilePhotos?.length || 0);
+      
       const response = await apiRequest("PUT", `/api/users/${currentUser?.id}`, data);
-      return response.json();
+      const result = await response.json();
+      
+      console.log('=== MUTATION: API Response ===');
+      console.log('Response from API:', result);
+      console.log('Photos in response:', result.profilePhotos?.length || 0);
+      
+      return result;
     },
     onSuccess: (user) => {
+      console.log('=== MUTATION: Success ===');
+      console.log('Success data:', user);
+      console.log('Photos after successful save:', user.profilePhotos?.length || 0);
+      
       localStorage.setItem("currentUser", JSON.stringify(user));
       toast({
         title: "Success",
@@ -33,7 +47,10 @@ export default function ProfileSetup() {
       });
       setLocation("/discover");
     },
-    onError: () => {
+    onError: (error) => {
+      console.log('=== MUTATION: Error ===');
+      console.log('Error:', error);
+      
       toast({
         title: "Error",
         description: "Failed to create profile",
