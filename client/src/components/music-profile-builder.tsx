@@ -244,7 +244,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
         console.log('NO PHOTOS FOUND IN PROFILE DATA AT COMPLETION');
       }
       
-      console.log('=== CALLING onComplete ===');
+      console.log('=== CALLING onComplete FROM nextStep ===');
+      console.log('About to send profileData:', JSON.stringify(profileData, null, 2));
       onComplete(profileData);
     }
   };
@@ -454,6 +455,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                 console.log('NO PHOTOS IN EDITING MODE COMPLETION');
               }
               
+              console.log('=== CALLING onComplete FROM SAVE CHANGES ===');
               onComplete(profileData);
             }}
             disabled={isLoading}
