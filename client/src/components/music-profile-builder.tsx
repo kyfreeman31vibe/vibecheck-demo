@@ -223,7 +223,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
       console.log('=== PROFILE COMPLETION DEBUGGING ===');
       console.log('Current step:', step);
       console.log('Total steps:', totalSteps);
-      console.log('ProfileData state:', profileData);
+      console.log('Full ProfileData state:', JSON.stringify(profileData, null, 2));
       console.log('ProfileData.profilePhotos:', profileData.profilePhotos);
       console.log('ProfileData.profilePhotos length:', profileData.profilePhotos?.length || 0);
       console.log('ProfileData.profilePhotos type:', typeof profileData.profilePhotos);
@@ -231,6 +231,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
       
       if (profileData.profilePhotos && profileData.profilePhotos.length > 0) {
         console.log('First photo exists:', profileData.profilePhotos[0]?.substring(0, 50));
+        console.log('All photos exist:', profileData.profilePhotos.map((p, i) => `Photo ${i}: ${p.substring(0, 50)}...`));
       } else {
         console.log('NO PHOTOS FOUND IN PROFILE DATA AT COMPLETION');
       }
@@ -431,10 +432,17 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                 onPhotosChange={(photos) => {
                   console.log('Photos changed in music profile builder:', photos.length);
                   console.log('Setting profilePhotos to:', photos);
-                  setProfileData(prev => ({
-                    ...prev,
-                    profilePhotos: photos
-                  }));
+                  console.log('Current profileData before update:', profileData);
+                  
+                  setProfileData(prev => {
+                    const newData = {
+                      ...prev,
+                      profilePhotos: photos
+                    };
+                    console.log('New profileData after photo update:', newData);
+                    console.log('Specifically photos in new data:', newData.profilePhotos?.length || 0);
+                    return newData;
+                  });
                 }}
                 maxPhotos={5}
               />
