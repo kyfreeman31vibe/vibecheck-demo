@@ -163,6 +163,13 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
     setProfileData(prev => {
       const newData = { ...prev, ...updates };
       console.log('New profile data:', newData);
+      
+      // Special handling for profilePhotos to ensure they persist
+      if (updates.profilePhotos) {
+        console.log('ProfilePhotos being updated:', updates.profilePhotos.length);
+        console.log('First photo preview:', updates.profilePhotos[0]?.substring(0, 50));
+      }
+      
       return newData;
     });
   };
@@ -210,26 +217,26 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
 
   const nextStep = () => {
     if (step < totalSteps) {
+      console.log(`Moving from step ${step} to ${step + 1}, photos in profileData:`, profileData.profilePhotos?.length || 0);
       setStep(step + 1);
     } else {
-      console.log('Completing profile with data:', {
-        profilePhotos: profileData.profilePhotos?.length || 0,
-        hasPhotos: !!profileData.profilePhotos && profileData.profilePhotos.length > 0,
-        firstPhoto: profileData.profilePhotos?.[0]?.substring(0, 50)
-      });
+      console.log('=== PROFILE COMPLETION DEBUGGING ===');
+      console.log('Current step:', step);
+      console.log('Total steps:', totalSteps);
+      console.log('ProfileData state:', profileData);
+      console.log('ProfileData.profilePhotos:', profileData.profilePhotos);
+      console.log('ProfileData.profilePhotos length:', profileData.profilePhotos?.length || 0);
+      console.log('ProfileData.profilePhotos type:', typeof profileData.profilePhotos);
+      console.log('ProfileData.profilePhotos isArray:', Array.isArray(profileData.profilePhotos));
       
-      // Debug: Log the exact profileData object being passed
-      console.log('EXACT profileData being sent to onComplete:', profileData);
-      console.log('profileData.profilePhotos array:', profileData.profilePhotos);
+      if (profileData.profilePhotos && profileData.profilePhotos.length > 0) {
+        console.log('First photo exists:', profileData.profilePhotos[0]?.substring(0, 50));
+      } else {
+        console.log('NO PHOTOS FOUND IN PROFILE DATA AT COMPLETION');
+      }
       
-      // Force ensure photos are included in the completion data
-      const completionData = {
-        ...profileData,
-        profilePhotos: profileData.profilePhotos || []
-      };
-      
-      console.log('Completion data with photos forced:', completionData.profilePhotos?.length || 0);
-      onComplete(completionData);
+      console.log('=== CALLING onComplete ===');
+      onComplete(profileData);
     }
   };
 
