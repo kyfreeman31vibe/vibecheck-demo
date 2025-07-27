@@ -144,7 +144,9 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
       setProfileData(prev => {
         const newData = {
           ...prev,
-          ...initialData
+          ...initialData,
+          // Ensure profilePhotos is always an array
+          profilePhotos: initialData.profilePhotos || []
         };
         console.log('Profile data after initialization:', newData);
         console.log('Photos after init:', newData.profilePhotos?.length || 0);
@@ -469,8 +471,15 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                 console.log('NO PHOTOS IN EDITING MODE COMPLETION');
               }
               
+              // Create a fresh copy of profileData to ensure no state mutations
+              const finalData = {
+                ...profileData,
+                profilePhotos: profileData.profilePhotos || []
+              };
+              
               console.log('=== CALLING onComplete FROM SAVE CHANGES ===');
-              onComplete(profileData);
+              console.log('Final data being sent:', finalData);
+              onComplete(finalData);
             }}
             disabled={isLoading}
             className="flex-1 music-gradient-purple-pink text-white"
@@ -517,12 +526,16 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                   setProfileData(prev => {
                     const newData = {
                       ...prev,
-                      profilePhotos: photos
+                      profilePhotos: [...photos] // Create new array to ensure state update
                     };
                     console.log('New profileData after photo update:', newData);
                     console.log('Specifically photos in new data:', newData.profilePhotos?.length || 0);
+                    console.log('Photo data persistence check:', newData.profilePhotos);
                     return newData;
                   });
+                  
+                  // Force re-render to ensure state is updated
+                  console.log('Forcing component re-render after photo update');
                 }}
                 maxPhotos={5}
               />
