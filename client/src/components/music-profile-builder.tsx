@@ -138,10 +138,18 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
   // Initialize with existing data and check if user is editing
   useEffect(() => {
     if (initialData) {
-      setProfileData(prev => ({
-        ...prev,
-        ...initialData
-      }));
+      console.log('Initializing with data:', initialData);
+      console.log('Initial data has photos:', initialData.profilePhotos?.length || 0);
+      
+      setProfileData(prev => {
+        const newData = {
+          ...prev,
+          ...initialData
+        };
+        console.log('Profile data after initialization:', newData);
+        console.log('Photos after init:', newData.profilePhotos?.length || 0);
+        return newData;
+      });
       
       // Check if profile is already complete
       if (initialData.favoriteGenres && initialData.favoriteGenres.length > 0) {
@@ -273,6 +281,49 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
 
         {/* Profile Summary Cards */}
         <div className="space-y-4">
+          {/* Photo Summary Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Camera className="w-5 h-5 text-music-purple" />
+                <span>Profile Photos ({profileData.profilePhotos?.length || 0})</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {profileData.profilePhotos && profileData.profilePhotos.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {profileData.profilePhotos.slice(0, 3).map((photo, index) => (
+                    <img
+                      key={index}
+                      src={photo}
+                      alt={`Profile photo ${index + 1}`}
+                      className="w-16 h-16 object-cover rounded-lg"
+                    />
+                  ))}
+                  {profileData.profilePhotos.length > 3 && (
+                    <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center text-sm text-gray-500">
+                      +{profileData.profilePhotos.length - 3}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-sm">No photos uploaded</p>
+              )}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-3"
+                onClick={() => {
+                  console.log('Editing photos, current photos:', profileData.profilePhotos?.length || 0);
+                  setIsEditing(false);
+                  setStep(1);
+                }}
+              >
+                Edit Photos
+              </Button>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
@@ -391,7 +442,20 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             Edit Step by Step
           </Button>
           <Button 
-            onClick={() => onComplete(profileData)}
+            onClick={() => {
+              console.log('=== SAVE CHANGES - EDITING MODE COMPLETION ===');
+              console.log('ProfileData in editing mode:', profileData);
+              console.log('Photos in editing mode:', profileData.profilePhotos?.length || 0);
+              console.log('Full profileData being sent:', JSON.stringify(profileData, null, 2));
+              
+              if (profileData.profilePhotos && profileData.profilePhotos.length > 0) {
+                console.log('Photos exist in editing mode, first photo:', profileData.profilePhotos[0]?.substring(0, 50));
+              } else {
+                console.log('NO PHOTOS IN EDITING MODE COMPLETION');
+              }
+              
+              onComplete(profileData);
+            }}
             disabled={isLoading}
             className="flex-1 music-gradient-purple-pink text-white"
           >
