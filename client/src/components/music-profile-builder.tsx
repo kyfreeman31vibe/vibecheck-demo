@@ -275,8 +275,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
     }
   };
 
-  // Show completed profile summary if editing
-  if (isEditing && step === 1) {
+  // Show completed profile summary if editing (but not if actively uploading photos)
+  if (isEditing && step === 1 && !(profileData.profilePhotos && profileData.profilePhotos.length > 0)) {
     console.log('=== RENDERING EDITING SUMMARY ===');
     console.log('ProfileData in editing summary:', {
       photos: profileData.profilePhotos?.length || 0,
@@ -533,6 +533,12 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                     console.log('Photo data persistence check:', newData.profilePhotos);
                     return newData;
                   });
+                  
+                  // Stay in editing mode if photos are uploaded
+                  if (photos.length > 0) {
+                    console.log('Photos uploaded, staying in editing mode');
+                    setIsEditing(true);
+                  }
                   
                   // Force re-render to ensure state is updated
                   console.log('Forcing component re-render after photo update');
