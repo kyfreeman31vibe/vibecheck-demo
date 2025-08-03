@@ -186,7 +186,12 @@ export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: P
         {photos.length < maxPhotos && (
           <Card className="border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
             <button
-              onClick={() => fileInputRef.current?.click()}
+              onClick={() => {
+                console.log('=== ADD PHOTO BUTTON CLICKED ===');
+                console.log('File input ref:', fileInputRef.current);
+                console.log('Current photos before click:', photos.length);
+                fileInputRef.current?.click();
+              }}
               disabled={uploading}
               className="w-full aspect-square flex flex-col items-center justify-center space-y-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
             >
