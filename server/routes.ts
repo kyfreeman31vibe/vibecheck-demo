@@ -10,7 +10,7 @@ import { EventsService } from "./integrations/events";
 export async function registerRoutes(app: Express): Promise<Server> {
   
   // Auth routes
-  app.post("/api/auth/register", async (req, res) => {
+  app.post("/api/auth/register", async (req: any, res) => {
     try {
       const userData = insertUserSchema.parse(req.body);
       
@@ -21,6 +21,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = await storage.createUser(userData);
+      
+      // Store user in session for server-side authentication
+      req.session.user = user;
+      
       const { password, ...userWithoutPassword } = user;
       res.json(userWithoutPassword);
     } catch (error) {
@@ -28,7 +32,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/auth/login", async (req, res) => {
+  app.post("/api/auth/login", async (req: any, res) => {
     try {
       const { username, password } = req.body;
       
@@ -37,11 +41,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
+      // Store user in session for server-side authentication
+      req.session.user = user;
+      
       const { password: _, ...userWithoutPassword } = user;
       res.json(userWithoutPassword);
     } catch (error) {
       res.status(400).json({ message: "Login failed" });
     }
+  });
+
+  app.post("/api/auth/logout", async (req: any, res) => {
+    try {
+      req.session.destroy((err: any) => {
+        if (err) {
+          return res.status(500).json({ message: "Logout failed" });
+        }
+        res.json({ message: "Logged out successfully" });
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Logout failed" });
+    }
+  });
+
+  app.get("/api/auth/me", async (req: any, res) => {
+    if (!req.session?.user) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const { password, ...userWithoutPassword } = req.session.user;
+    res.json(userWithoutPassword);
   });
 
   // User routes

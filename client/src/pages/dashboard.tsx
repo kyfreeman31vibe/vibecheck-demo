@@ -118,23 +118,55 @@ export default function Dashboard({ currentUser, onLogout }: DashboardProps) {
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <Music className="w-5 h-5 text-green-500" />
-                <span className="text-gray-900 dark:text-gray-100">Spotify</span>
+                <Music className={`w-5 h-5 ${(spotifyStatus as any)?.connected ? 'text-green-500' : 'text-gray-400'}`} />
+                <div>
+                  <span className="text-gray-900 dark:text-gray-100">Spotify</span>
+                  {(spotifyStatus as any)?.connected && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Music sync active</p>
+                  )}
+                </div>
               </div>
-              {(spotifyStatus as any)?.connected ? (
-                <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                  Connected
-                </Badge>
-              ) : (
-                <Button
-                  onClick={() => setLocation("/setup")}
-                  size="sm"
-                  variant="outline"
-                >
-                  Connect
-                </Button>
-              )}
+              <div className="flex items-center space-x-2">
+                {(spotifyStatus as any)?.connected ? (
+                  <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" data-testid="badge-spotify-connected">
+                    Connected
+                  </Badge>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      // Open Spotify auth in popup to avoid navigation issues
+                      const popup = window.open(
+                        '/api/auth/spotify',
+                        'spotify-auth',
+                        'width=600,height=700,scrollbars=yes,resizable=yes'
+                      );
+                      
+                      // Listen for popup close to refresh status
+                      const checkClosed = setInterval(() => {
+                        if (popup?.closed) {
+                          clearInterval(checkClosed);
+                          // Refresh Spotify status after auth
+                          window.location.reload();
+                        }
+                      }, 1000);
+                    }}
+                    size="sm"
+                    className="bg-green-500 hover:bg-green-600 text-white"
+                    data-testid="button-connect-spotify"
+                  >
+                    Connect
+                  </Button>
+                )}
+              </div>
             </div>
+            
+            {!(spotifyStatus as any)?.connected && (
+              <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <p className="text-sm text-blue-700 dark:text-blue-300">
+                  Connect your Spotify account to import playlists and improve music-based matching!
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
