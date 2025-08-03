@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Music, Heart, MessageCircle, User, Settings, Zap, TrendingUp, BarChart3, LogOut } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/bottom-navigation";
 
 interface DashboardProps {
@@ -14,6 +15,7 @@ interface DashboardProps {
 
 export default function Dashboard({ currentUser, onLogout }: DashboardProps) {
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
 
   // Dashboard data queries
   const { data: dashboardStats } = useQuery({
@@ -26,10 +28,33 @@ export default function Dashboard({ currentUser, onLogout }: DashboardProps) {
     enabled: !!currentUser,
   });
 
-  const { data: spotifyStatus } = useQuery({
+  const { data: spotifyStatus, refetch: refetchSpotifyStatus } = useQuery({
     queryKey: ["/api/spotify/status"],
     enabled: !!currentUser,
   });
+
+  // Listen for Spotify auth popup messages
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data === 'spotify-auth-success') {
+        toast({
+          title: "Spotify Connected!",
+          description: "Your music accounts are now synced.",
+        });
+        // Refresh Spotify status
+        refetchSpotifyStatus();
+      } else if (event.data === 'spotify-auth-error') {
+        toast({
+          title: "Connection Failed",
+          description: "Unable to connect to Spotify. Please try again.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [refetchSpotifyStatus, toast]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
@@ -141,12 +166,19 @@ export default function Dashboard({ currentUser, onLogout }: DashboardProps) {
                         'width=600,height=700,scrollbars=yes,resizable=yes'
                       );
                       
-                      // Listen for popup close to refresh status
+                      if (!popup) {
+                        toast({
+                          title: "Popup Blocked",
+                          description: "Please allow popups for Spotify authentication.",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+                      
+                      // Listen for popup close without message (user closed manually)
                       const checkClosed = setInterval(() => {
-                        if (popup?.closed) {
+                        if (popup.closed) {
                           clearInterval(checkClosed);
-                          // Refresh Spotify status after auth
-                          window.location.reload();
                         }
                       }, 1000);
                     }}

@@ -165,17 +165,59 @@ export class SpotifyService {
 
     if (error) {
       console.error('Spotify auth error from callback:', error);
-      return res.redirect('/setup?error=spotify_denied');
+      return res.send(`
+        <html>
+          <head><title>Spotify Connection Failed</title></head>
+          <body>
+            <h2>Connection Failed</h2>
+            <p>Spotify authorization was denied.</p>
+            <script>
+              if (window.opener) {
+                window.opener.postMessage('spotify-auth-error', '*');
+              }
+              setTimeout(() => window.close(), 3000);
+            </script>
+          </body>
+        </html>
+      `);
     }
 
     if (state !== 'vibecheck-auth') {
       console.error('Invalid state parameter. Expected: vibecheck-auth, Got:', state);
-      return res.redirect('/setup?error=invalid_state');
+      return res.send(`
+        <html>
+          <head><title>Connection Error</title></head>
+          <body>
+            <h2>Invalid Request</h2>
+            <p>Authentication state mismatch.</p>
+            <script>
+              if (window.opener) {
+                window.opener.postMessage('spotify-auth-error', '*');
+              }
+              setTimeout(() => window.close(), 3000);
+            </script>
+          </body>
+        </html>
+      `);
     }
 
     if (!code) {
       console.error('No authorization code provided');
-      return res.redirect('/setup?error=no_code');
+      return res.send(`
+        <html>
+          <head><title>Connection Error</title></head>
+          <body>
+            <h2>No Authorization Code</h2>
+            <p>Spotify did not provide authorization.</p>
+            <script>
+              if (window.opener) {
+                window.opener.postMessage('spotify-auth-error', '*');
+              }
+              setTimeout(() => window.close(), 3000);
+            </script>
+          </body>
+        </html>
+      `);
     }
 
     console.log('Valid authorization code received, exchanging for tokens...');
@@ -192,11 +234,44 @@ export class SpotifyService {
       req.session.spotifyProfile = profile;
       console.log('Tokens and profile stored in session');
 
-      console.log('Redirecting to profile setup with success...');
-      res.redirect('/setup?connected=spotify');
+      console.log('Spotify connection successful, closing popup...');
+      // Return HTML that closes the popup window and signals success to parent
+      res.send(`
+        <html>
+          <head><title>Spotify Connected</title></head>
+          <body>
+            <h2>Spotify Connected Successfully!</h2>
+            <p>You can close this window.</p>
+            <script>
+              // Signal to parent window that auth was successful
+              if (window.opener) {
+                window.opener.postMessage('spotify-auth-success', '*');
+              }
+              // Auto-close after a brief delay
+              setTimeout(() => {
+                window.close();
+              }, 2000);
+            </script>
+          </body>
+        </html>
+      `);
     } catch (error) {
       console.error('Spotify auth error:', error);
-      res.redirect('/setup?error=auth_failed');
+      res.send(`
+        <html>
+          <head><title>Connection Failed</title></head>
+          <body>
+            <h2>Connection Failed</h2>
+            <p>Failed to connect to Spotify. Please try again.</p>
+            <script>
+              if (window.opener) {
+                window.opener.postMessage('spotify-auth-error', '*');
+              }
+              setTimeout(() => window.close(), 3000);
+            </script>
+          </body>
+        </html>
+      `);
     }
   };
 
