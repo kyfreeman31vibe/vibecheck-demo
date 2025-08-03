@@ -20,6 +20,11 @@ export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: P
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     
+    console.log('=== FILE UPLOAD STARTED ===');
+    console.log('Files selected:', files.length);
+    console.log('Current photos in component:', photos.length);
+    console.log('Max photos allowed:', maxPhotos);
+    
     if (photos.length + files.length > maxPhotos) {
       toast({
         title: "Too many photos",
@@ -36,10 +41,16 @@ export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: P
         files.map(file => convertFileToBase64(file))
       );
       
+      console.log('=== PHOTO UPLOAD SUCCESS ===');
       console.log('New photos added:', newPhotos.length);
+      console.log('Current photos in component:', photos.length);
       console.log('Total photos after upload:', [...photos, ...newPhotos].length);
+      console.log('First new photo preview:', newPhotos[0]?.substring(0, 50));
+      console.log('=== CALLING onPhotosChange ===');
       
-      onPhotosChange([...photos, ...newPhotos]);
+      const updatedPhotos = [...photos, ...newPhotos];
+      console.log('Updated photos array:', updatedPhotos.length);
+      onPhotosChange(updatedPhotos);
       
       toast({
         title: "Photos uploaded",
