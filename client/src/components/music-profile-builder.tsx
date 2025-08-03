@@ -142,14 +142,20 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
       console.log('Initial data has photos:', initialData.profilePhotos?.length || 0);
       
       setProfileData(prev => {
+        // Don't overwrite existing photos in state unless the initial data has more photos
+        const shouldUpdatePhotos = !prev.profilePhotos || 
+          prev.profilePhotos.length === 0 || 
+          (initialData.profilePhotos && initialData.profilePhotos.length > prev.profilePhotos.length);
+          
         const newData = {
           ...prev,
           ...initialData,
-          // Ensure profilePhotos is always an array
-          profilePhotos: initialData.profilePhotos || []
+          // Preserve existing photos unless initial data has more
+          profilePhotos: shouldUpdatePhotos ? (initialData.profilePhotos || []) : prev.profilePhotos
         };
         console.log('Profile data after initialization:', newData);
         console.log('Photos after init:', newData.profilePhotos?.length || 0);
+        console.log('Should update photos:', shouldUpdatePhotos);
         return newData;
       });
       
