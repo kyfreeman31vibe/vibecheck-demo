@@ -23,25 +23,27 @@ export default function Matches({ currentUser }: MatchesProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen sunset-gradient-soft flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-music-purple rounded-full animate-pulse"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading your matches...</p>
+          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-orange-400 to-pink-500 rounded-full animate-pulse"></div>
+          <p className="text-white/80 dark:text-white/70">Loading your matches...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+    <div className="min-h-screen sunset-gradient-soft pb-20">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-white/20 dark:bg-black/20 backdrop-blur-xl shadow-lg border-b border-white/20 dark:border-white/10">
         <div className="max-w-md mx-auto px-4 py-4">
           <div className="flex items-center space-x-3">
-            <Heart className="w-8 h-8 text-music-purple" />
+            <div className="w-10 h-10 bg-gradient-to-br from-yellow-300 via-orange-400 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
+              <Heart className="w-5 h-5 text-white" />
+            </div>
             <div>
-              <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">Your Matches</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <h1 className="text-lg font-bold text-white dark:text-white drop-shadow-lg">Your Matches</h1>
+              <p className="text-sm text-white/80 dark:text-white/70">
                 {matches.length} people who matched with you
               </p>
             </div>
@@ -56,33 +58,33 @@ export default function Matches({ currentUser }: MatchesProps) {
             {matches.map((match: any) => (
               <Card
                 key={match.id}
-                className="dark:bg-gray-800 dark:border-gray-700 cursor-pointer hover:shadow-md transition-shadow"
+                className="bg-white/20 dark:bg-black/20 backdrop-blur-xl border border-white/20 shadow-lg cursor-pointer hover:bg-white/25 transition-all duration-300"
                 onClick={() => setLocation(`/chat/${match.id}`)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-3">
-                    <div className="w-16 h-16 bg-music-purple rounded-full flex items-center justify-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
                       <User className="w-8 h-8 text-white" />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
-                        <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                        <h3 className="font-medium text-white dark:text-white">
                           {match.name || `User ${match.id}`}
                         </h3>
-                        <span className="text-sm text-music-purple font-medium">
+                        <span className="text-sm text-orange-300 font-medium">
                           {match.compatibilityScore || 85}% match
                         </span>
                       </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                      <p className="text-sm text-white/80 dark:text-white/70 mb-2">
                         {match.bio || "Music lover looking for connections"}
                       </p>
-                      <div className="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center space-x-4 text-xs text-white/70 dark:text-white/60">
                         <span>{match.age || 25} years old</span>
                         <span>{match.location || "2 miles away"}</span>
                       </div>
                       <Button
                         size="sm"
-                        className="mt-3 bg-music-purple hover:bg-music-purple/90 text-white"
+                        className="mt-3 bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-500 hover:to-pink-600 text-white shadow-lg"
                         onClick={(e) => {
                           e.stopPropagation();
                           setLocation(`/chat/${match.id}`);

@@ -19,15 +19,17 @@ export default function Messages({ currentUser }: MessagesProps) {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+    <div className="min-h-screen sunset-gradient-soft pb-20">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-white/20 dark:bg-black/20 backdrop-blur-xl shadow-lg border-b border-white/20 dark:border-white/10">
         <div className="max-w-md mx-auto px-4 py-4">
           <div className="flex items-center space-x-3">
-            <MessageCircle className="w-8 h-8 text-music-purple" />
+            <div className="w-10 h-10 bg-gradient-to-br from-yellow-300 via-orange-400 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
+              <MessageCircle className="w-5 h-5 text-white" />
+            </div>
             <div>
-              <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">Messages</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Chat with your matches</p>
+              <h1 className="text-lg font-bold text-white dark:text-white drop-shadow-lg">Messages</h1>
+              <p className="text-sm text-white/80 dark:text-white/70">Chat with your matches</p>
             </div>
           </div>
         </div>
