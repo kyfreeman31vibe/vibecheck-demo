@@ -156,16 +156,16 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
           <CardContent className="p-6 space-y-4">
             {/* Name and Age */}
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100" data-testid="text-profile-name">
+              <h2 className="text-2xl font-bold text-white" data-testid="text-profile-name">
                 {currentUser?.name}, {currentUser?.age}
               </h2>
-              <p className="text-gray-500 dark:text-gray-400">@{currentUser?.username}</p>
+              <p className="text-gray-300">@{currentUser?.username}</p>
             </div>
 
             {/* Bio */}
             {currentUser?.bio && (
               <div>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed" data-testid="text-profile-bio">
+                <p className="text-gray-300 leading-relaxed" data-testid="text-profile-bio">
                   {currentUser.bio}
                 </p>
               </div>
@@ -174,10 +174,10 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
             {/* Personality Traits */}
             {currentUser?.personalityTraits && currentUser.personalityTraits.length > 0 && (
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Music Personality</h4>
+                <h4 className="font-medium text-white mb-2">Music Personality</h4>
                 <div className="flex flex-wrap gap-2">
                   {currentUser.personalityTraits.map((trait: string, index: number) => (
-                    <Badge key={index} variant="secondary" className="text-xs" data-testid={`badge-trait-${index}`}>
+                    <Badge key={index} className="bg-purple-500/20 text-purple-300 hover:bg-purple-500/30 text-xs border border-purple-500/30" data-testid={`badge-trait-${index}`}>
                       {trait}
                     </Badge>
                   ))}
@@ -188,19 +188,19 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
             {/* Favorite Genres */}
             {currentUser?.favoriteGenres && currentUser.favoriteGenres.length > 0 && (
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Music Vibes</h4>
+                <h4 className="font-medium text-white mb-2">Music Vibes</h4>
                 <div className="flex flex-wrap gap-2">
                   {currentUser.favoriteGenres.slice(0, 6).map((genre: string, index: number) => (
                     <Badge 
                       key={index} 
-                      className="bg-music-purple/10 text-music-purple hover:bg-music-purple/20 text-xs"
+                      className="bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30 text-xs border border-cyan-500/30"
                       data-testid={`badge-genre-${index}`}
                     >
                       {genre}
                     </Badge>
                   ))}
                   {currentUser.favoriteGenres.length > 6 && (
-                    <Badge variant="outline" className="text-xs">
+                    <Badge className="bg-gray-600/40 text-gray-300 text-xs border border-gray-500/30">
                       +{currentUser.favoriteGenres.length - 6} more
                     </Badge>
                   )}
@@ -211,20 +211,19 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
             {/* Top Artists */}
             {currentUser?.favoriteArtists && currentUser.favoriteArtists.length > 0 && (
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Top Artists</h4>
+                <h4 className="font-medium text-white mb-2">Top Artists</h4>
                 <div className="flex flex-wrap gap-2">
                   {currentUser.favoriteArtists.slice(0, 4).map((artist: string, index: number) => (
                     <Badge 
                       key={index} 
-                      variant="outline" 
-                      className="text-xs"
+                      className="bg-purple-600/20 text-purple-200 text-xs border border-purple-500/40 hover:bg-purple-600/30"
                       data-testid={`badge-artist-${index}`}
                     >
                       {artist}
                     </Badge>
                   ))}
                   {currentUser.favoriteArtists.length > 4 && (
-                    <Badge variant="outline" className="text-xs">
+                    <Badge className="bg-gray-600/40 text-gray-300 text-xs border border-gray-500/30">
                       +{currentUser.favoriteArtists.length - 4} more
                     </Badge>
                   )}
@@ -235,12 +234,12 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
             {/* Defining Tracks */}
             {currentUser?.topDefiningTracks && currentUser.topDefiningTracks.length > 0 && (
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Defining Tracks</h4>
+                <h4 className="font-medium text-white mb-2">Defining Tracks</h4>
                 <div className="space-y-2">
                   {currentUser.topDefiningTracks.slice(0, 3).map((track: string, index: number) => (
                     <div key={index} className="flex items-center space-x-3" data-testid={`track-${index}`}>
-                      <div className="w-2 h-2 bg-music-purple rounded-full"></div>
-                      <span className="text-sm text-gray-700 dark:text-gray-300">{track}</span>
+                      <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>
+                      <span className="text-sm text-gray-200">{track}</span>
                     </div>
                   ))}
                 </div>
