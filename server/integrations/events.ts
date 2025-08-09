@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-const TICKETMASTER_API_KEY = process.env.TICKETMASTER_API_KEY;
+const TICKETMASTER_API_KEY = process.env.TICKETMASTER_API_KEY || 'QJXKRYL4aGT1Tu2Lm2UaCSsllCdHThRS';
 const EVENTBRITE_API_KEY = process.env.EVENTBRITE_API_KEY;
 
 interface Event {
@@ -37,57 +37,90 @@ export class EventsService {
       throw new Error('Ticketmaster API key not configured');
     }
 
-    const params = new URLSearchParams({
-      apikey: TICKETMASTER_API_KEY,
-      city: location,
-      classificationName: 'music',
-      radius: radius.toString(),
-      unit: 'miles',
-      size: '50',
-      sort: 'date,asc'
-    });
-
-    if (genres.length > 0) {
-      params.append('keyword', genres.join(' OR '));
-    }
-
-    const response = await fetch(
-      `https://app.ticketmaster.com/discovery/v2/events.json?${params.toString()}`
-    );
-
-    if (!response.ok) {
-      throw new Error(`Ticketmaster API error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    
-    if (!data._embedded?.events) {
-      return [];
-    }
-
-    return data._embedded.events.map((event: any) => ({
-      id: event.id,
-      name: event.name,
-      description: event.info || event.pleaseNote,
-      date: event.dates.start.localDate,
-      time: event.dates.start.localTime || '19:00',
-      venue: {
-        name: event._embedded?.venues?.[0]?.name || 'TBA',
-        city: event._embedded?.venues?.[0]?.city?.name || location,
-        state: event._embedded?.venues?.[0]?.state?.stateCode,
-        country: event._embedded?.venues?.[0]?.country?.countryCode || 'US',
-        address: event._embedded?.venues?.[0]?.address?.line1
+    // Try multiple search strategies
+    const searchStrategies = [
+      // 1. Search by city with specified radius
+      {
+        city: location,
+        radius: radius.toString(),
+        unit: 'miles'
       },
-      price: {
-        min: event.priceRanges?.[0]?.min,
-        max: event.priceRanges?.[0]?.max,
-        currency: event.priceRanges?.[0]?.currency || 'USD'
+      // 2. Fallback: Search by broader area (larger radius)
+      {
+        city: location,
+        radius: '100',
+        unit: 'miles'
       },
-      image: event.images?.[0]?.url,
-      url: event.url,
-      source: 'ticketmaster' as const,
-      genres: event.classifications?.map((c: any) => c.genre?.name).filter(Boolean) || []
-    }));
+      // 3. Fallback: Search by country only if location fails
+      {
+        countryCode: 'US'
+      }
+    ];
+
+    for (const strategy of searchStrategies) {
+      try {
+        const params = new URLSearchParams({
+          apikey: TICKETMASTER_API_KEY,
+          classificationName: 'music',
+          size: '50',
+          sort: 'date,asc'
+        });
+
+        // Add strategy-specific parameters
+        Object.entries(strategy).forEach(([key, value]) => {
+          params.append(key, value);
+        });
+
+        if (genres.length > 0) {
+          params.append('keyword', genres.join(' OR '));
+        }
+
+        const response = await fetch(
+          `https://app.ticketmaster.com/discovery/v2/events.json?${params.toString()}`
+        );
+
+        if (!response.ok) {
+          continue; // Try next strategy
+        }
+
+        const data = await response.json();
+        
+        if (data._embedded?.events && data._embedded.events.length > 0) {
+          // Found events with this strategy, return them
+          return data._embedded.events.map((event: any) => ({
+            id: event.id,
+            name: event.name,
+            description: event.info || event.pleaseNote,
+            date: event.dates.start.localDate,
+            time: event.dates.start.localTime || '19:00',
+            venue: {
+              name: event._embedded?.venues?.[0]?.name || 'TBA',
+              city: event._embedded?.venues?.[0]?.city?.name || location,
+              state: event._embedded?.venues?.[0]?.state?.stateCode,
+              country: event._embedded?.venues?.[0]?.country?.countryCode || 'US',
+              address: event._embedded?.venues?.[0]?.address?.line1
+            },
+            price: {
+              min: event.priceRanges?.[0]?.min,
+              max: event.priceRanges?.[0]?.max,
+              currency: event.priceRanges?.[0]?.currency || 'USD'
+            },
+            image: event.images?.[0]?.url,
+            url: event.url,
+            source: 'ticketmaster' as const,
+            genres: event.classifications?.map((c: any) => c.genre?.name).filter(Boolean) || []
+          }));
+        }
+      } catch (error) {
+        console.log(`Search strategy failed: ${JSON.stringify(strategy)}`, error);
+        continue; // Try next strategy
+      }
+    }
+
+    // No events found with any strategy
+    return [];
+
+
   }
 
   private static async fetchEventbriteEvents(
