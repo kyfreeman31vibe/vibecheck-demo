@@ -364,9 +364,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/events", EventsService.getEvents);
   
   // Event attendance routes
-  app.post("/api/events/:eventId/attend", async (req, res) => {
+  app.post("/api/events/:eventId/attend", async (req: any, res) => {
     try {
-      const userId = req.user?.id;
+      const userId = req.session?.user?.id;
       if (!userId) {
         return res.status(401).json({ error: "Not authenticated" });
       }
@@ -430,9 +430,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/events/:eventId/attend", async (req, res) => {
+  app.delete("/api/events/:eventId/attend", async (req: any, res) => {
     try {
-      const userId = req.user?.id;
+      const userId = req.session?.user?.id;
       if (!userId) {
         return res.status(401).json({ error: "Not authenticated" });
       }
@@ -452,9 +452,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Social connection routes
-  app.post("/api/social/connect", async (req, res) => {
+  app.post("/api/social/connect", async (req: any, res) => {
     try {
-      const userId = req.user?.id;
+      const userId = req.session?.user?.id;
       if (!userId) {
         return res.status(401).json({ error: "Not authenticated" });
       }
@@ -475,9 +475,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/social/connect/:connectionId", async (req, res) => {
+  app.put("/api/social/connect/:connectionId", async (req: any, res) => {
     try {
-      const userId = req.user?.id;
+      const userId = req.session?.user?.id;
       if (!userId) {
         return res.status(401).json({ error: "Not authenticated" });
       }
