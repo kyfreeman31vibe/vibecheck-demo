@@ -71,15 +71,17 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
   };
 
   return (
-    <div className="min-h-screen sunset-gradient-soft pb-20">
+    <div className="min-h-screen tech-gradient-soft pb-20">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-gray-900/30 dark:bg-gray-900/50 backdrop-blur-xl shadow-lg border-b border-purple-500/30">
         <div className="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <User className="w-8 h-8 text-music-purple" />
+            <div className="w-8 h-8 tech-gradient rounded-full flex items-center justify-center">
+              <User className="w-4 h-4 text-white" />
+            </div>
             <div>
-              <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">Your Profile</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">How others see you</p>
+              <h1 className="text-lg font-bold text-white">Your Profile</h1>
+              <p className="text-sm text-gray-300">How others see you</p>
             </div>
           </div>
           <div className="flex space-x-2">
@@ -87,7 +89,7 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
               variant="outline"
               size="sm"
               onClick={handleEditProfile}
-              className="text-music-purple border-music-purple hover:bg-music-purple hover:text-white"
+              className="text-cyan-400 border-cyan-400 hover:bg-cyan-400 hover:text-black"
               data-testid="button-edit-profile"
             >
               <Edit3 className="w-4 h-4 mr-1" />
@@ -97,7 +99,7 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
               variant="ghost"
               size="sm"
               onClick={() => setLocation("/settings")}
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              className="text-gray-300 hover:text-white hover:bg-purple-600/20"
               data-testid="button-settings"
             >
               <Settings className="w-4 h-4" />
@@ -109,7 +111,7 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
       {/* Dating Profile Card - How others see you */}
       <div className="max-w-md mx-auto px-4 py-6">
         {/* Main Profile Card */}
-        <Card className="dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
+        <Card className="bg-gray-800/40 backdrop-blur-xl border border-purple-500/30 overflow-hidden">
           {/* Photo Section */}
           <div className="relative">
             {currentUser?.profilePhotos && currentUser.profilePhotos.length > 0 ? (

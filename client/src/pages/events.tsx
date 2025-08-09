@@ -174,15 +174,17 @@ export default function Events({ currentUser }: EventsProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+    <div className="min-h-screen tech-gradient-soft pb-20">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-gray-900/30 backdrop-blur-xl shadow-lg border-b border-purple-500/30">
         <div className="max-w-md mx-auto px-4 py-4">
           <div className="flex items-center space-x-3 mb-4">
-            <Music className="w-8 h-8 text-music-purple" />
+            <div className="w-8 h-8 tech-gradient rounded-full flex items-center justify-center">
+              <Music className="w-4 h-4 text-white" />
+            </div>
             <div>
-              <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">Music Events</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Discover live music near you</p>
+              <h1 className="text-lg font-bold text-white">Music Events</h1>
+              <p className="text-sm text-gray-300">Discover live music near you</p>
             </div>
           </div>
 
@@ -198,7 +200,7 @@ export default function Events({ currentUser }: EventsProps) {
             <Button 
               onClick={handleLocationSearch}
               size="sm"
-              className="music-gradient-purple-pink text-white"
+              className="tech-gradient text-white border border-purple-400/50"
               data-testid="button-search-location"
             >
               <Search className="w-4 h-4" />
@@ -215,8 +217,8 @@ export default function Events({ currentUser }: EventsProps) {
                 onClick={() => setSelectedGenre(genre)}
                 className={`flex-shrink-0 ${
                   selectedGenre === genre 
-                    ? "music-gradient-purple-pink text-white" 
-                    : "hover:border-music-purple"
+                    ? "tech-gradient text-white border border-purple-400/50" 
+                    : "border-purple-500/30 text-purple-300 hover:bg-purple-500/20"
                 }`}
                 data-testid={`button-genre-${genre.toLowerCase()}`}
               >
@@ -232,15 +234,15 @@ export default function Events({ currentUser }: EventsProps) {
         <div className="max-w-md mx-auto">
           {isLoading && (
             <div className="text-center py-8">
-              <div className="animate-spin w-8 h-8 border-4 border-music-purple border-t-transparent rounded-full mx-auto mb-4"></div>
-              <p className="text-gray-500 dark:text-gray-400">Finding events...</p>
+              <div className="animate-spin w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className="text-gray-300">Finding events...</p>
             </div>
           )}
 
           {error && (
             <div className="text-center py-8">
               <Music className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 dark:text-gray-400 mb-2">Unable to load events</p>
+              <p className="text-gray-300 mb-2">Unable to load events</p>
               <p className="text-sm text-gray-400">Check your connection and try again</p>
             </div>
           )}
@@ -248,7 +250,7 @@ export default function Events({ currentUser }: EventsProps) {
           {!isLoading && !error && events.length === 0 && (
             <div className="text-center py-8">
               <Music className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 dark:text-gray-400 mb-2">No events found</p>
+              <p className="text-gray-300 mb-2">No events found</p>
               <p className="text-sm text-gray-400">Try searching in a different city or change genre filters</p>
             </div>
           )}
