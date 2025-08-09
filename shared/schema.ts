@@ -83,6 +83,41 @@ export const swipes = pgTable("swipes", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Event attendance tracking for social networking
+export const eventAttendances = pgTable("event_attendances", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  eventId: text("event_id").notNull(), // Ticketmaster event ID
+  eventName: text("event_name").notNull(),
+  eventDate: text("event_date").notNull(),
+  eventVenue: text("event_venue").notNull(),
+  eventCity: text("event_city").notNull(),
+  status: text("status").notNull().default("interested"), // "interested", "going", "maybe"
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Social connections for general networking (non-dating)
+export const socialConnections = pgTable("social_connections", {
+  id: serial("id").primaryKey(),
+  requesterId: integer("requester_id").notNull(),
+  receiverId: integer("receiver_id").notNull(),
+  status: text("status").notNull().default("pending"), // "pending", "accepted", "declined", "blocked"
+  connectionType: text("connection_type").notNull().default("friend"), // "friend", "music_buddy", "event_buddy"
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Event comments and interactions
+export const eventComments = pgTable("event_comments", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  eventId: text("event_id").notNull(),
+  content: text("content").notNull(),
+  parentCommentId: integer("parent_comment_id"), // For replies
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
   createdAt: true,
@@ -103,6 +138,23 @@ export const insertSwipeSchema = createInsertSchema(swipes).omit({
   createdAt: true,
 });
 
+export const insertEventAttendanceSchema = createInsertSchema(eventAttendances).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertSocialConnectionSchema = createInsertSchema(socialConnections).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertEventCommentSchema = createInsertSchema(eventComments).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type Match = typeof matches.$inferSelect;
@@ -111,3 +163,9 @@ export type Message = typeof messages.$inferSelect;
 export type InsertMessage = z.infer<typeof insertMessageSchema>;
 export type Swipe = typeof swipes.$inferSelect;
 export type InsertSwipe = z.infer<typeof insertSwipeSchema>;
+export type EventAttendance = typeof eventAttendances.$inferSelect;
+export type InsertEventAttendance = z.infer<typeof insertEventAttendanceSchema>;
+export type SocialConnection = typeof socialConnections.$inferSelect;
+export type InsertSocialConnection = z.infer<typeof insertSocialConnectionSchema>;
+export type EventComment = typeof eventComments.$inferSelect;
+export type InsertEventComment = z.infer<typeof insertEventCommentSchema>;

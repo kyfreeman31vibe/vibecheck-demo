@@ -1,9 +1,12 @@
 import { 
-  users, matches, messages, swipes,
+  users, matches, messages, swipes, eventAttendances, socialConnections, eventComments,
   type User, type InsertUser, 
   type Match, type InsertMatch,
   type Message, type InsertMessage,
-  type Swipe, type InsertSwipe
+  type Swipe, type InsertSwipe,
+  type EventAttendance, type InsertEventAttendance,
+  type SocialConnection, type InsertSocialConnection,
+  type EventComment, type InsertEventComment
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, not, inArray } from "drizzle-orm";
@@ -33,6 +36,23 @@ export interface IStorage {
   createSwipe(swipe: InsertSwipe): Promise<Swipe>;
   getUserSwipes(userId: number): Promise<Swipe[]>;
   hasUserSwiped(swiperId: number, targetId: number): Promise<boolean>;
+
+  // Event attendance operations
+  createEventAttendance(attendance: InsertEventAttendance): Promise<EventAttendance>;
+  updateEventAttendance(userId: number, eventId: string, status: string): Promise<EventAttendance | undefined>;
+  getEventAttendances(eventId: string): Promise<EventAttendance[]>;
+  getUserEventAttendances(userId: number): Promise<EventAttendance[]>;
+  deleteEventAttendance(userId: number, eventId: string): Promise<boolean>;
+
+  // Social connection operations
+  createSocialConnection(connection: InsertSocialConnection): Promise<SocialConnection>;
+  updateSocialConnection(id: number, status: string): Promise<SocialConnection | undefined>;
+  getUserSocialConnections(userId: number): Promise<SocialConnection[]>;
+  getPendingSocialRequests(userId: number): Promise<SocialConnection[]>;
+
+  // Event comment operations
+  createEventComment(comment: InsertEventComment): Promise<EventComment>;
+  getEventComments(eventId: string): Promise<EventComment[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -40,20 +60,32 @@ export class MemStorage implements IStorage {
   private matches: Map<number, Match>;
   private messages: Map<number, Message>;
   private swipes: Map<number, Swipe>;
+  private eventAttendances: Map<number, EventAttendance>;
+  private socialConnections: Map<number, SocialConnection>;
+  private eventComments: Map<number, EventComment>;
   private currentUserId: number;
   private currentMatchId: number;
   private currentMessageId: number;
   private currentSwipeId: number;
+  private currentAttendanceId: number;
+  private currentConnectionId: number;
+  private currentCommentId: number;
 
   constructor() {
     this.users = new Map();
     this.matches = new Map();
     this.messages = new Map();
     this.swipes = new Map();
+    this.eventAttendances = new Map();
+    this.socialConnections = new Map();
+    this.eventComments = new Map();
     this.currentUserId = 1;
     this.currentMatchId = 1;
     this.currentMessageId = 1;
     this.currentSwipeId = 1;
+    this.currentAttendanceId = 1;
+    this.currentConnectionId = 1;
+    this.currentCommentId = 1;
 
     // Initialize with some demo users
     this.initializeDemoData();
@@ -278,10 +310,201 @@ export class MemStorage implements IStorage {
       swipe.swiperId === swiperId && swipe.targetId === targetId
     );
   }
+
+  // Event attendance operations
+  async createEventAttendance(attendance: InsertEventAttendance): Promise<EventAttendance> {
+    const id = this.currentAttendanceId++;
+    const newAttendance: EventAttendance = { 
+      ...attendance, 
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.eventAttendances.set(id, newAttendance);
+    return newAttendance;
+  }
+
+  async updateEventAttendance(userId: number, eventId: string, status: string): Promise<EventAttendance | undefined> {
+    const attendance = Array.from(this.eventAttendances.values()).find(a => 
+      a.userId === userId && a.eventId === eventId
+    );
+    if (!attendance) return undefined;
+
+    const updatedAttendance = { ...attendance, status, updatedAt: new Date() };
+    this.eventAttendances.set(attendance.id, updatedAttendance);
+    return updatedAttendance;
+  }
+
+  async getEventAttendances(eventId: string): Promise<EventAttendance[]> {
+    return Array.from(this.eventAttendances.values()).filter(a => a.eventId === eventId);
+  }
+
+  async getUserEventAttendances(userId: number): Promise<EventAttendance[]> {
+    return Array.from(this.eventAttendances.values()).filter(a => a.userId === userId);
+  }
+
+  async deleteEventAttendance(userId: number, eventId: string): Promise<boolean> {
+    const attendance = Array.from(this.eventAttendances.values()).find(a => 
+      a.userId === userId && a.eventId === eventId
+    );
+    if (!attendance) return false;
+
+    this.eventAttendances.delete(attendance.id);
+    return true;
+  }
+
+  // Social connection operations
+  async createSocialConnection(connection: InsertSocialConnection): Promise<SocialConnection> {
+    const id = this.currentConnectionId++;
+    const newConnection: SocialConnection = { 
+      ...connection, 
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.socialConnections.set(id, newConnection);
+    return newConnection;
+  }
+
+  async updateSocialConnection(id: number, status: string): Promise<SocialConnection | undefined> {
+    const connection = this.socialConnections.get(id);
+    if (!connection) return undefined;
+
+    const updatedConnection = { ...connection, status, updatedAt: new Date() };
+    this.socialConnections.set(id, updatedConnection);
+    return updatedConnection;
+  }
+
+  async getUserSocialConnections(userId: number): Promise<SocialConnection[]> {
+    return Array.from(this.socialConnections.values()).filter(c => 
+      (c.requesterId === userId || c.receiverId === userId) && c.status === 'accepted'
+    );
+  }
+
+  async getPendingSocialRequests(userId: number): Promise<SocialConnection[]> {
+    return Array.from(this.socialConnections.values()).filter(c => 
+      c.receiverId === userId && c.status === 'pending'
+    );
+  }
+
+  // Event comment operations
+  async createEventComment(comment: InsertEventComment): Promise<EventComment> {
+    const id = this.currentCommentId++;
+    const newComment: EventComment = { 
+      ...comment, 
+      id,
+      createdAt: new Date()
+    };
+    this.eventComments.set(id, newComment);
+    return newComment;
+  }
+
+  async getEventComments(eventId: string): Promise<EventComment[]> {
+    return Array.from(this.eventComments.values())
+      .filter(c => c.eventId === eventId)
+      .sort((a, b) => a.createdAt!.getTime() - b.createdAt!.getTime());
+  }
 }
 
 // Database Storage Implementation
 export class DatabaseStorage implements IStorage {
+  // Event attendance operations
+  async createEventAttendance(attendance: InsertEventAttendance): Promise<EventAttendance> {
+    const [newAttendance] = await db
+      .insert(eventAttendances)
+      .values(attendance)
+      .returning();
+    return newAttendance;
+  }
+
+  async updateEventAttendance(userId: number, eventId: string, status: string): Promise<EventAttendance | undefined> {
+    const [attendance] = await db
+      .update(eventAttendances)
+      .set({ status, updatedAt: new Date() })
+      .where(and(eq(eventAttendances.userId, userId), eq(eventAttendances.eventId, eventId)))
+      .returning();
+    return attendance || undefined;
+  }
+
+  async getEventAttendances(eventId: string): Promise<EventAttendance[]> {
+    return await db
+      .select()
+      .from(eventAttendances)
+      .where(eq(eventAttendances.eventId, eventId));
+  }
+
+  async getUserEventAttendances(userId: number): Promise<EventAttendance[]> {
+    return await db
+      .select()
+      .from(eventAttendances)
+      .where(eq(eventAttendances.userId, userId));
+  }
+
+  async deleteEventAttendance(userId: number, eventId: string): Promise<boolean> {
+    const result = await db
+      .delete(eventAttendances)
+      .where(and(eq(eventAttendances.userId, userId), eq(eventAttendances.eventId, eventId)));
+    return result.rowCount ? result.rowCount > 0 : false;
+  }
+
+  // Social connection operations
+  async createSocialConnection(connection: InsertSocialConnection): Promise<SocialConnection> {
+    const [newConnection] = await db
+      .insert(socialConnections)
+      .values(connection)
+      .returning();
+    return newConnection;
+  }
+
+  async updateSocialConnection(id: number, status: string): Promise<SocialConnection | undefined> {
+    const [connection] = await db
+      .update(socialConnections)
+      .set({ status, updatedAt: new Date() })
+      .where(eq(socialConnections.id, id))
+      .returning();
+    return connection || undefined;
+  }
+
+  async getUserSocialConnections(userId: number): Promise<SocialConnection[]> {
+    return await db
+      .select()
+      .from(socialConnections)
+      .where(
+        and(
+          or(eq(socialConnections.requesterId, userId), eq(socialConnections.receiverId, userId)),
+          eq(socialConnections.status, 'accepted')
+        )
+      );
+  }
+
+  async getPendingSocialRequests(userId: number): Promise<SocialConnection[]> {
+    return await db
+      .select()
+      .from(socialConnections)
+      .where(
+        and(
+          eq(socialConnections.receiverId, userId),
+          eq(socialConnections.status, 'pending')
+        )
+      );
+  }
+
+  // Event comment operations
+  async createEventComment(comment: InsertEventComment): Promise<EventComment> {
+    const [newComment] = await db
+      .insert(eventComments)
+      .values(comment)
+      .returning();
+    return newComment;
+  }
+
+  async getEventComments(eventId: string): Promise<EventComment[]> {
+    return await db
+      .select()
+      .from(eventComments)
+      .where(eq(eventComments.eventId, eventId))
+      .orderBy(eventComments.createdAt);
+  }
   async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;

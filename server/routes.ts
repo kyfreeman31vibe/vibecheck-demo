@@ -362,6 +362,141 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Events Routes
   app.get("/api/events", EventsService.getEvents);
+  
+  // Event attendance routes
+  app.post("/api/events/:eventId/attend", async (req, res) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const { eventId } = req.params;
+      const { status = "interested", eventName, eventDate, eventVenue, eventCity } = req.body;
+
+      // Check if user already has attendance record
+      const existingAttendance = await storage.getEventAttendances(eventId);
+      const userAttendance = existingAttendance.find(a => a.userId === userId);
+
+      if (userAttendance) {
+        // Update existing attendance
+        const updated = await storage.updateEventAttendance(userId, eventId, status);
+        res.json(updated);
+      } else {
+        // Create new attendance record
+        const attendance = await storage.createEventAttendance({
+          userId,
+          eventId,
+          eventName,
+          eventDate,
+          eventVenue,
+          eventCity,
+          status,
+        });
+        res.json(attendance);
+      }
+    } catch (error) {
+      console.error("Error updating event attendance:", error);
+      res.status(500).json({ error: "Failed to update event attendance" });
+    }
+  });
+
+  app.get("/api/events/:eventId/attendees", async (req, res) => {
+    try {
+      const { eventId } = req.params;
+      const attendances = await storage.getEventAttendances(eventId);
+      
+      // Get user details for each attendance
+      const attendeesWithUsers = await Promise.all(
+        attendances.map(async (attendance) => {
+          const user = await storage.getUser(attendance.userId);
+          return {
+            ...attendance,
+            user: user ? {
+              id: user.id,
+              name: user.name,
+              profilePicture: user.profilePicture,
+              favoriteGenres: user.favoriteGenres,
+              personalityType: user.personalityType,
+            } : null
+          };
+        })
+      );
+
+      res.json(attendeesWithUsers);
+    } catch (error) {
+      console.error("Error fetching event attendees:", error);
+      res.status(500).json({ error: "Failed to fetch event attendees" });
+    }
+  });
+
+  app.delete("/api/events/:eventId/attend", async (req, res) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const { eventId } = req.params;
+      const success = await storage.deleteEventAttendance(userId, eventId);
+      
+      if (success) {
+        res.json({ message: "Attendance removed" });
+      } else {
+        res.status(404).json({ error: "Attendance not found" });
+      }
+    } catch (error) {
+      console.error("Error removing event attendance:", error);
+      res.status(500).json({ error: "Failed to remove event attendance" });
+    }
+  });
+
+  // Social connection routes
+  app.post("/api/social/connect", async (req, res) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const { receiverId, connectionType = "friend" } = req.body;
+
+      const connection = await storage.createSocialConnection({
+        requesterId: userId,
+        receiverId,
+        connectionType,
+        status: "pending",
+      });
+
+      res.json(connection);
+    } catch (error) {
+      console.error("Error creating social connection:", error);
+      res.status(500).json({ error: "Failed to create social connection" });
+    }
+  });
+
+  app.put("/api/social/connect/:connectionId", async (req, res) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const { connectionId } = req.params;
+      const { status } = req.body;
+
+      const updated = await storage.updateSocialConnection(parseInt(connectionId), status);
+      
+      if (updated) {
+        res.json(updated);
+      } else {
+        res.status(404).json({ error: "Connection not found" });
+      }
+    } catch (error) {
+      console.error("Error updating social connection:", error);
+      res.status(500).json({ error: "Failed to update social connection" });
+    }
+  });
 
   // Logout route - clears session and returns success
   app.post("/api/auth/logout", (req: any, res) => {
