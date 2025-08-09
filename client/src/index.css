@@ -60,56 +60,57 @@
 }
 
 :root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(20, 14.3%, 4.1%);
-  --muted: hsl(60, 4.8%, 95.9%);
-  --muted-foreground: hsl(25, 5.3%, 44.7%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(20, 14.3%, 4.1%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(20, 14.3%, 4.1%);
-  --border: hsl(20, 5.9%, 90%);
-  --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(60, 4.8%, 95.9%);
-  --secondary-foreground: hsl(24, 9.8%, 10%);
-  --accent: hsl(60, 4.8%, 95.9%);
-  --accent-foreground: hsl(24, 9.8%, 10%);
-  --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(20, 14.3%, 4.1%);
-  --radius: 0.5rem;
+  --background: hsl(320, 25%, 98%);
+  --foreground: hsl(260, 15%, 15%);
+  --muted: hsl(310, 20%, 95%);
+  --muted-foreground: hsl(265, 8%, 45%);
+  --popover: hsl(320, 25%, 98%);
+  --popover-foreground: hsl(260, 15%, 15%);
+  --card: hsl(320, 30%, 97%);
+  --card-foreground: hsl(260, 15%, 15%);
+  --border: hsl(310, 15%, 88%);
+  --input: hsl(310, 15%, 88%);
+  --primary: hsl(280, 85%, 60%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(45, 100%, 65%);
+  --secondary-foreground: hsl(260, 15%, 15%);
+  --accent: hsl(195, 85%, 55%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --ring: hsl(280, 85%, 60%);
+  --radius: 0.75rem;
   
   /* Music app specific colors */
-  --music-purple: hsl(261, 83%, 58%);
-  --music-pink: hsl(327, 73%, 58%);
-  --music-orange: hsl(45, 93%, 47%);
-  --music-blue: hsl(243, 82%, 60%);
-  --dark-purple: hsl(262, 83%, 35%);
+  --music-purple: hsl(280, 85%, 60%);
+  --music-pink: hsl(330, 80%, 65%);
+  --music-orange: hsl(45, 100%, 65%);
+  --music-teal: hsl(195, 85%, 55%);
+  --music-violet: hsl(260, 75%, 55%);
+  --music-gradient: linear-gradient(135deg, hsl(280, 85%, 60%), hsl(330, 80%, 65%));
 }
 
 .dark {
-  --background: hsl(240, 10%, 3.9%);
-  --foreground: hsl(0, 0%, 98%);
-  --muted: hsl(240, 3.7%, 15.9%);
-  --muted-foreground: hsl(240, 5%, 64.9%);
-  --popover: hsl(240, 10%, 3.9%);
-  --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(240, 10%, 3.9%);
-  --card-foreground: hsl(0, 0%, 98%);
-  --border: hsl(240, 3.7%, 15.9%);
-  --input: hsl(240, 3.7%, 15.9%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(240, 3.7%, 15.9%);
-  --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(240, 3.7%, 15.9%);
-  --accent-foreground: hsl(0, 0%, 98%);
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(240, 4.9%, 83.9%);
-  --radius: 0.5rem;
+  --background: hsl(260, 15%, 8%);
+  --foreground: hsl(320, 25%, 95%);
+  --muted: hsl(260, 10%, 15%);
+  --muted-foreground: hsl(265, 8%, 65%);
+  --popover: hsl(260, 15%, 8%);
+  --popover-foreground: hsl(320, 25%, 95%);
+  --card: hsl(260, 12%, 12%);
+  --card-foreground: hsl(320, 25%, 95%);
+  --border: hsl(260, 8%, 20%);
+  --input: hsl(260, 8%, 20%);
+  --primary: hsl(280, 85%, 65%);
+  --primary-foreground: hsl(260, 15%, 8%);
+  --secondary: hsl(45, 100%, 70%);
+  --secondary-foreground: hsl(260, 15%, 8%);
+  --accent: hsl(195, 85%, 60%);
+  --accent-foreground: hsl(260, 15%, 8%);
+  --destructive: hsl(0, 84%, 65%);
+  --destructive-foreground: hsl(260, 15%, 8%);
+  --ring: hsl(280, 85%, 65%);
+  --radius: 0.75rem;
 }
 
 @layer base {
@@ -143,8 +144,12 @@
     color: var(--music-orange);
   }
   
-  .text-music-blue {
-    color: var(--music-blue);
+  .text-music-teal {
+    color: var(--music-teal);
+  }
+  
+  .text-music-violet {
+    color: var(--music-violet);
   }
   
   .bg-music-purple {
@@ -159,12 +164,36 @@
     background-color: var(--music-orange);
   }
   
+  .bg-music-teal {
+    background-color: var(--music-teal);
+  }
+  
+  .bg-music-violet {
+    background-color: var(--music-violet);
+  }
+  
   .border-music-purple {
     border-color: var(--music-purple);
   }
   
   .border-music-pink {
     border-color: var(--music-pink);
+  }
+  
+  .border-music-teal {
+    border-color: var(--music-teal);
+  }
+  
+  .hover\\:bg-music-purple:hover {
+    background-color: var(--music-purple);
+  }
+  
+  .hover\\:bg-music-pink:hover {
+    background-color: var(--music-pink);
+  }
+  
+  .hover\\:bg-music-teal:hover {
+    background-color: var(--music-teal);
   }
 
   .animate-pulse-slow {
