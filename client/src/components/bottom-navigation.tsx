@@ -20,7 +20,7 @@ export default function BottomNavigation({ currentUser }: BottomNavigationProps)
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white/20 dark:bg-black/20 backdrop-blur-xl border-t border-white/20 dark:border-white/10 shadow-2xl">
+    <div className="fixed bottom-0 left-0 right-0 bg-gray-900/50 backdrop-blur-xl border-t border-purple-500/30 shadow-2xl">
       <div className="max-w-md mx-auto px-2 py-2">
         <div className="flex justify-around items-center">
           {navItems.map((item) => {
@@ -35,8 +35,8 @@ export default function BottomNavigation({ currentUser }: BottomNavigationProps)
                 onClick={() => setLocation(item.path)}
                 className={`flex flex-col items-center space-y-1 p-2 h-auto min-w-0 transition-all duration-300 ${
                   isActive 
-                    ? "text-white bg-gradient-to-br from-orange-400 to-pink-500 rounded-xl shadow-lg" 
-                    : "text-white/70 hover:text-white hover:bg-white/10 dark:text-white/60 dark:hover:text-white rounded-xl"
+                    ? "text-white tech-gradient rounded-xl shadow-lg border border-purple-400/50" 
+                    : "text-gray-400 hover:text-white hover:bg-purple-600/20 rounded-xl"
                 }`}
                 data-testid={`nav-${item.label.toLowerCase()}`}
               >

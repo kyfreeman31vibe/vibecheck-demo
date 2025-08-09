@@ -89,13 +89,15 @@
   --music-violet: hsl(260, 75%, 55%);
   --music-gradient: linear-gradient(135deg, hsl(280, 85%, 60%), hsl(330, 80%, 65%));
   
-  /* Sunset theme colors */
-  --sunset-orange: hsl(25, 100%, 60%);
-  --sunset-pink: hsl(340, 85%, 65%);
-  --sunset-purple: hsl(260, 80%, 50%);
-  --sunset-yellow: hsl(50, 100%, 70%);
-  --sunset-coral: hsl(15, 90%, 65%);
-  --sunset-gradient: linear-gradient(135deg, hsl(50, 100%, 70%) 0%, hsl(25, 100%, 60%) 25%, hsl(15, 90%, 65%) 50%, hsl(340, 85%, 65%) 75%, hsl(260, 80%, 50%) 100%);
+  /* Tech music theme colors */
+  --tech-purple: hsl(270, 95%, 65%);
+  --tech-blue: hsl(195, 100%, 75%);
+  --tech-coral: hsl(15, 100%, 70%);
+  --tech-lime: hsl(75, 100%, 60%);
+  --tech-charcoal: hsl(220, 15%, 20%);
+  --tech-light-gray: hsl(220, 10%, 85%);
+  --tech-gradient: linear-gradient(135deg, hsl(270, 95%, 65%) 0%, hsl(195, 100%, 75%) 100%);
+  --tech-accent-gradient: linear-gradient(135deg, hsl(15, 100%, 70%) 0%, hsl(75, 100%, 60%) 100%);
 }
 
 .dark {
@@ -140,12 +142,24 @@
     background: linear-gradient(135deg, var(--music-purple) 0%, var(--music-pink) 100%);
   }
   
-  .sunset-gradient {
-    background: var(--sunset-gradient);
+  .tech-gradient {
+    background: var(--tech-gradient);
   }
   
-  .sunset-gradient-soft {
-    background: linear-gradient(135deg, hsl(50, 100%, 80%) 0%, hsl(25, 85%, 75%) 30%, hsl(15, 80%, 75%) 60%, hsl(340, 70%, 75%) 85%, hsl(260, 60%, 70%) 100%);
+  .tech-gradient-soft {
+    background: linear-gradient(135deg, var(--tech-charcoal) 0%, hsl(220, 18%, 25%) 100%);
+  }
+
+  .tech-card-bg {
+    background: linear-gradient(135deg, 
+      hsl(270, 95%, 65%, 0.1) 0%, 
+      hsl(195, 100%, 75%, 0.1) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(270, 95%, 65%, 0.3);
+  }
+
+  .accent-coral-lime {
+    background: var(--tech-accent-gradient);
   }
   
   .bg-sunset-orange {
