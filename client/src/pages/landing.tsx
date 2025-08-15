@@ -98,6 +98,7 @@ export default function Landing() {
       localStorage.setItem("currentUser", JSON.stringify(user));
       setCurrentUser(user);
       setShowLogin(false);
+
       toast({
         title: "Welcome back!",
         description: "Successfully logged in to your account.",

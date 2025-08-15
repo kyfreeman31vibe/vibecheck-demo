@@ -113,12 +113,21 @@ export default function Events({ currentUser }: EventsProps) {
         description: `You're now ${variables.status} for this event!`,
       });
     },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to update event attendance",
-        variant: "destructive",
-      });
+    onError: (error: any) => {
+      console.error("Event attendance error:", error);
+      if (error.message && error.message.includes("401")) {
+        toast({
+          title: "Authentication required",
+          description: "Please log in to attend events. Your session may have expired.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to update event attendance",
+          variant: "destructive",
+        });
+      }
     },
   });
 
