@@ -170,7 +170,7 @@ export default function ProfileSetup() {
         initialData={initialProfileData}
       />
 
-      <BottomNavigation />
+      <BottomNavigation currentUser={currentUser} />
     </div>
   );
 }

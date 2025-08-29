@@ -63,6 +63,7 @@ export default function Landing() {
     username: "",
     password: "",
     name: "",
+    email: "",
     age: "",
   });
 
@@ -121,6 +122,7 @@ export default function Landing() {
       favoriteGenres: [],
       favoriteArtists: [],
       favoriteSongs: [],
+      email: signupData.email,
     });
   };
 
@@ -174,6 +176,15 @@ export default function Landing() {
                       className="bg-gray-700/40 border-purple-500/30 text-white placeholder:text-gray-400 h-12 rounded-xl focus:ring-2 focus:ring-cyan-400/50 focus:border-transparent"
                       required
                       data-testid="input-signup-name"
+                    />
+                    <Input
+                      type="email"
+                      placeholder="Email Address"
+                      value={signupData.email}
+                      onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
+                      className="bg-gray-700/40 border-purple-500/30 text-white placeholder:text-gray-400 h-12 rounded-xl focus:ring-2 focus:ring-cyan-400/50 focus:border-transparent"
+                      required
+                      data-testid="input-signup-email"
                     />
                     <Input
                       type="text"
