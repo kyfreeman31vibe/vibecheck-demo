@@ -98,8 +98,6 @@ const LISTENING_HABITS = [
 interface MusicProfileData {
   favoriteGenres: string[];
   favoriteArtists: string[];
-  favoriteSongs: string[];
-  topDefiningTracks: string[];
   listeningHabits: string[];
   musicPersonality: string[];
   concertExperience: number;
@@ -128,8 +126,6 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
   const [profileData, setProfileData] = useState<MusicProfileData>({
     favoriteGenres: [],
     favoriteArtists: [],
-    favoriteSongs: [],
-    topDefiningTracks: [],
     listeningHabits: [],
     musicPersonality: [],
     concertExperience: 5,
@@ -181,7 +177,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
     song: ""
   });
 
-  const totalSteps = 9;
+  const totalSteps = 7;
   const progress = (step / totalSteps) * 100;
 
   const updateProfileData = (updates: Partial<MusicProfileData>) => {
@@ -233,11 +229,9 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
       case 2: return profileData.name && profileData.email && profileData.username && profileData.age; // Basic info
       case 3: return profileData.favoriteGenres.length >= 3;
       case 4: return profileData.favoriteArtists.length >= 3;
-      case 5: return profileData.favoriteSongs.length >= 2;
-      case 6: return profileData.topDefiningTracks.length >= 3;
-      case 7: return profileData.listeningHabits.length >= 2;
-      case 8: return true; // Music personality quiz (optional)
-      case 9: return profileData.bio.length >= 20;
+      case 5: return profileData.listeningHabits.length >= 2;
+      case 6: return true; // Music personality quiz (optional)
+      case 7: return profileData.bio.length >= 20;
       default: return true;
     }
   };
@@ -766,171 +760,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             </div>
           )}
 
-          {/* Step 5: Favorite Songs */}
+          {/* Step 5: Listening Habits & Personality */}
           {step === 5 && (
-            <div className="space-y-6">
-              <div className="text-center space-y-2">
-                <Heart className="w-12 h-12 mx-auto text-music-orange" />
-                <h2 className="text-xl font-bold">Songs that define you</h2>
-                <p className="text-gray-600">Add at least 2 songs you absolutely love</p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="relative">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <Input
-                    type="text"
-                    placeholder="Add your favorite songs (Song - Artist)..."
-                    value={searchInputs.song}
-                    onChange={(e) => setSearchInputs({ ...searchInputs, song: e.target.value })}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        addCustomItem('favoriteSongs', searchInputs.song);
-                        setSearchInputs({ ...searchInputs, song: "" });
-                      }
-                    }}
-                    className="pl-10"
-                  />
-                  {searchInputs.song && (
-                    <Button
-                      size="sm"
-                      onClick={() => {
-                        addCustomItem('favoriteSongs', searchInputs.song);
-                        setSearchInputs({ ...searchInputs, song: "" });
-                      }}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 px-2"
-                    >
-                      <Plus className="w-3 h-3" />
-                    </Button>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <h3 className="font-medium">Your Songs:</h3>
-                  <div className="space-y-2">
-                    {profileData.favoriteSongs.map((song, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <Play className="w-4 h-4 text-music-orange" />
-                          <span className="font-medium">{song}</span>
-                        </div>
-                        <X 
-                          className="w-4 h-4 cursor-pointer text-gray-400 hover:text-gray-600" 
-                          onClick={() => removeItem('favoriteSongs', song)}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-sm text-gray-500">
-                    Added: {profileData.favoriteSongs.length}/8
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 6: Top 5 Defining Tracks */}
-          {step === 6 && (
-            <div className="space-y-6">
-              <div className="text-center space-y-2">
-                <Star className="w-12 h-12 mx-auto text-music-purple" />
-                <h2 className="text-xl font-bold">Your Top 5 Defining Tracks</h2>
-                <p className="text-gray-600">Songs that truly define who you are (add at least 3)</p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="relative">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <Input
-                    type="text"
-                    placeholder="Add a song that defines you (Song - Artist)..."
-                    value={searchInputs.song}
-                    onChange={(e) => setSearchInputs({ ...searchInputs, song: e.target.value })}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter' && profileData.topDefiningTracks.length < 5) {
-                        addCustomItem('topDefiningTracks', searchInputs.song);
-                        setSearchInputs({ ...searchInputs, song: "" });
-                      }
-                    }}
-                    className="pl-10"
-                    disabled={profileData.topDefiningTracks.length >= 5}
-                  />
-                  {searchInputs.song && profileData.topDefiningTracks.length < 5 && (
-                    <Button
-                      size="sm"
-                      onClick={() => {
-                        addCustomItem('topDefiningTracks', searchInputs.song);
-                        setSearchInputs({ ...searchInputs, song: "" });
-                      }}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 px-2"
-                    >
-                      <Plus className="w-3 h-3" />
-                    </Button>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <h3 className="font-medium">Your Defining Tracks:</h3>
-                  <div className="space-y-3">
-                    {profileData.topDefiningTracks.map((song, index) => (
-                      <div key={index} className="flex items-center justify-between p-4 bg-gradient-to-r from-music-purple/10 to-music-pink/10 rounded-lg border-l-4 border-music-purple">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-music-purple text-white rounded-full flex items-center justify-center font-bold text-sm">
-                            {index + 1}
-                          </div>
-                          <div>
-                            <div className="font-medium text-gray-800">{song}</div>
-                            <div className="text-sm text-gray-600">Defining track #{index + 1}</div>
-                          </div>
-                        </div>
-                        <X 
-                          className="w-4 h-4 cursor-pointer text-gray-400 hover:text-gray-600" 
-                          onClick={() => removeItem('topDefiningTracks', song)}
-                        />
-                      </div>
-                    ))}
-                    
-                    {/* Empty slots */}
-                    {Array.from({ length: 5 - profileData.topDefiningTracks.length }, (_, i) => (
-                      <div key={`empty-${i}`} className="flex items-center space-x-3 p-4 border-2 border-dashed border-gray-300 rounded-lg">
-                        <div className="w-8 h-8 bg-gray-200 text-gray-400 rounded-full flex items-center justify-center font-bold text-sm">
-                          {profileData.topDefiningTracks.length + i + 1}
-                        </div>
-                        <div className="text-gray-400">
-                          Add track #{profileData.topDefiningTracks.length + i + 1}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="flex items-center justify-between text-sm">
-                    <span className={profileData.topDefiningTracks.length >= 3 ? "text-green-600" : "text-gray-500"}>
-                      {profileData.topDefiningTracks.length >= 3 ? "✓" : "○"} Minimum 3 tracks
-                    </span>
-                    <span className="text-gray-500">
-                      {profileData.topDefiningTracks.length}/5 tracks
-                    </span>
-                  </div>
-                </div>
-
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <div className="flex items-start space-x-3">
-                    <Heart className="w-5 h-5 text-blue-600 mt-0.5" />
-                    <div>
-                      <h4 className="font-medium text-blue-800">What makes a defining track?</h4>
-                      <p className="text-sm text-blue-700 mt-1">
-                        Choose songs that shaped your musical journey, represent important moments in your life, 
-                        or capture your personality perfectly. These are the tracks you'd play to help someone understand who you are.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 7: Listening Habits & Personality */}
-          {step === 7 && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
                 <Headphones className="w-12 h-12 mx-auto text-music-blue" />
@@ -984,8 +815,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             </div>
           )}
 
-          {/* Step 8: Music Personality Quiz */}
-          {step === 8 && (
+          {/* Step 6: Music Personality Quiz */}
+          {step === 6 && (
             <div className="space-y-6">
               <MusicPersonalityQuiz
                 onComplete={(personality, answers) => {
@@ -1006,8 +837,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             </div>
           )}
 
-          {/* Step 9: Bio & Final Details */}
-          {step === 9 && (
+          {/* Step 7: Bio & Final Details */}
+          {step === 7 && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
                 <Star className="w-12 h-12 mx-auto text-music-purple" />
@@ -1044,9 +875,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                   <CardContent className="space-y-3">
                     <div>
                       <span className="font-medium text-music-purple">{profileData.favoriteGenres.length}</span> genres, 
-                      <span className="font-medium text-music-pink ml-1">{profileData.favoriteArtists.length}</span> artists, 
-                      <span className="font-medium text-music-orange ml-1">{profileData.favoriteSongs.length}</span> songs,
-                      <span className="font-medium text-purple-600 ml-1">{profileData.topDefiningTracks.length}</span> defining tracks
+                      <span className="font-medium text-music-pink ml-1">{profileData.favoriteArtists.length}</span> artists
                     </div>
                     {profileData.personalityType && (
                       <div className="text-sm text-gray-600">

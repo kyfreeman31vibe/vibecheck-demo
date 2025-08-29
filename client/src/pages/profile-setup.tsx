@@ -96,8 +96,6 @@ export default function ProfileSetup() {
     const dataToSave = {
       favoriteGenres: profileData.favoriteGenres || [],
       favoriteArtists: profileData.favoriteArtists || [],
-      favoriteSongs: profileData.favoriteSongs || [],
-      topDefiningTracks: profileData.topDefiningTracks || [],
       personalityType: profileData.personalityType || "",
       personalityTraits: profileData.personalityTraits || [],
       bio: profileData.bio || "",

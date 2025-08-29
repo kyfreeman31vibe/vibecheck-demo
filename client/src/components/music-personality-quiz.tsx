@@ -138,58 +138,6 @@ const QUIZ_QUESTIONS: QuizQuestion[] = [
         personalities: ["loyalist", "devotee"]
       }
     ]
-  },
-  {
-    id: "sharing",
-    question: "When you love a song, you...",
-    options: [
-      {
-        text: "Immediately share it with friends and social media",
-        value: "broadcaster",
-        personalities: ["social_butterfly", "evangelist"]
-      },
-      {
-        text: "Keep it to yourself and treasure it privately",
-        value: "private",
-        personalities: ["introvert", "keeper"]
-      },
-      {
-        text: "Research the artist and explore their entire catalog",
-        value: "researcher",
-        personalities: ["scholar", "explorer"]
-      },
-      {
-        text: "Play it on repeat until you've absorbed every detail",
-        value: "obsessive",
-        personalities: ["intense", "devotee"]
-      }
-    ]
-  },
-  {
-    id: "concerts",
-    question: "At live shows, you're the person who...",
-    options: [
-      {
-        text: "Dances and sings along to every song",
-        value: "participant",
-        personalities: ["enthusiast", "performer"]
-      },
-      {
-        text: "Focuses intensely on the musicianship and sound",
-        value: "observer",
-        personalities: ["audiophile", "scholar"]
-      },
-      {
-        text: "Captures moments and shares the experience",
-        value: "documenter",
-        personalities: ["social_butterfly", "chronicler"]
-      },
-      {
-        text: "Gets lost in the emotion and energy of the crowd",
-        value: "absorber",
-        personalities: ["empath", "collective"]
-      }
-    ]
   }
 ];
 
