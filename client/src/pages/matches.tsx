@@ -12,7 +12,7 @@ interface MatchesProps {
 export default function Matches({ currentUser }: MatchesProps) {
   const [, setLocation] = useLocation();
 
-  const { data: matches = [], isLoading } = useQuery({
+  const { data: matches = [], isLoading } = useQuery<any[]>({
     queryKey: [`/api/matches/${currentUser?.id}`],
     enabled: !!currentUser?.id,
   });

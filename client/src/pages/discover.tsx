@@ -68,10 +68,10 @@ export default function Discover({ currentUser }: DiscoverProps) {
 
   if (isLoading) {
     return (
-      <div className="h-screen bg-gray-50 flex items-center justify-center">
+      <div className="h-screen tech-gradient-soft flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 music-gradient rounded-full animate-pulse"></div>
-          <p className="text-gray-600">Finding your perfect matches...</p>
+          <div className="w-16 h-16 mx-auto mb-4 tech-gradient rounded-full animate-pulse border border-purple-400/50"></div>
+          <p className="text-gray-300">Finding your perfect matches...</p>
         </div>
       </div>
     );
@@ -81,48 +81,48 @@ export default function Discover({ currentUser }: DiscoverProps) {
 
   if (!currentProfile) {
     return (
-      <div className="h-screen bg-gray-50 flex flex-col">
+      <div className="h-screen tech-gradient-soft flex flex-col">
         {/* Header with navigation */}
-        <div className="flex items-center justify-between p-4 bg-white shadow-sm">
+        <div className="flex items-center justify-between p-4 bg-gray-900/30 dark:bg-gray-900/50 backdrop-blur-xl shadow-lg border-b border-purple-500/30">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setLocation("/setup")}
-            className="rounded-full bg-gray-200"
+            className="rounded-full bg-gray-800/40 border border-purple-500/30 text-gray-300 hover:bg-gray-800/60"
             title="Update Profile"
           >
-            <Settings className="h-5 w-5 text-gray-600" />
+            <Settings className="h-5 w-5" />
           </Button>
-          <h1 className="text-xl font-bold music-gradient bg-clip-text text-transparent">
+          <h1 className="text-xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
             VibeCheck
           </h1>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setLocation("/messages")}
-            className="rounded-full bg-gray-200 relative"
+            className="rounded-full bg-gray-800/40 border border-purple-500/30 text-gray-300 hover:bg-gray-800/60 relative"
             title="View Messages"
           >
-            <MessageCircle className="h-5 w-5 text-gray-600" />
+            <MessageCircle className="h-5 w-5" />
           </Button>
         </div>
 
         {/* Empty state */}
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center p-6">
-            <div className="w-16 h-16 mx-auto mb-4 music-gradient rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-4 tech-gradient rounded-full flex items-center justify-center border border-purple-400/50 shadow-lg">
               <Heart className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-xl font-bold text-gray-800 mb-2">No more profiles!</h2>
-            <p className="text-gray-600 mb-4">You've seen everyone available. Check back later for new matches!</p>
+            <h2 className="text-xl font-bold text-white mb-2">No more profiles!</h2>
+            <p className="text-gray-300 mb-4">You've seen everyone available. Check back later for new matches!</p>
             <div className="space-y-3">
-              <Button onClick={() => refetch()} className="music-gradient-purple-pink text-white w-full">
+              <Button onClick={() => refetch()} className="tech-gradient hover:opacity-90 text-white w-full border border-purple-400/50">
                 Refresh for New Users
               </Button>
               <Button 
                 onClick={() => setLocation("/matches")} 
                 variant="outline" 
-                className="w-full"
+                className="w-full bg-gray-800/40 border-purple-500/30 text-gray-300 hover:bg-gray-800/60"
               >
                 View Your Matches
               </Button>
@@ -136,10 +136,10 @@ export default function Discover({ currentUser }: DiscoverProps) {
   }
 
   return (
-    <div className="relative h-screen bg-gray-50 pb-20">
+    <div className="relative h-screen tech-gradient-soft pb-20">
       {/* Header */}
-      <div className="flex items-center justify-center p-4 bg-white shadow-sm">
-        <h1 className="text-xl font-bold music-gradient bg-clip-text text-transparent">
+      <div className="flex items-center justify-center p-4 bg-gray-900/30 dark:bg-gray-900/50 backdrop-blur-xl shadow-lg border-b border-purple-500/30">
+        <h1 className="text-xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
           VibeCheck
         </h1>
       </div>
@@ -148,8 +148,8 @@ export default function Discover({ currentUser }: DiscoverProps) {
       <div className="relative px-4 pt-8 pb-24 h-full">
         {/* Background Cards */}
         <div className="absolute inset-x-4 top-12 bottom-28">
-          <div className="absolute inset-0 bg-white rounded-2xl shadow-lg transform rotate-2 scale-95"></div>
-          <div className="absolute inset-0 bg-white rounded-2xl shadow-lg transform -rotate-1 scale-97"></div>
+          <div className="absolute inset-0 bg-gray-800/40 backdrop-blur-xl border border-purple-500/30 rounded-2xl shadow-lg transform rotate-2 scale-95"></div>
+          <div className="absolute inset-0 bg-gray-800/40 backdrop-blur-xl border border-purple-500/30 rounded-2xl shadow-lg transform -rotate-1 scale-97"></div>
         </div>
 
         {/* Main Profile Card */}
@@ -163,27 +163,27 @@ export default function Discover({ currentUser }: DiscoverProps) {
           disabled={swipeMutation.isPending}
           size="lg"
           variant="outline"
-          className="w-14 h-14 rounded-full shadow-lg border-2 border-gray-200 hover:border-red-300 hover:bg-red-50"
+          className="w-14 h-14 rounded-full shadow-lg bg-gray-800/40 border-2 border-red-500/50 hover:border-red-400 hover:bg-red-900/20 text-red-400"
         >
-          <X className="h-6 w-6 text-red-500" />
+          <X className="h-6 w-6" />
         </Button>
         <Button
           onClick={() => handleSwipe("super")}
           disabled={swipeMutation.isPending}
           size="lg"
           variant="outline"
-          className="w-12 h-12 rounded-full shadow-lg border-2 border-blue-200 hover:border-blue-400 hover:bg-blue-50"
+          className="w-12 h-12 rounded-full shadow-lg bg-gray-800/40 border-2 border-cyan-500/50 hover:border-cyan-400 hover:bg-cyan-900/20 text-cyan-400"
         >
-          <Star className="h-4 w-4 text-blue-500" />
+          <Star className="h-4 w-4" />
         </Button>
         <Button
           onClick={() => handleSwipe("right")}
           disabled={swipeMutation.isPending}
           size="lg"
           variant="outline"
-          className="w-14 h-14 rounded-full shadow-lg border-2 border-green-200 hover:border-green-400 hover:bg-green-50"
+          className="w-14 h-14 rounded-full shadow-lg bg-gray-800/40 border-2 border-lime-500/50 hover:border-lime-400 hover:bg-lime-900/20 text-lime-400"
         >
-          <Heart className="h-6 w-6 text-green-500" />
+          <Heart className="h-6 w-6" />
         </Button>
       </div>
 
