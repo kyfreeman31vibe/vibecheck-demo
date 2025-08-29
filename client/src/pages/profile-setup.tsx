@@ -102,7 +102,12 @@ export default function ProfileSetup() {
       personalityTraits: profileData.personalityTraits || [],
       bio: profileData.bio || "",
       profilePhotos: profileData.profilePhotos || [],
-      profilePicture: (profileData.profilePhotos && profileData.profilePhotos.length > 0) ? profileData.profilePhotos[0] : null
+      profilePicture: (profileData.profilePhotos && profileData.profilePhotos.length > 0) ? profileData.profilePhotos[0] : null,
+      // Include basic user info
+      name: profileData.name || currentUser?.name,
+      email: profileData.email || currentUser?.email,
+      username: profileData.username || currentUser?.username,
+      age: profileData.age || currentUser?.age
     };
     
     console.log('Data being sent to API:', dataToSave);

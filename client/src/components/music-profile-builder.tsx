@@ -20,7 +20,8 @@ import {
   Disc3,
   Radio,
   Brain,
-  Camera
+  Camera,
+  User
 } from "lucide-react";
 import MusicPersonalityQuiz from "./music-personality-quiz";
 import PhotoUpload from "./photo-upload";
@@ -108,6 +109,11 @@ interface MusicProfileData {
   personalityType?: string;
   personalityTraits?: string[];
   profilePhotos?: string[];
+  // Basic user info
+  name?: string;
+  email?: string;
+  username?: string;
+  age?: number;
 }
 
 interface MusicProfileBuilderProps {
@@ -132,7 +138,11 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
     bio: "",
     personalityType: "",
     personalityTraits: [],
-    profilePhotos: []
+    profilePhotos: [],
+    name: "",
+    email: "",
+    username: "",
+    age: undefined
   });
 
   // Initialize with existing data and check if user is editing
@@ -171,7 +181,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
     song: ""
   });
 
-  const totalSteps = 8;
+  const totalSteps = 9;
   const progress = (step / totalSteps) * 100;
 
   const updateProfileData = (updates: Partial<MusicProfileData>) => {
@@ -220,13 +230,14 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
   const canProceed = () => {
     switch (step) {
       case 1: return (profileData.profilePhotos?.length || 0) >= 1;
-      case 2: return profileData.favoriteGenres.length >= 3;
-      case 3: return profileData.favoriteArtists.length >= 3;
-      case 4: return profileData.favoriteSongs.length >= 2;
-      case 5: return profileData.topDefiningTracks.length >= 3;
-      case 6: return profileData.listeningHabits.length >= 2;
-      case 7: return true; // Music personality quiz (optional)
-      case 8: return profileData.bio.length >= 20;
+      case 2: return profileData.name && profileData.email && profileData.username && profileData.age; // Basic info
+      case 3: return profileData.favoriteGenres.length >= 3;
+      case 4: return profileData.favoriteArtists.length >= 3;
+      case 5: return profileData.favoriteSongs.length >= 2;
+      case 6: return profileData.topDefiningTracks.length >= 3;
+      case 7: return profileData.listeningHabits.length >= 2;
+      case 8: return true; // Music personality quiz (optional)
+      case 9: return profileData.bio.length >= 20;
       default: return true;
     }
   };
@@ -554,8 +565,88 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             </div>
           )}
 
-          {/* Step 2: Favorite Genres */}
+          {/* Step 2: Basic User Information */}
           {step === 2 && (
+            <div className="space-y-6">
+              <div className="text-center space-y-2">
+                <User className="w-12 h-12 mx-auto text-music-purple" />
+                <h2 className="text-xl font-bold">Tell us about yourself</h2>
+                <p className="text-gray-600">Basic information to complete your profile</p>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Full Name
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={profileData.name || ""}
+                    onChange={(e) => updateProfileData({ name: e.target.value })}
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email Address
+                  </label>
+                  <Input
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={profileData.email || ""}
+                    onChange={(e) => updateProfileData({ email: e.target.value })}
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Username
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Choose a unique username"
+                    value={profileData.username || ""}
+                    onChange={(e) => updateProfileData({ username: e.target.value })}
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Age
+                  </label>
+                  <Input
+                    type="number"
+                    placeholder="Enter your age"
+                    value={profileData.age || ""}
+                    onChange={(e) => updateProfileData({ age: parseInt(e.target.value) || undefined })}
+                    min="18"
+                    max="100"
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start space-x-3">
+                    <Heart className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <div>
+                      <h4 className="font-medium text-blue-800">Privacy & Security</h4>
+                      <p className="text-sm text-blue-700 mt-1">
+                        Your email will only be used for account security and important updates. 
+                        Your username will be visible to other users.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Favorite Genres */}
+          {step === 3 && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
                 <Disc3 className="w-12 h-12 mx-auto text-music-purple" />
@@ -593,8 +684,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             </div>
           )}
 
-          {/* Step 3: Favorite Artists */}
-          {step === 3 && (
+          {/* Step 4: Favorite Artists */}
+          {step === 4 && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
                 <Mic className="w-12 h-12 mx-auto text-music-pink" />
@@ -675,8 +766,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             </div>
           )}
 
-          {/* Step 4: Favorite Songs */}
-          {step === 4 && (
+          {/* Step 5: Favorite Songs */}
+          {step === 5 && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
                 <Heart className="w-12 h-12 mx-auto text-music-orange" />
@@ -738,8 +829,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             </div>
           )}
 
-          {/* Step 4: Top 5 Defining Tracks */}
-          {step === 4 && (
+          {/* Step 6: Top 5 Defining Tracks */}
+          {step === 6 && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
                 <Star className="w-12 h-12 mx-auto text-music-purple" />
@@ -838,8 +929,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             </div>
           )}
 
-          {/* Step 5: Listening Habits & Personality */}
-          {step === 6 && (
+          {/* Step 7: Listening Habits & Personality */}
+          {step === 7 && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
                 <Headphones className="w-12 h-12 mx-auto text-music-blue" />
@@ -893,8 +984,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             </div>
           )}
 
-          {/* Step 7: Music Personality Quiz */}
-          {step === 7 && (
+          {/* Step 8: Music Personality Quiz */}
+          {step === 8 && (
             <div className="space-y-6">
               <MusicPersonalityQuiz
                 onComplete={(personality, answers) => {
@@ -915,8 +1006,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             </div>
           )}
 
-          {/* Step 8: Bio & Final Details */}
-          {step === 8 && (
+          {/* Step 9: Bio & Final Details */}
+          {step === 9 && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
                 <Star className="w-12 h-12 mx-auto text-music-purple" />
