@@ -483,7 +483,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                   console.log('=== EDITING PHOTOS BUTTON CLICKED ===');
                   console.log('Current photos before editing:', profileData.profilePhotos?.length || 0);
                   console.log('Full profileData before photo editing:', profileData);
-                  setIsEditing(false);
+                  setIsEditing(true);
                   setStep(1);
                 }}
               >
@@ -510,7 +510,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                 size="sm" 
                 className="mt-3"
                 onClick={() => {
-                  setIsEditing(false);
+                  setIsEditing(true);
                   setStep(3);
                 }}
               >
@@ -540,11 +540,41 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                 size="sm" 
                 className="mt-3"
                 onClick={() => {
-                  setIsEditing(false);
+                  setIsEditing(true);
                   setStep(4);
                 }}
               >
                 Edit Artists
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Music className="w-5 h-5 text-music-purple" />
+                <span>Favorite Songs ({profileData.favoriteSongs.length})</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {profileData.favoriteSongs.slice(0, 4).map((song, index) => (
+                  <Badge key={index} variant="secondary" className="text-xs">{song}</Badge>
+                ))}
+                {profileData.favoriteSongs.length > 4 && (
+                  <Badge variant="outline">+{profileData.favoriteSongs.length - 4} more</Badge>
+                )}
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-3"
+                onClick={() => {
+                  setIsEditing(true);
+                  setStep(5);
+                }}
+              >
+                Edit Songs
               </Button>
             </CardContent>
           </Card>
@@ -562,8 +592,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                 variant="outline" 
                 size="sm"
                 onClick={() => {
-                  setIsEditing(false);
-                  setStep(7);
+                  setIsEditing(true);
+                  setStep(8);
                 }}
               >
                 Edit Bio
@@ -587,7 +617,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                   variant="outline" 
                   size="sm"
                   onClick={() => {
-                    setIsEditing(false);
+                    setIsEditing(true);
                     setStep(7);
                   }}
                 >
@@ -601,11 +631,12 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
         <div className="flex space-x-4">
           <Button 
             onClick={() => {
-              setIsEditing(false);
+              setIsEditing(true);
               setStep(1);
             }} 
             variant="outline"
             className="flex-1"
+            data-testid="button-edit-step-by-step"
           >
             Edit Step by Step
           </Button>
@@ -1117,6 +1148,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
               Skip Section
             </Button>
           )}
+
           
           <Button
             onClick={() => {
