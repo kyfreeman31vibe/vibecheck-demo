@@ -25,6 +25,8 @@ import {
 } from "lucide-react";
 import MusicPersonalityQuiz from "./music-personality-quiz";
 import PhotoUpload from "./photo-upload";
+import SpotifyArtistSuggestions from "./spotify-artist-suggestions";
+import SpotifySongSuggestions from "./spotify-song-suggestions";
 
 const MUSIC_GENRES = [
   "Pop", "Rock", "Hip-Hop", "Electronic", "Indie", "Jazz", "Country", "R&B",
@@ -211,6 +213,7 @@ const LISTENING_HABITS = [
 interface MusicProfileData {
   favoriteGenres: string[];
   favoriteArtists: string[];
+  favoriteSongs: string[];
   listeningHabits: string[];
   musicPersonality: string[];
   concertExperience: number;
@@ -239,6 +242,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
   const [profileData, setProfileData] = useState<MusicProfileData>({
     favoriteGenres: [],
     favoriteArtists: [],
+    favoriteSongs: [],
     listeningHabits: [],
     musicPersonality: [],
     concertExperience: 5,
@@ -290,7 +294,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
     song: ""
   });
 
-  const totalSteps = 7;
+  const totalSteps = 8;
   const progress = (step / totalSteps) * 100;
 
   // Get artists filtered by selected genres
@@ -358,9 +362,10 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
       case 2: return profileData.name && profileData.email && profileData.username && profileData.age; // Basic info
       case 3: return profileData.favoriteGenres.length >= 3;
       case 4: return profileData.favoriteArtists.length >= 3;
-      case 5: return profileData.listeningHabits.length >= 2;
-      case 6: return true; // Music personality quiz (optional)
-      case 7: return profileData.bio.length >= 20;
+      case 5: return profileData.favoriteSongs.length >= 2;
+      case 6: return profileData.listeningHabits.length >= 2;
+      case 7: return true; // Music personality quiz (optional)
+      case 8: return profileData.bio.length >= 20;
       default: return true;
     }
   };
@@ -823,6 +828,14 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                 )}
               </div>
 
+              <SpotifyArtistSuggestions
+                selectedGenres={profileData.favoriteGenres}
+                selectedArtists={profileData.favoriteArtists}
+                onArtistSelect={(artist: string) => updateProfileData({
+                  favoriteArtists: toggleArrayItem(profileData.favoriteArtists, artist, 10)
+                })}
+              />
+
               <div className="space-y-4">
                 <div className="relative">
                   <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -896,8 +909,26 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             </div>
           )}
 
-          {/* Step 5: Listening Habits & Personality */}
+          {/* Step 5: Favorite Songs */}
           {step === 5 && (
+            <div className="space-y-6">
+              <div className="text-center space-y-2">
+                <Music className="w-12 h-12 mx-auto text-music-purple" />
+                <h2 className="text-xl font-bold">What songs define you?</h2>
+                <p className="text-gray-600">Add up to 8 songs that represent your taste</p>
+              </div>
+
+              <SpotifySongSuggestions
+                selectedSongs={profileData.favoriteSongs}
+                onSongSelect={(song: string) => updateProfileData({
+                  favoriteSongs: toggleArrayItem(profileData.favoriteSongs, song, 8)
+                })}
+              />
+            </div>
+          )}
+
+          {/* Step 6: Listening Habits & Personality */}
+          {step === 6 && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
                 <Headphones className="w-12 h-12 mx-auto text-music-blue" />
@@ -951,8 +982,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             </div>
           )}
 
-          {/* Step 6: Music Personality Quiz */}
-          {step === 6 && (
+          {/* Step 7: Music Personality Quiz */}
+          {step === 7 && (
             <div className="space-y-6">
               <MusicPersonalityQuiz
                 onComplete={(personality, answers) => {
@@ -973,8 +1004,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             </div>
           )}
 
-          {/* Step 7: Bio & Final Details */}
-          {step === 7 && (
+          {/* Step 8: Bio & Final Details */}
+          {step === 8 && (
             <div className="space-y-6">
               <div className="text-center space-y-2">
                 <Star className="w-12 h-12 mx-auto text-music-purple" />
