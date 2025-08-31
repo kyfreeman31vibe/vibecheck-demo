@@ -37,30 +37,49 @@ const ARTISTS_BY_GENRE = {
   "Pop": [
     "Bruno Mars", "The Weeknd", "Lady Gaga", "Billie Eilish", "Taylor Swift", "Sabrina Carpenter", "Ariana Grande",
     "Harry Styles", "Post Malone", "Ed Sheeran", "Dua Lipa", "Olivia Rodrigo", "Doja Cat", 
-    "Teddy Swims", "Benson Boone", "Gracie Abrams", "Chappell Roan", "Lana Del Rey"
+    "Teddy Swims", "Benson Boone", "Gracie Abrams", "Chappell Roan", "Lana Del Rey", "Tate McRae",
+    "Madison Beer", "Charli XCX", "Troye Sivan", "Shawn Mendes", "Justin Bieber", "Selena Gomez",
+    "Miley Cyrus", "Katy Perry", "P!nk", "Sia", "Charlie Puth", "The Chainsmokers", "OneRepublic",
+    "Maroon 5", "Imagine Dragons", "Jonas Brothers", "Camila Cabello", "Halsey", "The 1975"
   ],
   "Hip-Hop": [
     "Drake", "Kendrick Lamar", "Travis Scott", "Eminem", "Kanye West", "Future", "Metro Boomin", "Tyler, the Creator",
     "Lil Wayne", "21 Savage", "Doechii", "GloRilla", "Sexyy Red", "Ice Spice", "Lil Baby", "DaBaby",
-    "Megan Thee Stallion", "Cardi B", "J. Cole", "A$AP Rocky"
+    "Megan Thee Stallion", "Cardi B", "J. Cole", "A$AP Rocky", "Lil Uzi Vert", "Playboi Carti",
+    "Young Thug", "Gunna", "Roddy Ricch", "The Kid LAROI", "Jack Harlow", "Central Cee", "Juice WRLD",
+    "XXXTentacion", "Mac Miller", "Chance the Rapper", "Big Sean", "Wiz Khalifa", "Nicki Minaj",
+    "Saweetie", "Doja Cat", "Lizzo", "City Girls", "JID", "Denzel Curry", "Vince Staples", "Earl Sweatshirt"
   ],
   "R&B": [
     "Beyoncé", "The Weeknd", "SZA", "Frank Ocean", "H.E.R.", "Alicia Keys", "John Legend", "Miguel",
     "Daniel Caesar", "Summer Walker", "Jhené Aiko", "Chris Brown", "Usher", "Anderson .Paak",
-    "Brent Faiyaz", "Victoria Monét", "Lucky Daye", "Kali Uchis", "Steve Lacy", "Solange"
+    "Brent Faiyaz", "Victoria Monét", "Lucky Daye", "Kali Uchis", "Steve Lacy", "Solange",
+    "Kehlani", "Doja Cat", "Ari Lennox", "Jazmine Sullivan", "Teyanna Taylor", "Ella Mai",
+    "Normani", "Tinashe", "FKA twigs", "Chloe x Halle", "Giveon", "Masego", "PJ Morton",
+    "Khalid", "Bryson Tiller", "PARTYNEXTDOOR", "Tory Lanez", "6LACK", "Ty Dolla $ign", "Jeremih"
   ],
   "Rock": [
     "Imagine Dragons", "OneRepublic", "Maroon 5", "Arctic Monkeys", "Foo Fighters", "Red Hot Chili Peppers",
-    "Coldplay", "The Killers", "Green Day", "Pearl Jam", "KNEECAP", "HAIM", "The 1975"
+    "Coldplay", "The Killers", "Green Day", "Pearl Jam", "KNEECAP", "HAIM", "The 1975",
+    "Twenty One Pilots", "Fall Out Boy", "Panic! At The Disco", "My Chemical Romance", "Paramore",
+    "Linkin Park", "Muse", "Radiohead", "The Strokes", "Kings of Leon", "The Black Keys",
+    "Jack White", "The White Stripes", "Queen", "Led Zeppelin", "The Beatles", "AC/DC",
+    "Nirvana", "Metallica", "Black Sabbath", "Pink Floyd", "The Rolling Stones", "U2"
   ],
   "Electronic": [
     "David Guetta", "Calvin Harris", "Marshmello", "Skrillex", "Diplo", "Tiësto", "Martin Garrix",
-    "The Chainsmokers", "Deadmau5", "Zedd", "Aili", "Flume", "ODESZA", "Porter Robinson", "Disclosure"
+    "The Chainsmokers", "Deadmau5", "Zedd", "Aili", "Flume", "ODESZA", "Porter Robinson", "Disclosure",
+    "Illenium", "Slander", "Seven Lions", "RL Grime", "Rezz", "Liquid Stranger", "Excision",
+    "Bassnectar", "Pretty Lights", "GRiZ", "Big Gigantic", "Ganja White Night", "Subtronics",
+    "Virtual Riot", "Zomboy", "Getter", "What So Not", "RL Grime", "Baauer", "Jauz", "Flosstradamus"
   ],
   "Indie": [
     "Arctic Monkeys", "Tame Impala", "The Strokes", "Vampire Weekend", "Phoebe Bridgers", "Mac DeMarco",
     "MGMT", "Two Door Cinema Club", "Foster the People", "The National", "Bon Iver", "Fleet Foxes",
-    "Beach House", "Grizzly Bear", "Animal Collective"
+    "Beach House", "Grizzly Bear", "Animal Collective", "Clairo", "Rex Orange County", "Boy Pablo",
+    "Still Woozy", "Cuco", "The 1975", "Glass Animals", "alt-J", "Cage the Elephant",
+    "Local Natives", "Hippo Campus", "Wallows", "The Neighbourhood", "COIN", "Dayglow",
+    "LANY", "The Paper Kites", "Of Monsters and Men", "Mumford & Sons", "Young the Giant"
   ],
   "Country": [
     "Morgan Wallen", "Luke Combs", "Chris Stapleton", "Lainey Wilson", "Kacey Musgraves", "Zach Bryan",
@@ -70,60 +89,111 @@ const ARTISTS_BY_GENRE = {
   ],
   "K-Pop": [
     "BTS", "BLACKPINK", "Stray Kids", "NewJeans", "aespa", "(G)I-DLE", "ITZY", "SEVENTEEN", "TWICE",
-    "IVE", "LE SSERAFIM", "XG", "NMIXX", "ENHYPEN", "ATEEZ"
+    "IVE", "LE SSERAFIM", "XG", "NMIXX", "ENHYPEN", "ATEEZ", "RIIZE", "ILLIT", "BABYMONSTER",
+    "KISSOFDEATH", "Red Velvet", "Girls' Generation", "MAMAMOO", "EVERGLOW", "LOONA", "OH MY GIRL",
+    "DREAMCATCHER", "WEEEKLY", "ITZY", "KARD", "NCT", "TXT", "TOMORROW X TOGETHER", "THE BOYZ",
+    "MONSTA X", "GOT7", "DAY6", "BIGBANG", "2NE1", "SHINee", "Super Junior", "Girls Generation"
   ],
   "Latin": [
     "Bad Bunny", "Daddy Yankee", "J Balvin", "Rosalía", "Karol G", "Ozuna", "Anuel AA", "Maluma",
-    "Becky G", "Rauw Alejandro", "Jhay Cortez", "Myke Towers", "Nicky Jam", "Farruko", "Sech"
+    "Becky G", "Rauw Alejandro", "Jhay Cortez", "Myke Towers", "Nicky Jam", "Farruko", "Sech",
+    "Peso Pluma", "Feid", "Ryan Castro", "Kali Uchis", "Camilo", "Manuel Turizo", "Grupo Frontera",
+    "Eslabon Armado", "Junior H", "Natanael Cano", "Bizarrap", "Shakira", "Romeo Santos",
+    "Marc Anthony", "Jesse & Joy", "Mau y Ricky", "Chayanne", "Luis Fonsi", "Enrique Iglesias"
   ],
   "Jazz": [
     "Kamasi Washington", "Robert Glasper", "Esperanza Spalding", "Thundercat", "Snarky Puppy",
-    "Brad Mehldau", "Christian Scott aTunde Adjuah", "GoGo Penguin", "Nubya Garcia", "Sons of Kemet"
+    "Brad Mehldau", "Christian Scott aTunde Adjuah", "GoGo Penguin", "Nubya Garcia", "Sons of Kemet",
+    "Miles Davis", "John Coltrane", "Bill Evans", "Herbie Hancock", "Wayne Shorter", "Pat Metheny",
+    "Chick Corea", "Keith Jarrett", "Ahmad Jamal", "Oscar Peterson", "Wynton Marsalis", "Diana Krall",
+    "Norah Jones", "Jamie Cullum", "Gregory Porter", "Kurt Elling", "Cecile McLorin Salvant", "Cory Henry"
   ],
   "Classical": [
     "Ludovico Einaudi", "Max Richter", "Ólafur Arnalds", "Nils Frahm", "Kiasmos", "A Winged Victory for the Sullen",
-    "Dustin O'Halloran", "Hauschka", "Peter Broderick", "Emilie Simon"
+    "Dustin O'Halloran", "Hauschka", "Peter Broderick", "Emilie Simon", "Johann Sebastian Bach", "Wolfgang Amadeus Mozart",
+    "Ludwig van Beethoven", "Frédéric Chopin", "Claude Debussy", "Pyotr Ilyich Tchaikovsky", "Antonio Vivaldi",
+    "Johann Pachelbel", "Erik Satie", "Sergei Rachmaninoff", "Franz Schubert", "Johannes Brahms", "George Frideric Handel",
+    "Igor Stravinsky", "Maurice Ravel", "Gustav Holst", "Edward Elgar", "Samuel Barber", "Arvo Pärt"
   ],
   "Folk": [
     "Bon Iver", "Fleet Foxes", "Caamp", "The Lumineers", "Gregory Alan Isakov", "Iron & Wine",
     "First Aid Kit", "The Head and the Heart", "Of Monsters and Men", "Mumford & Sons",
-    "The Tallest Man on Earth", "Phoebe Bridgers", "Big Thief", "Angel Olsen", "Julien Baker"
+    "The Tallest Man on Earth", "Phoebe Bridgers", "Big Thief", "Angel Olsen", "Julien Baker",
+    "Bob Dylan", "Neil Young", "Joni Mitchell", "Leonard Cohen", "Nick Drake", "Simon & Garfunkel",
+    "Johnny Cash", "Willie Nelson", "Patsy Cline", "Emmylou Harris", "Gillian Welch", "Ryan Adams",
+    "Bright Eyes", "Sufjan Stevens", "The National", "Kings of Convenience", "José González"
   ],
   "Reggae": [
-    "Bob Marley", "Damian Marley", "Sean Paul", "Shaggy", "Steel Pulse", "Chronixx", "Koffee", "Protoje"
+    "Bob Marley", "Damian Marley", "Sean Paul", "Shaggy", "Steel Pulse", "Chronixx", "Koffee", "Protoje",
+    "Jimmy Cliff", "Peter Tosh", "Burning Spear", "Lee 'Scratch' Perry", "Augustus Pablo", "King Tubby",
+    "Toots and the Maytals", "The Wailers", "Black Uhuru", "Third World", "Inner Circle", "UB40",
+    "Ziggy Marley", "Stephen Marley", "Ky-Mani Marley", "Julian Marley", "Spragga Benz", "Beenie Man"
   ],
   "Blues": [
-    "B.B. King", "Muddy Waters", "Etta James", "Gary Clark Jr.", "Joe Bonamassa", "Susan Tedeschi", "Derek Trucks"
+    "B.B. King", "Muddy Waters", "Etta James", "Gary Clark Jr.", "Joe Bonamassa", "Susan Tedeschi", "Derek Trucks",
+    "Eric Clapton", "Stevie Ray Vaughan", "Robert Johnson", "Howlin' Wolf", "Albert King", "Freddie King",
+    "John Lee Hooker", "T-Bone Walker", "Big Joe Turner", "Buddy Guy", "Koko Taylor", "Bonnie Raitt",
+    "Taj Mahal", "Johnny Winter", "Albert Collins", "Son House", "Skip James", "Big Mama Thornton"
   ],
   "Punk": [
-    "Green Day", "The Offspring", "Bad Religion", "NOFX", "Rancid", "Social Distortion", "Pennywise"
+    "Green Day", "The Offspring", "Bad Religion", "NOFX", "Rancid", "Social Distortion", "Pennywise",
+    "The Clash", "Sex Pistols", "The Ramones", "Dead Kennedys", "Black Flag", "Minor Threat", "The Misfits",
+    "X", "Bad Brains", "Circle Jerks", "Fugazi", "Operation Ivy", "Descendents", "All", "The Vandals",
+    "Suicidal Tendencies", "Agent Orange", "T.S.O.L.", "Fear", "Germs", "Adolescents"
   ],
   "Metal": [
-    "Metallica", "Iron Maiden", "Black Sabbath", "Judas Priest", "Slayer", "Megadeth", "Anthrax"
+    "Metallica", "Iron Maiden", "Black Sabbath", "Judas Priest", "Slayer", "Megadeth", "Anthrax",
+    "Pantera", "Motorhead", "Dio", "Ozzy Osbourne", "Tool", "System of a Down", "Korn", "Slipknot",
+    "Avenged Sevenfold", "Five Finger Death Punch", "Disturbed", "Breaking Benjamin", "Godsmack",
+    "Rammstein", "Lamb of God", "Mastodon", "Ghost", "Gojira", "Opeth", "Amon Amarth", "Arch Enemy"
   ],
   "Alternative": [
-    "Radiohead", "Nirvana", "Pearl Jam", "Soundgarden", "Stone Temple Pilots", "Alice in Chains", "Smashing Pumpkins"
+    "Radiohead", "Nirvana", "Pearl Jam", "Soundgarden", "Stone Temple Pilots", "Alice in Chains", "Smashing Pumpkins",
+    "Jane's Addiction", "Red Hot Chili Peppers", "R.E.M.", "The Cure", "Depeche Mode", "The Smiths",
+    "Pixies", "Sonic Youth", "Dinosaur Jr.", "My Bloody Valentine", "Shoegaze", "Blur", "Oasis",
+    "Weezer", "Pavement", "Modest Mouse", "The Strokes", "Interpol", "Yeah Yeah Yeahs", "Franz Ferdinand"
   ],
   "Soul": [
-    "Aretha Franklin", "Stevie Wonder", "Marvin Gaye", "Otis Redding", "Sam Cooke", "Al Green", "Leon Bridges"
+    "Aretha Franklin", "Stevie Wonder", "Marvin Gaye", "Otis Redding", "Sam Cooke", "Al Green", "Leon Bridges",
+    "Ray Charles", "James Brown", "Wilson Pickett", "Curtis Mayfield", "Isaac Hayes", "Barry White",
+    "The Temptations", "The Four Tops", "Gladys Knight & The Pips", "Diana Ross & The Supremes",
+    "Smokey Robinson", "The Isley Brothers", "Bill Withers", "Donny Hathaway", "Bobby Womack", "Etta James"
   ],
   "Funk": [
-    "Parliament-Funkadelic", "James Brown", "Sly & The Family Stone", "Earth Wind & Fire", "Chic", "Nile Rodgers"
+    "Parliament-Funkadelic", "James Brown", "Sly & The Family Stone", "Earth Wind & Fire", "Chic", "Nile Rodgers",
+    "Prince", "Rick James", "Bootsy Collins", "George Clinton", "The Time", "Zapp & Roger", "Cameo",
+    "Gap Band", "Kool & The Gang", "Average White Band", "Tower of Power", "War", "Ohio Players",
+    "Lakeside", "One Way", "Slave", "Midnight Star", "Chromeo", "Daft Punk", "Jamiroquai"
   ],
   "House": [
-    "Daft Punk", "Disclosure", "ODESZA", "Lane 8", "CamelPhat", "Fisher", "Chris Lake"
+    "Daft Punk", "Disclosure", "ODESZA", "Lane 8", "CamelPhat", "Fisher", "Chris Lake",
+    "Swedish House Mafia", "David Guetta", "Avicii", "Justice", "Moderat", "Bob Moses", "Rufus Du Sol",
+    "Gorgon City", "Oliver Heldens", "Duke Dumont", "Jax Jones", "MK", "Armand Van Helden",
+    "Todd Terry", "Masters At Work", "Dennis Ferrer", "Kerri Chandler", "Louie Vega", "Danny Tenaglia"
   ],
   "Techno": [
-    "Carl Cox", "Richie Hawtin", "Charlotte de Witte", "Adam Beyer", "Nina Kraviz", "Amelie Lens"
+    "Carl Cox", "Richie Hawtin", "Charlotte de Witte", "Adam Beyer", "Nina Kraviz", "Amelie Lens",
+    "Jeff Mills", "Derrick May", "Juan Atkins", "Kevin Saunderson", "Underworld", "The Chemical Brothers",
+    "Fatboy Slim", "Paul Oakenfold", "Sasha", "John Digweed", "Armin van Buuren", "Paul van Dyk",
+    "Tiësto", "Above & Beyond", "Ferry Corsten", "Markus Schulz", "Gareth Emery", "Andrew Rayel"
   ],
   "Ambient": [
-    "Brian Eno", "Tim Hecker", "Stars of the Lid", "Grouper", "William Basinski", "Eluvium"
+    "Brian Eno", "Tim Hecker", "Stars of the Lid", "Grouper", "William Basinski", "Eluvium",
+    "Boards of Canada", "Aphex Twin", "Autechre", "Squarepusher", "Burial", "Four Tet", "Bonobo",
+    "Tycho", "Emancipator", "Kiasmos", "Nils Frahm", "Ólafur Arnalds", "Max Richter", "Hammock",
+    "Godspeed You! Black Emperor", "Sigur Rós", "Explosions in the Sky", "This Will Destroy You"
   ],
   "Trap": [
-    "Future", "21 Savage", "Lil Baby", "Young Thug", "Playboi Carti", "Travis Scott", "Metro Boomin"
+    "Future", "21 Savage", "Lil Baby", "Young Thug", "Playboi Carti", "Travis Scott", "Metro Boomin",
+    "Migos", "Gucci Mane", "T.I.", "Jeezy", "Rick Ross", "Waka Flocka Flame", "Chief Keef",
+    "Lil Uzi Vert", "XXXTENTACION", "Juice WRLD", "Ski Mask The Slump God", "Denzel Curry",
+    "JID", "Earthgang", "City Morgue", "Scarlxrd", "Ghostemane", "Pouya", "Suicideboys"
   ],
   "Lo-Fi": [
-    "Nujabes", "J Dilla", "Tomppabeats", "Joji", "Clairo", "Rex Orange County", "Boy Pablo"
+    "Nujabes", "J Dilla", "Tomppabeats", "Joji", "Clairo", "Rex Orange County", "Boy Pablo",
+    "Cuco", "Still Woozy", "Mac DeMarco", "Crumb", "Inner Wave", "The Marias", "Homeshake",
+    "Mild High Club", "Connan Mockasin", "Ariel Pink", "Weyes Blood", "Men I Trust", "Kali Uchis",
+    "Tyler Cole", "Brent Faiyaz", "Daniel Caesar", "FKA twigs", "Blood Orange", "Toro y Moi"
   ]
 };
 
