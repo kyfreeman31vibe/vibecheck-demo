@@ -1109,9 +1109,13 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
           variant="outline"
           onClick={() => {
             if (isEditing && step > 1) {
-              // Go back to summary when editing
-              setIsEditing(true);
-              setStep(1);
+              if (step === 2) {
+                // From step 2, go back to summary
+                setStep(1);
+              } else {
+                // From other steps, go to previous step
+                setStep(step - 1);
+              }
             } else {
               prevStep();
             }
@@ -1120,7 +1124,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
           className="flex items-center gap-2"
           data-testid="button-back"
         >
-          {isEditing && step > 1 ? "Back to Summary" : "Previous"}
+          {isEditing && step === 2 ? "Back to Summary" : isEditing && step > 2 ? "Previous Step" : "Previous"}
         </Button>
 
         <div className="flex space-x-1">
@@ -1140,9 +1144,9 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             <Button
               variant="ghost"
               onClick={() => {
-                // Skip this section and return to summary
-                setIsEditing(true);
-                setStep(1);
+                // Skip this section and go to next step
+                console.log(`Skipping step ${step}, moving to step ${step + 1}`);
+                setStep(step + 1);
               }}
               className="text-gray-500 hover:text-gray-700"
               data-testid="button-skip-section"
@@ -1151,13 +1155,27 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             </Button>
           )}
 
+          {/* Done Editing button - show when in editing mode to return to summary */}
+          {isEditing && step > 1 && (
+            <Button
+              variant="outline"
+              onClick={() => {
+                console.log('Done editing, returning to summary');
+                setStep(1);
+              }}
+              className="text-gray-600 border-gray-300"
+              data-testid="button-done-editing"
+            >
+              Done Editing
+            </Button>
+          )}
           
           <Button
             onClick={() => {
               if (isEditing && step < totalSteps) {
-                // Save individual section changes and return to summary
-                setIsEditing(true);
-                setStep(1);
+                // Save individual section changes and go to next step
+                console.log(`Saving step ${step}, moving to step ${step + 1}`);
+                setStep(step + 1);
               } else {
                 nextStep();
               }
@@ -1166,7 +1184,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
             className="music-gradient-purple-pink text-white flex items-center gap-2"
             data-testid="button-next"
           >
-            {isLoading ? "Saving..." : isEditing && step < totalSteps ? "Save Section" : step === totalSteps ? "Complete Profile" : "Next"}
+            {isLoading ? "Saving..." : isEditing && step < totalSteps ? "Save & Continue" : step === totalSteps ? "Complete Profile" : "Next"}
           </Button>
         </div>
       </div>
