@@ -24,11 +24,28 @@ export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: P
     console.log('Files selected:', files.length);
     console.log('Current photos in component:', photos.length);
     console.log('Max photos allowed:', maxPhotos);
+    console.log('File details:', files.map(f => ({
+      name: f.name,
+      size: f.size,
+      type: f.type,
+      sizeInMB: (f.size / (1024 * 1024)).toFixed(2)
+    })));
     
     if (photos.length + files.length > maxPhotos) {
       toast({
         title: "Too many photos",
-        description: `You can only upload up to ${maxPhotos} photos`,
+        description: `You can only upload up to ${maxPhotos} photos. You currently have ${photos.length} photos.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check individual file sizes before processing
+    const oversizedFiles = files.filter(file => file.size > 10 * 1024 * 1024);
+    if (oversizedFiles.length > 0) {
+      toast({
+        title: "File too large",
+        description: `Some files are over 10MB: ${oversizedFiles.map(f => f.name).join(', ')}`,
         variant: "destructive",
       });
       return;
@@ -37,15 +54,21 @@ export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: P
     setUploading(true);
     
     try {
+      console.log('Starting file conversion to base64...');
       const newPhotos = await Promise.all(
-        files.map(file => convertFileToBase64(file))
+        files.map(async (file, index) => {
+          console.log(`Converting file ${index + 1}/${files.length}: ${file.name}`);
+          const result = await convertFileToBase64(file);
+          console.log(`File ${index + 1} converted successfully, size: ${(result.length / 1024).toFixed(2)}KB`);
+          return result;
+        })
       );
       
       console.log('=== PHOTO UPLOAD SUCCESS ===');
       console.log('New photos added:', newPhotos.length);
       console.log('Current photos in component:', photos.length);
       console.log('Total photos after upload:', [...photos, ...newPhotos].length);
-      console.log('First new photo preview:', newPhotos[0]?.substring(0, 50));
+      console.log('Base64 data sizes:', newPhotos.map(p => `${(p.length / 1024).toFixed(2)}KB`));
       console.log('=== CALLING onPhotosChange ===');
       
       const updatedPhotos = [...photos, ...newPhotos];
@@ -57,9 +80,10 @@ export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: P
         description: `${files.length} photo(s) added successfully`,
       });
     } catch (error) {
+      console.error('Photo upload error:', error);
       toast({
         title: "Upload failed",
-        description: "Failed to upload photos. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to upload photos. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -72,21 +96,32 @@ export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: P
 
   const convertFileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
+      console.log(`Converting file: ${file.name}, size: ${(file.size / (1024 * 1024)).toFixed(2)}MB, type: ${file.type}`);
+      
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        reject(new Error('File must be an image'));
+        console.error(`Invalid file type: ${file.type} for file: ${file.name}`);
+        reject(new Error(`"${file.name}" is not an image file. Please select JPG, PNG, or GIF files.`));
         return;
       }
       
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        reject(new Error('File size must be less than 5MB'));
+      // Validate file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        console.error(`File too large: ${file.name} is ${(file.size / (1024 * 1024)).toFixed(2)}MB`);
+        reject(new Error(`"${file.name}" is ${(file.size / (1024 * 1024)).toFixed(2)}MB. Maximum size is 10MB.`));
         return;
       }
       
       const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.onload = () => {
+        const result = reader.result as string;
+        console.log(`Successfully converted ${file.name} to base64, result size: ${(result.length / 1024).toFixed(2)}KB`);
+        resolve(result);
+      };
+      reader.onerror = (error) => {
+        console.error(`Failed to read file ${file.name}:`, error);
+        reject(new Error(`Failed to read "${file.name}". Please try again.`));
+      };
       reader.readAsDataURL(file);
     });
   };
@@ -124,7 +159,7 @@ export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: P
         {/* Debug info */}
         {photos.length > 0 && (
           <div className="col-span-2 text-xs text-gray-500 bg-yellow-50 p-2 rounded">
-            Debug: {photos.length} photos loaded. First photo preview: {photos[0]?.substring(0, 50)}...
+            Debug: {photos.length} photos loaded. Total size: {(photos.reduce((sum, photo) => sum + photo.length, 0) / 1024).toFixed(0)}KB
           </div>
         )}
         
@@ -235,7 +270,7 @@ export default function PhotoUpload({ photos, onPhotosChange, maxPhotos = 5 }: P
       <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
         <p>• Your first photo will be your main profile picture</p>
         <p>• Use high-quality photos that show your face clearly</p>
-        <p>• Maximum file size: 5MB per photo</p>
+        <p>• Maximum file size: 10MB per photo</p>
         <p>• Supported formats: JPG, PNG, GIF</p>
       </div>
     </div>
