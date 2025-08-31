@@ -32,57 +32,100 @@ const MUSIC_GENRES = [
   "Funk", "House", "Techno", "Ambient", "Latin", "K-Pop", "Trap", "Lo-Fi"
 ];
 
-const POPULAR_ARTISTS = [
-  // Pop (2025 Top 20)
-  "Bruno Mars", "The Weeknd", "Lady Gaga", "Billie Eilish", "Taylor Swift", "Sabrina Carpenter", "Ariana Grande",
-  "Harry Styles", "Post Malone", "Ed Sheeran", "Dua Lipa", "Olivia Rodrigo", "Doja Cat", "Bad Bunny",
-  "Teddy Swims", "Benson Boone", "Gracie Abrams", "Chappell Roan", "SZA", "Lana Del Rey",
-  
-  // Hip-Hop/Rap (2025 Top 20)
-  "Drake", "Kendrick Lamar", "Travis Scott", "Eminem", "Kanye West", "Future", "Metro Boomin", "Tyler, the Creator",
-  "Lil Wayne", "21 Savage", "Doechii", "GloRilla", "Sexyy Red", "Ice Spice", "Lil Baby", "DaBaby",
-  "Megan Thee Stallion", "Cardi B", "J. Cole", "A$AP Rocky",
-  
-  // Rock (2025 Top 15)
-  "Imagine Dragons", "OneRepublic", "Maroon 5", "Arctic Monkeys", "Foo Fighters", "Red Hot Chili Peppers",
-  "Coldplay", "The Killers", "Green Day", "Pearl Jam", "KNEECAP", "HAIM", "Bon Iver", "The 1975",
-  
-  // Electronic/EDM (2025 Top 15)
-  "David Guetta", "Calvin Harris", "Marshmello", "Skrillex", "Diplo", "Tiësto", "Martin Garrix",
-  "The Chainsmokers", "Deadmau5", "Zedd", "Aili", "Flume", "ODESZA", "Porter Robinson", "Disclosure",
-  
-  // Indie (2025 Top 15)
-  "Arctic Monkeys", "Tame Impala", "The Strokes", "Vampire Weekend", "Phoebe Bridgers", "Mac DeMarco",
-  "MGMT", "Two Door Cinema Club", "Foster the People", "The National", "Bon Iver", "Fleet Foxes",
-  "Beach House", "Grizzly Bear", "Animal Collective",
-  
-  // Country (2025 Top 20)
-  "Morgan Wallen", "Luke Combs", "Chris Stapleton", "Lainey Wilson", "Kacey Musgraves", "Zach Bryan",
-  "Jelly Roll", "Megan Moroney", "Cody Johnson", "Parker McCollum", "Hardy", "Carly Pearce",
-  "Tyler Childers", "Sturgill Simpson", "Jason Aldean", "Thomas Rhett", "Kane Brown", "Gabby Barrett",
-  "Russell Dickerson", "Jimmie Allen",
-  
-  // K-Pop (2025 Top 15)
-  "BTS", "BLACKPINK", "Stray Kids", "NewJeans", "aespa", "(G)I-DLE", "ITZY", "SEVENTEEN", "TWICE",
-  "IVE", "LE SSERAFIM", "XG", "NMIXX", "ENHYPEN", "ATEEZ",
-  
-  // Latin (2025 Top 15)
-  "Bad Bunny", "Daddy Yankee", "J Balvin", "Rosalía", "Karol G", "Ozuna", "Anuel AA", "Maluma",
-  "Becky G", "Rauw Alejandro", "Jhay Cortez", "Myke Towers", "Nicky Jam", "Farruko", "Sech",
-  
-  // Jazz (2025 Contemporary Top 10)
-  "Kamasi Washington", "Robert Glasper", "Esperanza Spalding", "Thundercat", "Snarky Puppy",
-  "Brad Mehldau", "Christian Scott aTunde Adjuah", "GoGo Penguin", "Nubya Garcia", "Sons of Kemet",
-  
-  // Classical (2025 Contemporary Top 10)
-  "Ludovico Einaudi", "Max Richter", "Ólafur Arnalds", "Nils Frahm", "Kiasmos", "A Winged Victory for the Sullen",
-  "Dustin O'Halloran", "Hauschka", "Peter Broderick", "Emilie Simon",
-  
-  // Folk (2025 Top 15)
-  "Bon Iver", "Fleet Foxes", "Caamp", "The Lumineers", "Gregory Alan Isakov", "Iron & Wine",
-  "First Aid Kit", "The Head and the Heart", "Of Monsters and Men", "Mumford & Sons",
-  "The Tallest Man on Earth", "Phoebe Bridgers", "Big Thief", "Angel Olsen", "Julien Baker"
-];
+// Artists organized by genre for filtering
+const ARTISTS_BY_GENRE = {
+  "Pop": [
+    "Bruno Mars", "The Weeknd", "Lady Gaga", "Billie Eilish", "Taylor Swift", "Sabrina Carpenter", "Ariana Grande",
+    "Harry Styles", "Post Malone", "Ed Sheeran", "Dua Lipa", "Olivia Rodrigo", "Doja Cat", 
+    "Teddy Swims", "Benson Boone", "Gracie Abrams", "Chappell Roan", "Lana Del Rey"
+  ],
+  "Hip-Hop": [
+    "Drake", "Kendrick Lamar", "Travis Scott", "Eminem", "Kanye West", "Future", "Metro Boomin", "Tyler, the Creator",
+    "Lil Wayne", "21 Savage", "Doechii", "GloRilla", "Sexyy Red", "Ice Spice", "Lil Baby", "DaBaby",
+    "Megan Thee Stallion", "Cardi B", "J. Cole", "A$AP Rocky"
+  ],
+  "R&B": [
+    "Beyoncé", "The Weeknd", "SZA", "Frank Ocean", "H.E.R.", "Alicia Keys", "John Legend", "Miguel",
+    "Daniel Caesar", "Summer Walker", "Jhené Aiko", "Chris Brown", "Usher", "Anderson .Paak",
+    "Brent Faiyaz", "Victoria Monét", "Lucky Daye", "Kali Uchis", "Steve Lacy", "Solange"
+  ],
+  "Rock": [
+    "Imagine Dragons", "OneRepublic", "Maroon 5", "Arctic Monkeys", "Foo Fighters", "Red Hot Chili Peppers",
+    "Coldplay", "The Killers", "Green Day", "Pearl Jam", "KNEECAP", "HAIM", "The 1975"
+  ],
+  "Electronic": [
+    "David Guetta", "Calvin Harris", "Marshmello", "Skrillex", "Diplo", "Tiësto", "Martin Garrix",
+    "The Chainsmokers", "Deadmau5", "Zedd", "Aili", "Flume", "ODESZA", "Porter Robinson", "Disclosure"
+  ],
+  "Indie": [
+    "Arctic Monkeys", "Tame Impala", "The Strokes", "Vampire Weekend", "Phoebe Bridgers", "Mac DeMarco",
+    "MGMT", "Two Door Cinema Club", "Foster the People", "The National", "Bon Iver", "Fleet Foxes",
+    "Beach House", "Grizzly Bear", "Animal Collective"
+  ],
+  "Country": [
+    "Morgan Wallen", "Luke Combs", "Chris Stapleton", "Lainey Wilson", "Kacey Musgraves", "Zach Bryan",
+    "Jelly Roll", "Megan Moroney", "Cody Johnson", "Parker McCollum", "Hardy", "Carly Pearce",
+    "Tyler Childers", "Sturgill Simpson", "Jason Aldean", "Thomas Rhett", "Kane Brown", "Gabby Barrett",
+    "Russell Dickerson", "Jimmie Allen"
+  ],
+  "K-Pop": [
+    "BTS", "BLACKPINK", "Stray Kids", "NewJeans", "aespa", "(G)I-DLE", "ITZY", "SEVENTEEN", "TWICE",
+    "IVE", "LE SSERAFIM", "XG", "NMIXX", "ENHYPEN", "ATEEZ"
+  ],
+  "Latin": [
+    "Bad Bunny", "Daddy Yankee", "J Balvin", "Rosalía", "Karol G", "Ozuna", "Anuel AA", "Maluma",
+    "Becky G", "Rauw Alejandro", "Jhay Cortez", "Myke Towers", "Nicky Jam", "Farruko", "Sech"
+  ],
+  "Jazz": [
+    "Kamasi Washington", "Robert Glasper", "Esperanza Spalding", "Thundercat", "Snarky Puppy",
+    "Brad Mehldau", "Christian Scott aTunde Adjuah", "GoGo Penguin", "Nubya Garcia", "Sons of Kemet"
+  ],
+  "Classical": [
+    "Ludovico Einaudi", "Max Richter", "Ólafur Arnalds", "Nils Frahm", "Kiasmos", "A Winged Victory for the Sullen",
+    "Dustin O'Halloran", "Hauschka", "Peter Broderick", "Emilie Simon"
+  ],
+  "Folk": [
+    "Bon Iver", "Fleet Foxes", "Caamp", "The Lumineers", "Gregory Alan Isakov", "Iron & Wine",
+    "First Aid Kit", "The Head and the Heart", "Of Monsters and Men", "Mumford & Sons",
+    "The Tallest Man on Earth", "Phoebe Bridgers", "Big Thief", "Angel Olsen", "Julien Baker"
+  ],
+  "Reggae": [
+    "Bob Marley", "Damian Marley", "Sean Paul", "Shaggy", "Steel Pulse", "Chronixx", "Koffee", "Protoje"
+  ],
+  "Blues": [
+    "B.B. King", "Muddy Waters", "Etta James", "Gary Clark Jr.", "Joe Bonamassa", "Susan Tedeschi", "Derek Trucks"
+  ],
+  "Punk": [
+    "Green Day", "The Offspring", "Bad Religion", "NOFX", "Rancid", "Social Distortion", "Pennywise"
+  ],
+  "Metal": [
+    "Metallica", "Iron Maiden", "Black Sabbath", "Judas Priest", "Slayer", "Megadeth", "Anthrax"
+  ],
+  "Alternative": [
+    "Radiohead", "Nirvana", "Pearl Jam", "Soundgarden", "Stone Temple Pilots", "Alice in Chains", "Smashing Pumpkins"
+  ],
+  "Soul": [
+    "Aretha Franklin", "Stevie Wonder", "Marvin Gaye", "Otis Redding", "Sam Cooke", "Al Green", "Leon Bridges"
+  ],
+  "Funk": [
+    "Parliament-Funkadelic", "James Brown", "Sly & The Family Stone", "Earth Wind & Fire", "Chic", "Nile Rodgers"
+  ],
+  "House": [
+    "Daft Punk", "Disclosure", "ODESZA", "Lane 8", "CamelPhat", "Fisher", "Chris Lake"
+  ],
+  "Techno": [
+    "Carl Cox", "Richie Hawtin", "Charlotte de Witte", "Adam Beyer", "Nina Kraviz", "Amelie Lens"
+  ],
+  "Ambient": [
+    "Brian Eno", "Tim Hecker", "Stars of the Lid", "Grouper", "William Basinski", "Eluvium"
+  ],
+  "Trap": [
+    "Future", "21 Savage", "Lil Baby", "Young Thug", "Playboi Carti", "Travis Scott", "Metro Boomin"
+  ],
+  "Lo-Fi": [
+    "Nujabes", "J Dilla", "Tomppabeats", "Joji", "Clairo", "Rex Orange County", "Boy Pablo"
+  ]
+};
 
 const LISTENING_HABITS = [
   "Morning coffee vibes",
@@ -179,6 +222,22 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
 
   const totalSteps = 7;
   const progress = (step / totalSteps) * 100;
+
+  // Get artists filtered by selected genres
+  const getFilteredArtists = () => {
+    if (profileData.favoriteGenres.length === 0) {
+      // If no genres selected, show all artists
+      return Object.values(ARTISTS_BY_GENRE).flat();
+    }
+    
+    // Get artists from selected genres
+    const filteredArtists = profileData.favoriteGenres
+      .map(genre => ARTISTS_BY_GENRE[genre] || [])
+      .flat();
+    
+    // Remove duplicates and return
+    return [...new Set(filteredArtists)];
+  };
 
   const updateProfileData = (updates: Partial<MusicProfileData>) => {
     console.log('Updating profile data:', updates);
@@ -685,6 +744,13 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                 <Mic className="w-12 h-12 mx-auto text-music-pink" />
                 <h2 className="text-xl font-bold">Who are your music heroes?</h2>
                 <p className="text-gray-600">Add at least 3 artists you love</p>
+                {profileData.favoriteGenres.length > 0 && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mx-4">
+                    <p className="text-sm text-blue-700">
+                      Showing artists from your selected genres: {profileData.favoriteGenres.join(", ")}
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-4">
@@ -718,7 +784,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                  {POPULAR_ARTISTS
+                  {getFilteredArtists()
                     .filter(artist => 
                       !profileData.favoriteArtists.includes(artist) &&
                       artist.toLowerCase().includes(searchInputs.artist.toLowerCase())
