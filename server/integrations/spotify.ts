@@ -297,6 +297,21 @@ export class SpotifyService {
       req.session.spotifyTokens = tokens;
       req.session.spotifyProfile = profile;
       console.log('Tokens and profile stored in session');
+      console.log('Session ID:', req.sessionID);
+      console.log('Session data after storage:', {
+        hasTokens: !!req.session.spotifyTokens,
+        tokenType: typeof req.session.spotifyTokens,
+        sessionKeys: Object.keys(req.session)
+      });
+      
+      // Force session save
+      req.session.save((err) => {
+        if (err) {
+          console.error('Session save error:', err);
+        } else {
+          console.log('Session saved successfully');
+        }
+      });
 
       console.log('Spotify connection successful, closing popup...');
       // Return HTML that closes the popup window and signals success to parent

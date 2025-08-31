@@ -277,13 +277,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/auth/spotify/callback", SpotifyService.handleCallback);
   app.get("/api/spotify/playlists", SpotifyService.getPlaylists);
   app.get("/api/spotify/status", (req: any, res) => {
+    console.log('=== Spotify Status Check ===');
+    console.log('Session ID:', req.sessionID);
+    console.log('Session exists:', !!req.session);
+    console.log('Session keys:', req.session ? Object.keys(req.session) : 'no session');
+    console.log('Spotify tokens exist:', !!req.session?.spotifyTokens);
+    console.log('Full session data:', req.session);
+    
     res.json({ connected: !!req.session?.spotifyTokens });
   });
 
   // Enhanced Spotify API endpoints for music profile building
   app.get("/api/spotify/top-artists", async (req: any, res) => {
+    console.log('=== Top Artists Request ===');
+    console.log('Session ID:', req.sessionID);
+    console.log('Session exists:', !!req.session);
+    console.log('Spotify tokens exist:', !!req.session?.spotifyTokens);
+    
     const tokens = req.session.spotifyTokens;
     if (!tokens) {
+      console.log('No tokens found in session for top artists request');
       return res.status(401).json({ error: 'Not authenticated with Spotify' });
     }
 
