@@ -1128,7 +1128,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                 nextStep();
               }
             }}
-            disabled={!canProceed() || isLoading}
+            disabled={(!isEditing && !canProceed()) || isLoading}
             className="music-gradient-purple-pink text-white flex items-center gap-2"
             data-testid="button-next"
           >
