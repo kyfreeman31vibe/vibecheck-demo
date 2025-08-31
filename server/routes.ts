@@ -280,6 +280,118 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ connected: !!req.session?.spotifyTokens });
   });
 
+  // Enhanced Spotify API endpoints for music profile building
+  app.get("/api/spotify/top-artists", async (req: any, res) => {
+    const tokens = req.session.spotifyTokens;
+    if (!tokens) {
+      return res.status(401).json({ error: 'Not authenticated with Spotify' });
+    }
+
+    try {
+      const timeRange = req.query.time_range || 'medium_term';
+      const limit = parseInt(req.query.limit) || 50;
+      const topArtists = await SpotifyService.getUserTopArtists(tokens.access_token, timeRange, limit);
+      res.json(topArtists);
+    } catch (error) {
+      console.error('Error fetching top artists:', error);
+      res.status(500).json({ error: 'Failed to fetch top artists' });
+    }
+  });
+
+  app.get("/api/spotify/top-tracks", async (req: any, res) => {
+    const tokens = req.session.spotifyTokens;
+    if (!tokens) {
+      return res.status(401).json({ error: 'Not authenticated with Spotify' });
+    }
+
+    try {
+      const timeRange = req.query.time_range || 'medium_term';
+      const limit = parseInt(req.query.limit) || 50;
+      const topTracks = await SpotifyService.getUserTopTracks(tokens.access_token, timeRange, limit);
+      res.json(topTracks);
+    } catch (error) {
+      console.error('Error fetching top tracks:', error);
+      res.status(500).json({ error: 'Failed to fetch top tracks' });
+    }
+  });
+
+  app.get("/api/spotify/recently-played", async (req: any, res) => {
+    const tokens = req.session.spotifyTokens;
+    if (!tokens) {
+      return res.status(401).json({ error: 'Not authenticated with Spotify' });
+    }
+
+    try {
+      const limit = parseInt(req.query.limit) || 50;
+      const recentTracks = await SpotifyService.getUserRecentlyPlayed(tokens.access_token, limit);
+      res.json(recentTracks);
+    } catch (error) {
+      console.error('Error fetching recently played:', error);
+      res.status(500).json({ error: 'Failed to fetch recently played tracks' });
+    }
+  });
+
+  app.get("/api/spotify/search", async (req: any, res) => {
+    const tokens = req.session.spotifyTokens;
+    if (!tokens) {
+      return res.status(401).json({ error: 'Not authenticated with Spotify' });
+    }
+
+    try {
+      const query = req.query.q;
+      const type = req.query.type || 'artist';
+      const limit = parseInt(req.query.limit) || 20;
+      
+      if (!query) {
+        return res.status(400).json({ error: 'Query parameter is required' });
+      }
+
+      const searchResults = await SpotifyService.searchSpotify(tokens.access_token, query, type, limit);
+      res.json(searchResults);
+    } catch (error) {
+      console.error('Error searching Spotify:', error);
+      res.status(500).json({ error: 'Failed to search Spotify' });
+    }
+  });
+
+  app.get("/api/spotify/recommendations", async (req: any, res) => {
+    const tokens = req.session.spotifyTokens;
+    if (!tokens) {
+      return res.status(401).json({ error: 'Not authenticated with Spotify' });
+    }
+
+    try {
+      const params = {
+        seed_artists: req.query.seed_artists ? req.query.seed_artists.split(',') : undefined,
+        seed_tracks: req.query.seed_tracks ? req.query.seed_tracks.split(',') : undefined,
+        seed_genres: req.query.seed_genres ? req.query.seed_genres.split(',') : undefined,
+        limit: parseInt(req.query.limit) || 20,
+        market: req.query.market || 'US'
+      };
+
+      const recommendations = await SpotifyService.getRecommendations(tokens.access_token, params);
+      res.json(recommendations);
+    } catch (error) {
+      console.error('Error getting recommendations:', error);
+      res.status(500).json({ error: 'Failed to get recommendations' });
+    }
+  });
+
+  app.get("/api/spotify/genres", async (req: any, res) => {
+    const tokens = req.session.spotifyTokens;
+    if (!tokens) {
+      return res.status(401).json({ error: 'Not authenticated with Spotify' });
+    }
+
+    try {
+      const genres = await SpotifyService.getAvailableGenres(tokens.access_token);
+      res.json(genres);
+    } catch (error) {
+      console.error('Error fetching genres:', error);
+      res.status(500).json({ error: 'Failed to fetch available genres' });
+    }
+  });
+
   // Dashboard endpoints
   app.get("/api/dashboard/stats", async (req: any, res) => {
     if (!req.session?.user) {

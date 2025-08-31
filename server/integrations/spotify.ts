@@ -48,7 +48,10 @@ export class SpotifyService {
       'playlist-read-private',
       'playlist-read-collaborative',
       'user-read-private',
-      'user-read-email'
+      'user-read-email',
+      'user-top-read',
+      'user-read-recently-played',
+      'user-library-read'
     ].join(' ');
 
     const params = new URLSearchParams({
@@ -136,6 +139,67 @@ export class SpotifyService {
 
   static async getUserProfile(accessToken: string) {
     return this.makeSpotifyRequest('/me', accessToken);
+  }
+
+  // Get user's top artists (short, medium, long term)
+  static async getUserTopArtists(accessToken: string, timeRange: 'short_term' | 'medium_term' | 'long_term' = 'medium_term', limit: number = 50) {
+    return this.makeSpotifyRequest(`/me/top/artists?time_range=${timeRange}&limit=${limit}`, accessToken);
+  }
+
+  // Get user's top tracks (short, medium, long term)
+  static async getUserTopTracks(accessToken: string, timeRange: 'short_term' | 'medium_term' | 'long_term' = 'medium_term', limit: number = 50) {
+    return this.makeSpotifyRequest(`/me/top/tracks?time_range=${timeRange}&limit=${limit}`, accessToken);
+  }
+
+  // Get user's recently played tracks
+  static async getUserRecentlyPlayed(accessToken: string, limit: number = 50) {
+    return this.makeSpotifyRequest(`/me/player/recently-played?limit=${limit}`, accessToken);
+  }
+
+  // Search for artists, albums, tracks
+  static async searchSpotify(accessToken: string, query: string, type: 'artist' | 'album' | 'track' | 'playlist' = 'artist', limit: number = 20) {
+    const encodedQuery = encodeURIComponent(query);
+    return this.makeSpotifyRequest(`/search?q=${encodedQuery}&type=${type}&limit=${limit}`, accessToken);
+  }
+
+  // Get artist details including genres
+  static async getArtist(accessToken: string, artistId: string) {
+    return this.makeSpotifyRequest(`/artists/${artistId}`, accessToken);
+  }
+
+  // Get multiple artists at once
+  static async getArtists(accessToken: string, artistIds: string[]) {
+    const ids = artistIds.join(',');
+    return this.makeSpotifyRequest(`/artists?ids=${ids}`, accessToken);
+  }
+
+  // Get artist's top tracks
+  static async getArtistTopTracks(accessToken: string, artistId: string, market: string = 'US') {
+    return this.makeSpotifyRequest(`/artists/${artistId}/top-tracks?market=${market}`, accessToken);
+  }
+
+  // Get recommendations based on seed artists, tracks, or genres
+  static async getRecommendations(accessToken: string, params: {
+    seed_artists?: string[];
+    seed_tracks?: string[];
+    seed_genres?: string[];
+    limit?: number;
+    market?: string;
+  }) {
+    const queryParams = new URLSearchParams();
+    
+    if (params.seed_artists) queryParams.set('seed_artists', params.seed_artists.join(','));
+    if (params.seed_tracks) queryParams.set('seed_tracks', params.seed_tracks.join(','));
+    if (params.seed_genres) queryParams.set('seed_genres', params.seed_genres.join(','));
+    if (params.limit) queryParams.set('limit', params.limit.toString());
+    if (params.market) queryParams.set('market', params.market);
+    
+    return this.makeSpotifyRequest(`/recommendations?${queryParams.toString()}`, accessToken);
+  }
+
+  // Get available genre seeds for recommendations
+  static async getAvailableGenres(accessToken: string) {
+    return this.makeSpotifyRequest('/recommendations/available-genre-seeds', accessToken);
   }
 
   // Express route handlers
