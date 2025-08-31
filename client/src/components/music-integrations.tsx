@@ -33,7 +33,7 @@ export default function MusicIntegrations({ onPlaylistsSelected, selectedPlaylis
   );
 
   // Check connection status
-  const { data: spotifyStatus } = useQuery<{ connected: boolean }>({
+  const { data: spotifyStatus, refetch: refetchSpotifyStatus } = useQuery<{ connected: boolean }>({
     queryKey: ["/api/spotify/status"],
     retry: false
   });
@@ -56,12 +56,35 @@ export default function MusicIntegrations({ onPlaylistsSelected, selectedPlaylis
     if (!authWindow || authWindow.closed || typeof authWindow.closed == 'undefined') {
       window.location.href = "/api/auth/spotify";
     } else {
-      // Listen for the window to close (user completed auth)
+      // Listen for messages from the popup window
+      const handleMessage = (event: MessageEvent) => {
+        if (event.data === 'spotify-auth-success') {
+          toast({
+            title: "Spotify Connected!",
+            description: "Your music accounts are now synced.",
+          });
+          // Refresh Spotify status without reloading the page
+          refetchSpotifyStatus();
+          window.removeEventListener('message', handleMessage);
+        } else if (event.data === 'spotify-auth-error') {
+          toast({
+            title: "Connection Failed",
+            description: "Unable to connect to Spotify. Please try again.",
+            variant: "destructive",
+          });
+          window.removeEventListener('message', handleMessage);
+        }
+      };
+
+      window.addEventListener('message', handleMessage);
+      
+      // Also check if window closes (fallback for older implementation)
       const checkClosed = setInterval(() => {
         if (authWindow.closed) {
           clearInterval(checkClosed);
-          // Refresh the page to show updated connection status
-          window.location.reload();
+          window.removeEventListener('message', handleMessage);
+          // Don't reload the page, just refresh the Spotify status
+          refetchSpotifyStatus();
         }
       }, 1000);
     }

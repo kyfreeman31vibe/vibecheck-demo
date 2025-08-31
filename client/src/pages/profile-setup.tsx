@@ -20,6 +20,27 @@ export default function ProfileSetup() {
     setCurrentUser(user);
   }, []);
 
+  // Handle Spotify authentication messages during profile creation
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data === 'spotify-auth-success') {
+        toast({
+          title: "Spotify Connected!",
+          description: "Your music accounts are now synced.",
+        });
+      } else if (event.data === 'spotify-auth-error') {
+        toast({
+          title: "Connection Failed",
+          description: "Unable to connect to Spotify. Please try again.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [toast]);
+
   const updateProfileMutation = useMutation({
     mutationFn: async (data: any) => {
       console.log('=== MUTATION: Sending data to API ===');
