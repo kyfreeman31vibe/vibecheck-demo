@@ -232,11 +232,11 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
     
     // Get artists from selected genres
     const filteredArtists = profileData.favoriteGenres
-      .map(genre => ARTISTS_BY_GENRE[genre] || [])
+      .map(genre => ARTISTS_BY_GENRE[genre as keyof typeof ARTISTS_BY_GENRE] || [])
       .flat();
     
     // Remove duplicates and return
-    return [...new Set(filteredArtists)];
+    return Array.from(new Set(filteredArtists));
   };
 
   const updateProfileData = (updates: Partial<MusicProfileData>) => {
@@ -345,8 +345,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
     }
   };
 
-  // Show completed profile summary if editing (but not if actively uploading photos)
-  if (isEditing && step === 1 && !(profileData.profilePhotos && profileData.profilePhotos.length > 0)) {
+  // Show completed profile summary if editing and has existing profile data
+  if (isEditing && step === 1 && profileData.favoriteGenres && profileData.favoriteGenres.length > 0) {
     console.log('=== RENDERING EDITING SUMMARY ===');
     console.log('ProfileData in editing summary:', {
       photos: profileData.profilePhotos?.length || 0,
@@ -430,7 +430,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                 className="mt-3"
                 onClick={() => {
                   setIsEditing(false);
-                  setStep(2);
+                  setStep(3);
                 }}
               >
                 Edit Genres
@@ -460,7 +460,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
                 className="mt-3"
                 onClick={() => {
                   setIsEditing(false);
-                  setStep(2);
+                  setStep(4);
                 }}
               >
                 Edit Artists
@@ -967,11 +967,19 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
       <div className="flex justify-between items-center">
         <Button
           variant="outline"
-          onClick={prevStep}
-          disabled={step === 1}
+          onClick={() => {
+            if (isEditing && step > 1) {
+              // Go back to summary when editing
+              setIsEditing(true);
+              setStep(1);
+            } else {
+              prevStep();
+            }
+          }}
+          disabled={step === 1 && !isEditing}
           className="flex items-center gap-2"
         >
-          Previous
+          {isEditing && step > 1 ? "Back to Summary" : "Previous"}
         </Button>
 
         <div className="flex space-x-1">
@@ -986,11 +994,19 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
         </div>
 
         <Button
-          onClick={nextStep}
+          onClick={() => {
+            if (isEditing && step < totalSteps) {
+              // Save individual section changes and return to summary
+              setIsEditing(true);
+              setStep(1);
+            } else {
+              nextStep();
+            }
+          }}
           disabled={!canProceed() || isLoading}
           className="music-gradient-purple-pink text-white flex items-center gap-2"
         >
-          {isLoading ? "Saving..." : step === totalSteps ? "Complete Profile" : "Next"}
+          {isLoading ? "Saving..." : isEditing && step < totalSteps ? "Save Section" : step === totalSteps ? "Complete Profile" : "Next"}
         </Button>
       </div>
     </div>
