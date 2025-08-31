@@ -426,8 +426,8 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
     }
   };
 
-  // Show completed profile summary if editing and has existing profile data
-  if (isEditing && step === 1 && profileData.favoriteGenres && profileData.favoriteGenres.length > 0) {
+  // Show completed profile summary only if we're truly viewing the summary (step 1) and have profile data
+  if (step === 1 && profileData.favoriteGenres && profileData.favoriteGenres.length > 0) {
     console.log('=== RENDERING EDITING SUMMARY ===');
     console.log('ProfileData in editing summary:', {
       photos: profileData.profilePhotos?.length || 0,
@@ -631,8 +631,10 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
         <div className="flex space-x-4">
           <Button 
             onClick={() => {
+              console.log('=== EDIT STEP BY STEP CLICKED ===');
+              console.log('Setting isEditing=true and step=2');
               setIsEditing(true);
-              setStep(1);
+              setStep(2);
             }} 
             variant="outline"
             className="flex-1"
