@@ -33,55 +33,55 @@ const MUSIC_GENRES = [
 ];
 
 const POPULAR_ARTISTS = [
-  // Pop
-  "Taylor Swift", "Ed Sheeran", "Adele", "Ariana Grande", "Dua Lipa", "Harry Styles", "Olivia Rodrigo",
-  "Bruno Mars", "Justin Bieber", "Rihanna", "Lady Gaga", "Katy Perry", "P!nk", "Miley Cyrus", "Selena Gomez",
+  // Pop (2025 Top 20)
+  "Bruno Mars", "The Weeknd", "Lady Gaga", "Billie Eilish", "Taylor Swift", "Sabrina Carpenter", "Ariana Grande",
+  "Harry Styles", "Post Malone", "Ed Sheeran", "Dua Lipa", "Olivia Rodrigo", "Doja Cat", "Bad Bunny",
+  "Teddy Swims", "Benson Boone", "Gracie Abrams", "Chappell Roan", "SZA", "Lana Del Rey",
   
-  // Hip-Hop/Rap
-  "Drake", "Kendrick Lamar", "J. Cole", "Travis Scott", "Post Malone", "Tyler, The Creator", "Kanye West",
-  "Eminem", "Jay-Z", "Nas", "Future", "Lil Wayne", "Nicki Minaj", "Cardi B", "Megan Thee Stallion", "21 Savage",
+  // Hip-Hop/Rap (2025 Top 20)
+  "Drake", "Kendrick Lamar", "Travis Scott", "Eminem", "Kanye West", "Future", "Metro Boomin", "Tyler, the Creator",
+  "Lil Wayne", "21 Savage", "Doechii", "GloRilla", "Sexyy Red", "Ice Spice", "Lil Baby", "DaBaby",
+  "Megan Thee Stallion", "Cardi B", "J. Cole", "A$AP Rocky",
   
-  // R&B/Soul
-  "Beyoncé", "The Weeknd", "SZA", "Frank Ocean", "H.E.R.", "Alicia Keys", "John Legend", "Miguel",
-  "Daniel Caesar", "Summer Walker", "Jhené Aiko", "Chris Brown", "Usher", "Bruno Mars", "Anderson .Paak",
+  // Rock (2025 Top 15)
+  "Imagine Dragons", "OneRepublic", "Maroon 5", "Arctic Monkeys", "Foo Fighters", "Red Hot Chili Peppers",
+  "Coldplay", "The Killers", "Green Day", "Pearl Jam", "KNEECAP", "HAIM", "Bon Iver", "The 1975",
   
-  // Rock/Alternative
-  "The Beatles", "Queen", "Radiohead", "The Strokes", "Arctic Monkeys", "Foo Fighters", "Red Hot Chili Peppers",
-  "Nirvana", "Pearl Jam", "Led Zeppelin", "Pink Floyd", "The Rolling Stones", "AC/DC", "Metallica", "Green Day",
-  "Coldplay", "U2", "Linkin Park", "Imagine Dragons", "OneRepublic", "Maroon 5", "Fall Out Boy", "Panic! At The Disco",
+  // Electronic/EDM (2025 Top 15)
+  "David Guetta", "Calvin Harris", "Marshmello", "Skrillex", "Diplo", "Tiësto", "Martin Garrix",
+  "The Chainsmokers", "Deadmau5", "Zedd", "Aili", "Flume", "ODESZA", "Porter Robinson", "Disclosure",
   
-  // Electronic/EDM
-  "Daft Punk", "Calvin Harris", "David Guetta", "Skrillex", "Deadmau5", "Marshmello", "The Chainsmokers",
-  "Avicii", "Swedish House Mafia", "Martin Garrix", "Tiësto", "Diplo", "Flume", "ODESZA", "Porter Robinson",
+  // Indie (2025 Top 15)
+  "Arctic Monkeys", "Tame Impala", "The Strokes", "Vampire Weekend", "Phoebe Bridgers", "Mac DeMarco",
+  "MGMT", "Two Door Cinema Club", "Foster the People", "The National", "Bon Iver", "Fleet Foxes",
+  "Beach House", "Grizzly Bear", "Animal Collective",
   
-  // Indie/Alternative
-  "Billie Eilish", "Lorde", "Phoebe Bridgers", "Clairo", "Rex Orange County", "Mac DeMarco", "Tame Impala",
-  "The 1975", "Vampire Weekend", "MGMT", "Foster the People", "Two Door Cinema Club", "Glass Animals", "Alt-J",
+  // Country (2025 Top 20)
+  "Morgan Wallen", "Luke Combs", "Chris Stapleton", "Lainey Wilson", "Kacey Musgraves", "Zach Bryan",
+  "Jelly Roll", "Megan Moroney", "Cody Johnson", "Parker McCollum", "Hardy", "Carly Pearce",
+  "Tyler Childers", "Sturgill Simpson", "Jason Aldean", "Thomas Rhett", "Kane Brown", "Gabby Barrett",
+  "Russell Dickerson", "Jimmie Allen",
   
-  // Country
-  "Taylor Swift", "Kacey Musgraves", "Chris Stapleton", "Maren Morris", "Keith Urban", "Carrie Underwood",
-  "Blake Shelton", "Luke Bryan", "Florida Georgia Line", "Dan + Shay", "The Chicks", "Johnny Cash", "Dolly Parton",
+  // K-Pop (2025 Top 15)
+  "BTS", "BLACKPINK", "Stray Kids", "NewJeans", "aespa", "(G)I-DLE", "ITZY", "SEVENTEEN", "TWICE",
+  "IVE", "LE SSERAFIM", "XG", "NMIXX", "ENHYPEN", "ATEEZ",
   
-  // K-Pop
-  "BTS", "BLACKPINK", "TWICE", "Red Velvet", "ITZY", "aespa", "SEVENTEEN", "Stray Kids", "ENHYPEN", "(G)I-DLE",
+  // Latin (2025 Top 15)
+  "Bad Bunny", "Daddy Yankee", "J Balvin", "Rosalía", "Karol G", "Ozuna", "Anuel AA", "Maluma",
+  "Becky G", "Rauw Alejandro", "Jhay Cortez", "Myke Towers", "Nicky Jam", "Farruko", "Sech",
   
-  // Latin
-  "Bad Bunny", "J Balvin", "Ozuna", "Karol G", "Rosalía", "Shakira", "Maluma", "Daddy Yankee", "Luis Fonsi",
+  // Jazz (2025 Contemporary Top 10)
+  "Kamasi Washington", "Robert Glasper", "Esperanza Spalding", "Thundercat", "Snarky Puppy",
+  "Brad Mehldau", "Christian Scott aTunde Adjuah", "GoGo Penguin", "Nubya Garcia", "Sons of Kemet",
   
-  // Jazz/Blues
-  "Miles Davis", "John Coltrane", "Billie Holiday", "Ella Fitzgerald", "Louis Armstrong", "Duke Ellington",
-  "Nina Simone", "B.B. King", "Muddy Waters", "Etta James", "Norah Jones", "Diana Krall",
+  // Classical (2025 Contemporary Top 10)
+  "Ludovico Einaudi", "Max Richter", "Ólafur Arnalds", "Nils Frahm", "Kiasmos", "A Winged Victory for the Sullen",
+  "Dustin O'Halloran", "Hauschka", "Peter Broderick", "Emilie Simon",
   
-  // Classical/Instrumental
-  "Ludwig van Beethoven", "Wolfgang Amadeus Mozart", "Johann Sebastian Bach", "Frédéric Chopin", "Claude Debussy",
-  "Ludovico Einaudi", "Max Richter", "Ólafur Arnalds", "Nils Frahm", "GoGo Penguin",
-  
-  // Reggae/Caribbean
-  "Bob Marley", "Damian Marley", "Sean Paul", "Shaggy", "Jimmy Buffett", "Steel Pulse", "Chronixx",
-  
-  // Folk/Acoustic
-  "Bob Dylan", "Joni Mitchell", "Neil Young", "Fleet Foxes", "The Lumineers", "Mumford & Sons", "Of Monsters and Men",
-  "Iron & Wine", "Bon Iver", "Sufjan Stevens", "Father John Misty", "Big Thief", "Angel Olsen"
+  // Folk (2025 Top 15)
+  "Bon Iver", "Fleet Foxes", "Caamp", "The Lumineers", "Gregory Alan Isakov", "Iron & Wine",
+  "First Aid Kit", "The Head and the Heart", "Of Monsters and Men", "Mumford & Sons",
+  "The Tallest Man on Earth", "Phoebe Bridgers", "Big Thief", "Angel Olsen", "Julien Baker"
 ];
 
 const LISTENING_HABITS = [
