@@ -357,6 +357,12 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
   };
 
   const canProceed = () => {
+    // When in editing mode, users should be able to skip any section except the summary
+    if (isEditing && step > 1) {
+      return true; // Allow skipping any section when editing
+    }
+    
+    // Normal progression requirements for initial profile creation
     switch (step) {
       case 1: return (profileData.profilePhotos?.length || 0) >= 1;
       case 2: return profileData.name && profileData.email && profileData.username && profileData.age; // Basic info
@@ -1079,6 +1085,7 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
           }}
           disabled={step === 1 && !isEditing}
           className="flex items-center gap-2"
+          data-testid="button-back"
         >
           {isEditing && step > 1 ? "Back to Summary" : "Previous"}
         </Button>
@@ -1094,21 +1101,40 @@ export default function MusicProfileBuilder({ onComplete, isLoading, initialData
           ))}
         </div>
 
-        <Button
-          onClick={() => {
-            if (isEditing && step < totalSteps) {
-              // Save individual section changes and return to summary
-              setIsEditing(true);
-              setStep(1);
-            } else {
-              nextStep();
-            }
-          }}
-          disabled={!canProceed() || isLoading}
-          className="music-gradient-purple-pink text-white flex items-center gap-2"
-        >
-          {isLoading ? "Saving..." : isEditing && step < totalSteps ? "Save Section" : step === totalSteps ? "Complete Profile" : "Next"}
-        </Button>
+        <div className="flex items-center space-x-2">
+          {/* Skip button - only show when in editing mode and not on summary or final step */}
+          {isEditing && step > 1 && step < totalSteps && (
+            <Button
+              variant="ghost"
+              onClick={() => {
+                // Skip this section and return to summary
+                setIsEditing(true);
+                setStep(1);
+              }}
+              className="text-gray-500 hover:text-gray-700"
+              data-testid="button-skip-section"
+            >
+              Skip Section
+            </Button>
+          )}
+          
+          <Button
+            onClick={() => {
+              if (isEditing && step < totalSteps) {
+                // Save individual section changes and return to summary
+                setIsEditing(true);
+                setStep(1);
+              } else {
+                nextStep();
+              }
+            }}
+            disabled={!canProceed() || isLoading}
+            className="music-gradient-purple-pink text-white flex items-center gap-2"
+            data-testid="button-next"
+          >
+            {isLoading ? "Saving..." : isEditing && step < totalSteps ? "Save Section" : step === totalSteps ? "Complete Profile" : "Next"}
+          </Button>
+        </div>
       </div>
     </div>
   );
