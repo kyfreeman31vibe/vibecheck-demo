@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,8 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, User, Bell, Shield, CreditCard, Save, Eye, EyeOff } from "lucide-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ArrowLeft, User, Bell, Shield, CreditCard, Save, Eye, EyeOff, Music } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/bottom-navigation";
@@ -22,6 +22,49 @@ export default function Settings({ currentUser }: SettingsProps) {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Spotify connection status
+  const { data: spotifyStatus, refetch: refetchSpotifyStatus } = useQuery<{ connected: boolean }>({
+    queryKey: ["/api/spotify/status"],
+    enabled: !!currentUser,
+    retry: false,
+  });
+
+  const spotifyConnected = spotifyStatus?.connected || false;
+
+  // Listen for Spotify auth popup messages
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      const trustedOrigin = window.location.origin;
+      if (event.origin !== trustedOrigin) {
+        return;
+      }
+
+      if (event.data === 'spotify-auth-success') {
+        toast({
+          title: "Spotify Connected!",
+          description: "Your music service is now linked.",
+        });
+        refetchSpotifyStatus();
+      } else if (event.data === 'spotify-auth-error') {
+        toast({
+          title: "Connection Failed",
+          description: "Unable to connect to Spotify.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [toast, refetchSpotifyStatus]);
+
+  const connectSpotify = () => {
+    const authWindow = window.open('/api/auth/spotify', 'spotify-auth', 'width=500,height=600');
+    if (!authWindow || authWindow.closed || typeof authWindow.closed == 'undefined') {
+      window.location.href = "/api/auth/spotify";
+    }
+  };
 
   // Account settings state
   const [accountData, setAccountData] = useState({
@@ -259,6 +302,51 @@ export default function Settings({ currentUser }: SettingsProps) {
                   <Save className="w-4 h-4 mr-2" />
                   {updateAccountMutation.isPending ? "Saving..." : "Save Changes"}
                 </Button>
+
+                <Separator className="my-6" />
+
+                {/* Connected Services */}
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-1">Connected Services</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Manage your linked music accounts</p>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                        <Music className="w-5 h-5 text-green-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Spotify</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {spotifyConnected ? "Connected" : "Not connected"}
+                        </p>
+                      </div>
+                    </div>
+                    {spotifyConnected ? (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs"
+                        disabled
+                        data-testid="button-spotify-connected"
+                      >
+                        Connected
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={connectSpotify}
+                        className="text-xs"
+                        data-testid="button-connect-spotify-settings"
+                      >
+                        Connect
+                      </Button>
+                    )}
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
