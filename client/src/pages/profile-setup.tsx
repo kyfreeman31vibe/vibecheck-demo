@@ -117,6 +117,8 @@ export default function ProfileSetup() {
     const dataToSave = {
       favoriteGenres: profileData.favoriteGenres || [],
       favoriteArtists: profileData.favoriteArtists || [],
+      favoriteSongs: profileData.favoriteSongs || [],
+      listeningHabits: profileData.listeningHabits || [],
       personalityType: profileData.personalityType || "",
       personalityTraits: profileData.personalityTraits || [],
       bio: profileData.bio || "",
@@ -142,7 +144,12 @@ export default function ProfileSetup() {
     personalityType: currentUser.personalityType || "",
     personalityTraits: currentUser.personalityTraits || [],
     bio: currentUser.bio || "",
-    profilePhotos: currentUser.profilePhotos || []
+    profilePhotos: currentUser.profilePhotos || [],
+    // Include basic user info so validation works
+    name: currentUser.name,
+    email: currentUser.email || undefined,
+    username: currentUser.username,
+    age: currentUser.age
   } : undefined;
 
   if (!currentUser) {
