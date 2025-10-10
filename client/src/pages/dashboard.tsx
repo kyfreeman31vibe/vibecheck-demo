@@ -7,6 +7,7 @@ import { Music, Heart, MessageCircle, User, Settings, Zap, TrendingUp, BarChart3
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/bottom-navigation";
+import HomeFeed from "@/components/home-feed";
 
 interface DashboardProps {
   currentUser: any;
@@ -204,35 +205,8 @@ export default function Dashboard({ currentUser, onLogout }: DashboardProps) {
           </CardContent>
         </Card>
 
-        {/* Recent Activity */}
-        <Card className="bg-gray-800/40 backdrop-blur-xl border border-purple-500/30 shadow-xl">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg text-white">Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {recentMatches && (recentMatches as any[]).length > 0 ? (
-                (recentMatches as any[]).slice(0, 3).map((match: any, index: number) => (
-                  <div key={index} className="flex items-center space-x-3 p-3 rounded-xl bg-purple-500/10 backdrop-blur-sm border border-purple-500/30">
-                    <User className="w-4 h-4 text-pink-400" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-white">
-                        New match with {match.name}
-                      </p>
-                      <p className="text-xs text-gray-300">
-                        {match.compatibilityScore}% compatibility
-                      </p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-gray-400 text-center py-4">
-                  No recent activity
-                </p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        {/* Home Feed - Music Activity & Trending */}
+        <HomeFeed currentUser={currentUser} />
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-4">

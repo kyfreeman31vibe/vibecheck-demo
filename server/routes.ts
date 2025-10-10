@@ -6,6 +6,7 @@ import { calculateMusicCompatibility } from "../client/src/lib/music-compatibili
 import { SpotifyService } from "./integrations/spotify";
 import { AppleMusicService } from "./integrations/apple-music";
 import { EventsService } from "./integrations/events";
+import { GeniusService } from "./integrations/genius";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -421,6 +422,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: 'Failed to fetch available genres' });
     }
   });
+
+  // Genius API Routes
+  app.get("/api/genius/search", GeniusService.handleSearch);
+  app.get("/api/genius/trending", GeniusService.handleTrending);
+  app.get("/api/genius/songs/:id", GeniusService.handleSongDetails);
 
   // Dashboard endpoints
   app.get("/api/dashboard/stats", async (req: any, res) => {
