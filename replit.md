@@ -1,8 +1,8 @@
-# VibeCheck - Music Dating App System Architecture
+# VibeCheck - Music Social Network System Architecture
 
 ## Overview
 
-VibeCheck is a full-stack music-themed dating application designed to connect users based on their musical compatibility. The platform allows users to discover, match, and chat with others who share similar tastes in genres, artists, and songs. It features a mobile-first design, real-time messaging, and integrates with external music event APIs to foster a vibrant community around shared musical interests. The ambition is to create a leading platform for music lovers seeking meaningful connections.
+VibeCheck is a full-stack music-based social networking platform designed to connect users through their shared love of music. The platform allows users to build meaningful connections—whether friendships, event buddies, or romantic relationships—based on musical compatibility. Users can discover others with similar tastes, share their profiles via direct handles, send connection requests, attend music events together, and engage in real-time messaging. It features a mobile-first design, shareable profile links, and integrates with external music event APIs to foster a vibrant community around shared musical interests. The ambition is to create the leading social network for music lovers of all connection types.
 
 ## User Preferences
 
@@ -25,17 +25,28 @@ Preferred communication style: Simple, everyday language.
 - **Session Management**: Express sessions with PostgreSQL store.
 - **Core Features**:
     - **User Management**: Registration, login, profile setup with detailed music preferences, and an enhanced 7-step profile creation/editing process.
-    - **Matching System**: Music-based compatibility scoring algorithm and a swipe-based discovery interface.
+    - **Social Connections**: Direct connection requests with support for multiple connection types (friends, music buddies, event buddies) separate from romantic matching.
+    - **Shareable Profiles**: Public profile pages accessible via username handles (e.g., /u/username) that can be shared with anyone.
+    - **Matching System**: Optional music-based compatibility scoring algorithm and a swipe-based discovery interface for dating.
+    - **Connection Management**: Dedicated connections page to view, accept, and manage friend requests and connections.
     - **Chat System**: Real-time messaging with message history.
     - **Music Integration**: Tracking and calculation of compatibility based on shared musical interests, including a comprehensive artist database (600+ artists across 24 genres).
-    - **Profile Design**: Redesigned "how others see you" profile view with large photo display, music personality badges, and consolidated editing.
+    - **Profile Design**: Redesigned "how others see you" profile view with large photo display, music personality badges, shareable profile links, and consolidated editing.
     - **Settings Page**: Comprehensive settings with Account, Notifications, Privacy, and mock Billing sections.
     - **Photo Upload System**: Robust photo upload, saving, and persistence.
+    - **Event Discovery**: Browse and RSVP to music events, see who else is attending.
 
 ### Database Design
 - **ORM**: Drizzle ORM with PostgreSQL dialect.
 - **Schema**: Defined with Zod validation.
-- **Tables**: `users`, `matches`, `messages`, `swipes`, `eventAttendances`, `socialConnections`, `eventComments`.
+- **Tables**: 
+  - `users` - User accounts and profile data
+  - `matches` - Romantic matching/dating relationships  
+  - `messages` - Chat messages between matches
+  - `swipes` - Dating discovery swipe actions
+  - `socialConnections` - Non-romantic connections (friends, music buddies, event buddies) with request/accept flow
+  - `eventAttendances` - User RSVPs to music events
+  - `eventComments` - User comments on events
 
 ### Deployment Strategy
 - **Development**: Vite dev server (frontend), Express server with `tsx` (backend), environment variables.
