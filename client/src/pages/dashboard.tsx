@@ -1,11 +1,8 @@
-import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Music, Heart, MessageCircle, User, Settings, Zap, TrendingUp, BarChart3, LogOut } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/bottom-navigation";
 import HomeFeed from "@/components/home-feed";
 
@@ -16,7 +13,6 @@ interface DashboardProps {
 
 export default function Dashboard({ currentUser, onLogout }: DashboardProps) {
   const [, setLocation] = useLocation();
-  const { toast } = useToast();
 
   // Dashboard data queries
   const { data: dashboardStats } = useQuery({
@@ -28,34 +24,6 @@ export default function Dashboard({ currentUser, onLogout }: DashboardProps) {
     queryKey: ["/api/dashboard/recent-matches"],
     enabled: !!currentUser,
   });
-
-  const { data: spotifyStatus, refetch: refetchSpotifyStatus } = useQuery({
-    queryKey: ["/api/spotify/status"],
-    enabled: !!currentUser,
-  });
-
-  // Listen for Spotify auth popup messages
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      if (event.data === 'spotify-auth-success') {
-        toast({
-          title: "Spotify Connected!",
-          description: "Your music accounts are now synced.",
-        });
-        // Refresh Spotify status
-        refetchSpotifyStatus();
-      } else if (event.data === 'spotify-auth-error') {
-        toast({
-          title: "Connection Failed",
-          description: "Unable to connect to Spotify. Please try again.",
-          variant: "destructive",
-        });
-      }
-    };
-
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
-  }, [refetchSpotifyStatus, toast]);
 
   return (
     <div className="min-h-screen tech-gradient-soft pb-20">
@@ -137,73 +105,6 @@ export default function Dashboard({ currentUser, onLogout }: DashboardProps) {
             </CardContent>
           </Card>
         </div>
-
-        {/* Music Connection Status */}
-        <Card className="bg-gray-800/40 backdrop-blur-xl border border-cyan-500/30 shadow-xl">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg text-white">Music Connection</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Music className={`w-5 h-5 ${(spotifyStatus as any)?.connected ? 'text-lime-400' : 'text-gray-400'}`} />
-                <div>
-                  <span className="text-white">Spotify</span>
-                  {(spotifyStatus as any)?.connected && (
-                    <p className="text-xs text-gray-300">Music sync active</p>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                {(spotifyStatus as any)?.connected ? (
-                  <Badge className="bg-lime-500/20 text-lime-400 border border-lime-400/30" data-testid="badge-spotify-connected">
-                    Connected
-                  </Badge>
-                ) : (
-                  <Button
-                    onClick={() => {
-                      // Open Spotify auth in popup to avoid navigation issues
-                      const popup = window.open(
-                        '/api/auth/spotify',
-                        'spotify-auth',
-                        'width=600,height=700,scrollbars=yes,resizable=yes'
-                      );
-                      
-                      if (!popup) {
-                        toast({
-                          title: "Popup Blocked",
-                          description: "Please allow popups for Spotify authentication.",
-                          variant: "destructive",
-                        });
-                        return;
-                      }
-                      
-                      // Listen for popup close without message (user closed manually)
-                      const checkClosed = setInterval(() => {
-                        if (popup.closed) {
-                          clearInterval(checkClosed);
-                        }
-                      }, 1000);
-                    }}
-                    size="sm"
-                    className="accent-coral-lime text-white shadow-lg border border-coral-400/50"
-                    data-testid="button-connect-spotify"
-                  >
-                    Connect
-                  </Button>
-                )}
-              </div>
-            </div>
-            
-            {!(spotifyStatus as any)?.connected && (
-              <div className="mt-3 p-3 bg-cyan-500/10 backdrop-blur-sm rounded-lg border border-cyan-500/30">
-                <p className="text-sm text-gray-300">
-                  Connect your Spotify account to import playlists and improve music-based matching!
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
 
         {/* Home Feed - Music Activity & Trending */}
         <HomeFeed currentUser={currentUser} />
