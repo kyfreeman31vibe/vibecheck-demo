@@ -3,6 +3,13 @@ import type { Request, Response } from "express";
 const GENIUS_API_TOKEN = process.env.GENIUS_API_TOKEN;
 const GENIUS_API_BASE = "https://api.genius.com";
 
+// Debug: Check if token is loaded
+if (!GENIUS_API_TOKEN) {
+  console.warn('⚠️ GENIUS_API_TOKEN is not set in environment variables');
+} else {
+  console.log('✅ GENIUS_API_TOKEN loaded (length:', GENIUS_API_TOKEN.length, ')');
+}
+
 interface GeniusSong {
   id: number;
   title: string;
@@ -17,16 +24,14 @@ export class GeniusService {
   // Search for trending songs
   static async searchSongs(query: string, limit: number = 10): Promise<any[]> {
     try {
+      // Use access_token query parameter as an alternative to Bearer header
       const response = await fetch(
-        `${GENIUS_API_BASE}/search?q=${encodeURIComponent(query)}`,
-        {
-          headers: {
-            Authorization: `Bearer ${GENIUS_API_TOKEN}`,
-          },
-        }
+        `${GENIUS_API_BASE}/search?q=${encodeURIComponent(query)}&access_token=${GENIUS_API_TOKEN}`
       );
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Genius API error response:', response.status, errorText);
         throw new Error(`Genius API error: ${response.statusText}`);
       }
 
