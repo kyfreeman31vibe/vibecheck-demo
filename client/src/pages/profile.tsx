@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Music, User, Settings, Edit3, LogOut, MapPin, Heart, Brain, Users, Volume2, Compass, Zap, Star } from "lucide-react";
+import { Music, User, Settings, Edit3, LogOut, MapPin, Heart, Brain, Users, Volume2, Compass, Zap, Star, Share2, Copy, Check } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -17,6 +17,7 @@ interface ProfileProps {
 export default function Profile({ currentUser, onLogout }: ProfileProps) {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
+  const [copied, setCopied] = useState(false);
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
@@ -38,6 +39,42 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
 
   const handleEditProfile = () => {
     setLocation("/setup");
+  };
+
+  const handleCopyProfile = async () => {
+    const url = `${window.location.origin}/u/${currentUser?.username}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      toast({
+        title: "Profile Link Copied!",
+        description: "Share your profile with anyone",
+      });
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "Failed to copy link",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleShareProfile = async () => {
+    const url = `${window.location.origin}/u/${currentUser?.username}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${currentUser?.name}'s VibeCheck Profile`,
+          text: `Check out my music profile on VibeCheck!`,
+          url,
+        });
+      } catch (err) {
+        // User cancelled share
+      }
+    } else {
+      handleCopyProfile();
+    }
   };
 
   // Get personality icon based on type
@@ -245,6 +282,40 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
                 </div>
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Shareable Profile Link */}
+        <Card className="mt-6 bg-gray-800/40 backdrop-blur-xl border border-purple-500/30">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h3 className="text-sm font-medium text-white mb-1">Share Your Profile</h3>
+                <p className="text-xs text-gray-400">
+                  vibecheck.app/u/{currentUser?.username}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopyProfile}
+                  className="bg-white/5 border-purple-500/30 text-white hover:bg-white/10"
+                  data-testid="button-copy-profile-link"
+                >
+                  {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleShareProfile}
+                  className="tech-gradient text-white border border-purple-400/50"
+                  data-testid="button-share-profile"
+                >
+                  <Share2 className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
 

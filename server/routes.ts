@@ -90,6 +90,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get user by username (for shareable profiles)
+  app.get("/api/users/username/:username", async (req, res) => {
+    try {
+      const { username } = req.params;
+      const user = await storage.getUserByUsername(username);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const { password, ...userWithoutPassword } = user;
+      res.json(userWithoutPassword);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid username" });
+    }
+  });
+
   app.put("/api/users/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -577,6 +594,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Social connection routes
+  app.get("/api/social/connections/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const connections = await storage.getUserSocialConnections(userId);
+      
+      // Get user details for each connection
+      const connectionsWithUsers = await Promise.all(
+        connections.map(async (connection: any) => {
+          const requester = await storage.getUser(connection.requesterId);
+          const receiver = await storage.getUser(connection.receiverId);
+          
+          return {
+            ...connection,
+            requester: requester ? {
+              id: requester.id,
+              name: requester.name,
+              username: requester.username,
+              profilePicture: requester.profilePicture,
+            } : null,
+            receiver: receiver ? {
+              id: receiver.id,
+              name: receiver.name,
+              username: receiver.username,
+              profilePicture: receiver.profilePicture,
+            } : null,
+          };
+        })
+      );
+
+      res.json(connectionsWithUsers);
+    } catch (error) {
+      console.error("Error fetching connections:", error);
+      res.status(500).json({ error: "Failed to fetch connections" });
+    }
+  });
+
   app.post("/api/social/connect", async (req: any, res) => {
     try {
       const userId = req.session?.user?.id;

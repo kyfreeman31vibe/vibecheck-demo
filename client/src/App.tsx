@@ -21,6 +21,8 @@ import Chat from "@/pages/chat";
 import Events from "@/pages/events";
 import Integrations from "@/pages/integrations";
 import Settings from "@/pages/settings";
+import PublicProfile from "@/pages/public-profile";
+import Connections from "@/pages/connections";
 
 function Router() {
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -115,6 +117,14 @@ function Router() {
       <Route path="/settings">
         {currentUser ? (
           <Settings currentUser={currentUser} />
+        ) : (
+          <Landing />
+        )}
+      </Route>
+      <Route path="/u/:username" component={PublicProfile} />
+      <Route path="/connections">
+        {currentUser ? (
+          <Connections currentUser={currentUser} />
         ) : (
           <Landing />
         )}

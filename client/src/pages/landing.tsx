@@ -368,8 +368,8 @@ export default function Landing() {
             <div className="absolute -bottom-2 -left-4 w-5 h-5 bg-purple-400 rounded-full animate-ping"></div>
           </div>
           <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">VibeCheck</h1>
-          <p className="text-2xl text-gray-300 font-medium">Connect through music</p>
-          <p className="text-sm text-gray-400 mt-3">Where technology meets musical souls</p>
+          <p className="text-2xl text-gray-300 font-medium">Your Music Social Network</p>
+          <p className="text-sm text-gray-400 mt-3">Connect, share, and vibe with music lovers • Dating, friendships & more</p>
         </div>
 
         <div className="space-y-6 w-full max-w-sm">
