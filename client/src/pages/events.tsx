@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -47,6 +48,7 @@ interface EventAttendee {
   user: {
     id: number;
     name: string;
+    username: string;
     profilePicture?: string;
     favoriteGenres: string[];
     personalityType?: string;
@@ -414,12 +416,14 @@ function EventSocialComponent({
             <div className="flex items-center space-x-2 mb-3">
               <div className="flex -space-x-2">
                 {attendees.slice(0, 5).map((attendee, index) => (
-                  <Avatar key={attendee.id} className="w-6 h-6 border-2 border-white dark:border-gray-800">
-                    <AvatarImage src={attendee.user?.profilePicture} />
-                    <AvatarFallback className="text-xs bg-music-purple/10 text-music-purple">
-                      {attendee.user?.name?.charAt(0) || '?'}
-                    </AvatarFallback>
-                  </Avatar>
+                  <Link key={attendee.id} href={`/u/${attendee.user?.username}`}>
+                    <Avatar className="w-6 h-6 border-2 border-white dark:border-gray-800 cursor-pointer hover:scale-110 transition-transform">
+                      <AvatarImage src={attendee.user?.profilePicture} />
+                      <AvatarFallback className="text-xs bg-music-purple/10 text-music-purple">
+                        {attendee.user?.name?.charAt(0) || '?'}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Link>
                 ))}
                 {attendees.length > 5 && (
                   <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 border-2 border-white dark:border-gray-800 flex items-center justify-center">
