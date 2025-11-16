@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,21 +10,14 @@ import { Music, Heart, MessageCircle, User, Settings, Zap, TrendingUp, Calendar,
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function Landing() {
   const [, setLocation] = useLocation();
   const [showSignup, setShowSignup] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const { currentUser, login, logout } = useAuth();
   const { toast } = useToast();
-
-  // Check if user is logged in
-  useEffect(() => {
-    const user = localStorage.getItem("currentUser");
-    if (user) {
-      setCurrentUser(JSON.parse(user));
-    }
-  }, []);
 
   // Dashboard data queries
   const { data: dashboardStats } = useQuery({
@@ -48,8 +41,7 @@ export default function Landing() {
       return response.json();
     },
     onSuccess: () => {
-      localStorage.removeItem("currentUser");
-      setCurrentUser(null);
+      logout();
       toast({
         title: "Logged out successfully",
         description: "See you next time!",
@@ -81,7 +73,7 @@ export default function Landing() {
       return response.json();
     },
     onSuccess: (user) => {
-      localStorage.setItem("currentUser", JSON.stringify(user));
+      login(user);
       setLocation("/setup");
     },
     onError: () => {
@@ -99,8 +91,7 @@ export default function Landing() {
       return response.json();
     },
     onSuccess: (user) => {
-      localStorage.setItem("currentUser", JSON.stringify(user));
-      setCurrentUser(user);
+      login(user);
       setShowLogin(false);
 
       toast({

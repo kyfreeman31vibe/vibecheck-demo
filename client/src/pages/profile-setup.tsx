@@ -5,6 +5,7 @@ import { ArrowLeft, Music, LogOut } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/auth-context";
 import MusicProfileBuilder from "@/components/music-profile-builder";
 import BottomNavigation from "@/components/bottom-navigation";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -13,12 +14,7 @@ import type { User } from "@shared/schema";
 export default function ProfileSetup() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("currentUser") || "{}");
-    setCurrentUser(user);
-  }, []);
+  const { currentUser, updateUser, logout } = useAuth();
 
   // Handle Spotify authentication messages during profile creation
   useEffect(() => {
@@ -61,7 +57,7 @@ export default function ProfileSetup() {
       console.log('Success data:', user);
       console.log('Photos after successful save:', user.profilePhotos?.length || 0);
       
-      localStorage.setItem("currentUser", JSON.stringify(user));
+      updateUser(user);
       toast({
         title: "Success",
         description: "Music profile created successfully!",
@@ -86,7 +82,7 @@ export default function ProfileSetup() {
       return response.json();
     },
     onSuccess: () => {
-      localStorage.removeItem("currentUser");
+      logout();
       toast({
         title: "Signed out",
         description: "You have been successfully signed out"
