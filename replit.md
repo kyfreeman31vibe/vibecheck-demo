@@ -24,7 +24,8 @@ Preferred communication style: Simple, everyday language.
 - **Database**: PostgreSQL with Drizzle ORM for schema management and data storage.
 - **Session Management**: Express sessions with PostgreSQL store.
 - **Core Features**:
-    - **User Management**: Registration, login, profile setup with detailed music preferences, and an enhanced 7-step profile creation/editing process.
+    - **User Management**: Registration, login, profile setup with detailed music preferences, and an enhanced 7-step profile creation/editing process. During signup, users select their connection interests (friends, dating, or both) to personalize their experience.
+    - **Connection Interests**: Users specify what they're looking for during registration—friends & connections, dating & romance, or both. This preference is stored in the database and can be used to personalize discovery and recommendations.
     - **Social Connections**: Direct connection requests with support for multiple connection types (friends, music buddies, event buddies) separate from romantic matching.
     - **Shareable Profiles**: Public profile pages accessible via username handles (e.g., /u/username) that can be shared with anyone.
     - **Matching System**: Optional music-based compatibility scoring algorithm and a swipe-based discovery interface for dating.
@@ -40,7 +41,7 @@ Preferred communication style: Simple, everyday language.
 - **ORM**: Drizzle ORM with PostgreSQL dialect.
 - **Schema**: Defined with Zod validation.
 - **Tables**: 
-  - `users` - User accounts and profile data
+  - `users` - User accounts and profile data (includes `connectionInterests` field to store friend/dating preferences)
   - `matches` - Romantic matching/dating relationships  
   - `messages` - Chat messages between matches
   - `swipes` - Dating discovery swipe actions
