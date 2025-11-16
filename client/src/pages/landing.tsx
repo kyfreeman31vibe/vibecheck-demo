@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Music, Heart, MessageCircle, User, Settings, Zap, TrendingUp, Calendar, BarChart3 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Music, Heart, MessageCircle, User, Settings, Zap, TrendingUp, Calendar, BarChart3, Users } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -65,6 +67,7 @@ export default function Landing() {
     name: "",
     email: "",
     age: "",
+    connectionInterests: [] as string[],
   });
 
   const [loginData, setLoginData] = useState({
@@ -114,6 +117,15 @@ export default function Landing() {
     },
   });
 
+  const toggleConnectionInterest = (interest: string) => {
+    setSignupData(prev => ({
+      ...prev,
+      connectionInterests: prev.connectionInterests.includes(interest)
+        ? prev.connectionInterests.filter(i => i !== interest)
+        : [...prev.connectionInterests, interest]
+    }));
+  };
+
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
     signupMutation.mutate({
@@ -123,6 +135,7 @@ export default function Landing() {
       favoriteArtists: [],
       favoriteSongs: [],
       email: signupData.email,
+      connectionInterests: signupData.connectionInterests,
     });
   };
 
@@ -213,6 +226,48 @@ export default function Landing() {
                       required
                       data-testid="input-signup-age"
                     />
+                  </div>
+
+                  {/* Connection Interests Selection */}
+                  <div className="space-y-3 bg-gray-700/20 border border-purple-500/20 rounded-xl p-4">
+                    <Label className="text-gray-200 font-medium">I'm interested in:</Label>
+                    <p className="text-xs text-gray-400">Select what you're looking for (you can choose both)</p>
+                    
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-700/30 border border-blue-500/30 hover:bg-gray-700/50 transition-colors">
+                        <Checkbox
+                          id="friends"
+                          checked={signupData.connectionInterests.includes("friends")}
+                          onCheckedChange={() => toggleConnectionInterest("friends")}
+                          className="border-blue-400 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
+                          data-testid="checkbox-interest-friends"
+                        />
+                        <Label htmlFor="friends" className="flex items-center gap-2 text-gray-200 cursor-pointer flex-1">
+                          <Users className="w-4 h-4 text-blue-400" />
+                          <div>
+                            <div className="font-medium">Friends & Connections</div>
+                            <div className="text-xs text-gray-400">Meet music lovers for friendship</div>
+                          </div>
+                        </Label>
+                      </div>
+
+                      <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-700/30 border border-pink-500/30 hover:bg-gray-700/50 transition-colors">
+                        <Checkbox
+                          id="dating"
+                          checked={signupData.connectionInterests.includes("dating")}
+                          onCheckedChange={() => toggleConnectionInterest("dating")}
+                          className="border-pink-400 data-[state=checked]:bg-pink-500 data-[state=checked]:border-pink-500"
+                          data-testid="checkbox-interest-dating"
+                        />
+                        <Label htmlFor="dating" className="flex items-center gap-2 text-gray-200 cursor-pointer flex-1">
+                          <Heart className="w-4 h-4 text-pink-400" />
+                          <div>
+                            <div className="font-medium">Dating & Romance</div>
+                            <div className="text-xs text-gray-400">Find romantic connections through music</div>
+                          </div>
+                        </Label>
+                      </div>
+                    </div>
                   </div>
                   
                   <Button

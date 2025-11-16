@@ -18,6 +18,7 @@ export const users = pgTable("users", {
   topDefiningTracks: text("top_defining_tracks").array(),
   personalityType: text("personality_type"),
   personalityTraits: text("personality_traits").array(),
+  connectionInterests: text("connection_interests").array(), // ["friends", "dating"] or ["friends"] or ["dating"]
   createdAt: timestamp("created_at").defaultNow(),
   // Account settings
   email: text("email"),
