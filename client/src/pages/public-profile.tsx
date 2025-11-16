@@ -15,7 +15,8 @@ import {
   MapPin,
   Disc3,
   Sparkles,
-  Users
+  Users,
+  MessageCircle
 } from "lucide-react";
 import BottomNavigation from "@/components/bottom-navigation";
 
@@ -24,7 +25,6 @@ export default function PublicProfile() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [connectionStatus, setConnectionStatus] = useState<string | null>(null);
 
   useEffect(() => {
     const user = localStorage.getItem("currentUser");
@@ -43,13 +43,35 @@ export default function PublicProfile() {
     enabled: !!params?.username,
   });
 
+  const { data: userConnections } = useQuery({
+    queryKey: ["/api/social/connections", currentUser?.id],
+    queryFn: async () => {
+      const response = await fetch(`/api/social/connections/${currentUser.id}`);
+      if (!response.ok) throw new Error("Failed to fetch connections");
+      return response.json();
+    },
+    enabled: !!currentUser?.id,
+  });
+
+  const isAlreadyConnected = userConnections?.some(
+    (conn: any) => 
+      (conn.status === "accepted") && 
+      (conn.requesterId === profileUser?.id || conn.receiverId === profileUser?.id)
+  );
+
+  const hasPendingRequest = userConnections?.some(
+    (conn: any) => 
+      (conn.status === "pending") && 
+      (conn.requesterId === currentUser?.id && conn.receiverId === profileUser?.id)
+  );
+
   const connectMutation = useMutation({
     mutationFn: async (data: { receiverId: number; connectionType: string }) => {
       const response = await apiRequest("POST", "/api/social/connect", data);
       return response.json();
     },
     onSuccess: () => {
-      setConnectionStatus("pending");
+      queryClient.invalidateQueries({ queryKey: ["/api/social/connections", currentUser?.id] });
       toast({
         title: "Connection Request Sent!",
         description: "You'll be notified when they respond",
@@ -185,18 +207,29 @@ export default function PublicProfile() {
             {/* Action Buttons */}
             {!isOwnProfile && currentUser && (
               <div className="mt-4 flex gap-2">
-                <Button
-                  className="flex-1 tech-gradient text-white border border-purple-400/50"
-                  onClick={() => connectMutation.mutate({ 
-                    receiverId: profileUser.id, 
-                    connectionType: "friend" 
-                  })}
-                  disabled={connectionStatus === "pending" || connectMutation.isPending}
-                  data-testid="button-connect"
-                >
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  {connectionStatus === "pending" ? "Request Sent" : "Connect"}
-                </Button>
+                {isAlreadyConnected ? (
+                  <Button
+                    className="flex-1 tech-gradient text-white border border-purple-400/50"
+                    onClick={() => setLocation(`/chat/${profileUser.id}`)}
+                    data-testid="button-message"
+                  >
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Message
+                  </Button>
+                ) : (
+                  <Button
+                    className="flex-1 tech-gradient text-white border border-purple-400/50"
+                    onClick={() => connectMutation.mutate({ 
+                      receiverId: profileUser.id, 
+                      connectionType: "friend" 
+                    })}
+                    disabled={hasPendingRequest || connectMutation.isPending}
+                    data-testid="button-connect"
+                  >
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    {hasPendingRequest ? "Request Sent" : "Connect"}
+                  </Button>
+                )}
                 <Button
                   variant="outline"
                   className="bg-white/5 border-purple-500/30 text-white hover:bg-white/10"
