@@ -3,7 +3,7 @@ import { useLocation, useParams } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Music, Send, MoreVertical, Heart } from "lucide-react";
+import { ArrowLeft, Music, Send, MoreVertical, Heart, Users, Ticket } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import BottomNavigation from "@/components/bottom-navigation";
@@ -18,18 +18,32 @@ export default function Chat({ currentUser }: ChatProps) {
   const { matchId } = useParams();
   const queryClient = useQueryClient();
   const [message, setMessage] = useState("");
+  const userId = matchId ? parseInt(matchId) : null;
 
-  const { data: messages = [], refetch } = useQuery({
+  const { data: messages = [], refetch } = useQuery<any[]>({
     queryKey: ["/api/messages", matchId],
     enabled: !!matchId,
   });
 
-  const { data: matches = [] } = useQuery({
+  const { data: matches = [] } = useQuery<any[]>({
     queryKey: ["/api/matches", currentUser?.id],
     enabled: !!currentUser?.id,
   });
 
-  const currentMatch = matches.find(match => match.id === parseInt(matchId || "0"));
+  const { data: socialConnections = [] } = useQuery<any[]>({
+    queryKey: ["/api/social/connections", currentUser?.id],
+    enabled: !!currentUser?.id,
+  });
+
+  const currentMatch = matches.find((match: any) => match.id === parseInt(matchId || "0"));
+  
+  const currentConnection = socialConnections.find((conn: any) => 
+    conn.status === "accepted" && 
+    (conn.requesterId === userId || conn.receiverId === userId)
+  );
+
+  const isMatch = !!currentMatch;
+  const isConnection = !!currentConnection;
 
   const sendMessageMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -54,11 +68,67 @@ export default function Chat({ currentUser }: ChatProps) {
     });
   };
 
-  if (!currentUser || !currentMatch) {
+  if (!currentUser) {
     return <div>Loading...</div>;
   }
 
-  const partner = currentMatch.partner;
+  if (!isMatch && !isConnection) {
+    return <div>Loading...</div>;
+  }
+
+  let partner: any;
+  let connectionType: string = "";
+  let compatibilityScore: number = 0;
+
+  if (isMatch && currentMatch) {
+    partner = currentMatch.partner;
+    compatibilityScore = currentMatch.compatibilityScore || 0;
+  } else if (isConnection && currentConnection) {
+    const partnerId = currentConnection.requesterId === currentUser.id 
+      ? currentConnection.receiverId 
+      : currentConnection.requesterId;
+    partner = currentConnection.requesterId === currentUser.id 
+      ? currentConnection.receiver 
+      : currentConnection.requester;
+    connectionType = currentConnection.connectionType || "friend";
+  }
+
+  const getConnectionBadge = () => {
+    if (isMatch) {
+      return (
+        <Badge variant="outline" className="bg-pink-500/20 border-pink-400/50 text-pink-600 text-xs font-medium">
+          <Heart className="w-3 h-3 mr-1" />
+          Dating
+        </Badge>
+      );
+    }
+    
+    switch (connectionType) {
+      case "friend":
+        return (
+          <Badge variant="outline" className="bg-blue-500/20 border-blue-400/50 text-blue-600 text-xs font-medium">
+            <Users className="w-3 h-3 mr-1" />
+            Friend
+          </Badge>
+        );
+      case "music_buddy":
+        return (
+          <Badge variant="outline" className="bg-purple-500/20 border-purple-400/50 text-purple-600 text-xs font-medium">
+            <Music className="w-3 h-3 mr-1" />
+            Music Buddy
+          </Badge>
+        );
+      case "event_buddy":
+        return (
+          <Badge variant="outline" className="bg-orange-500/20 border-orange-400/50 text-orange-600 text-xs font-medium">
+            <Ticket className="w-3 h-3 mr-1" />
+            Event Buddy
+          </Badge>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="bg-white min-h-screen flex flex-col pb-20">
@@ -80,10 +150,7 @@ export default function Chat({ currentUser }: ChatProps) {
           <div>
             <div className="flex items-center gap-2">
               <p className="font-semibold text-gray-800">{partner?.name}</p>
-              <Badge variant="outline" className="bg-pink-500/20 border-pink-400/50 text-pink-600 text-xs font-medium">
-                <Heart className="w-3 h-3 mr-1" />
-                Dating
-              </Badge>
+              {getConnectionBadge()}
             </div>
             <p className="text-xs text-green-500">Online now</p>
           </div>
@@ -94,21 +161,33 @@ export default function Chat({ currentUser }: ChatProps) {
       </div>
 
       {/* Music Compatibility Bar */}
-      <div className="music-gradient-purple-pink p-3">
-        <div className="flex items-center justify-center space-x-2 text-white">
-          <Music className="w-4 h-4" />
-          <span className="text-sm font-medium">
-            {currentMatch.compatibilityScore}% Music Match • You both love great music!
-          </span>
+      {isMatch && (
+        <div className="music-gradient-purple-pink p-3">
+          <div className="flex items-center justify-center space-x-2 text-white">
+            <Music className="w-4 h-4" />
+            <span className="text-sm font-medium">
+              {compatibilityScore}% Music Match • You both love great music!
+            </span>
+          </div>
         </div>
-      </div>
+      )}
+      {isConnection && (
+        <div className="music-gradient-purple-pink p-3">
+          <div className="flex items-center justify-center space-x-2 text-white">
+            <Music className="w-4 h-4" />
+            <span className="text-sm font-medium">
+              Connected through music • Start chatting!
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {/* Match Message */}
+        {/* Match/Connection Message */}
         <div className="text-center">
           <div className="inline-block music-gradient-purple-pink text-white px-4 py-2 rounded-full text-sm font-medium mb-2">
-            🎵 You matched on music taste! 🎵
+            {isMatch ? "🎵 You matched on music taste! 🎵" : "🎵 You're connected! 🎵"}
           </div>
           <p className="text-xs text-gray-500">Today</p>
         </div>
@@ -119,7 +198,7 @@ export default function Chat({ currentUser }: ChatProps) {
             <p className="text-sm text-gray-400 mt-1">Start the conversation!</p>
           </div>
         ) : (
-          messages.map((msg) => (
+          messages.map((msg: any) => (
             <div
               key={msg.id}
               className={`flex items-start space-x-2 ${
