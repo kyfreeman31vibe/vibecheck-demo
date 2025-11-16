@@ -192,6 +192,7 @@ export class MemStorage implements IStorage {
       stripeSubscriptionId: insertUser.stripeSubscriptionId || null,
       subscriptionPlan: insertUser.subscriptionPlan || "free",
       subscriptionStatus: insertUser.subscriptionStatus || "inactive",
+      connectionInterests: insertUser.connectionInterests || [],
       createdAt: new Date()
     };
     this.users.set(id, user);
@@ -527,7 +528,8 @@ export class DatabaseStorage implements IStorage {
         favoriteArtists: insertUser.favoriteArtists || [],
         favoriteSongs: insertUser.favoriteSongs || [],
         topDefiningTracks: insertUser.topDefiningTracks || [],
-        personalityTraits: insertUser.personalityTraits || []
+        personalityTraits: insertUser.personalityTraits || [],
+        connectionInterests: insertUser.connectionInterests || []
       })
       .returning();
     return user;
