@@ -5,12 +5,47 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { Users, UserPlus, UserCheck, UserX, Music } from "lucide-react";
+import { Users, UserPlus, UserCheck, UserX, Music, Ticket, Heart } from "lucide-react";
 import BottomNavigation from "@/components/bottom-navigation";
 
 interface ConnectionsProps {
   currentUser: any;
 }
+
+const getConnectionBadge = (connectionType: string) => {
+  const types: Record<string, { label: string; icon: any; className: string }> = {
+    friend: {
+      label: "Friend",
+      icon: Users,
+      className: "bg-blue-500/20 border-blue-400/50 text-blue-300",
+    },
+    music_buddy: {
+      label: "Music Buddy",
+      icon: Music,
+      className: "bg-purple-500/20 border-purple-400/50 text-purple-300",
+    },
+    event_buddy: {
+      label: "Event Buddy",
+      icon: Ticket,
+      className: "bg-orange-500/20 border-orange-400/50 text-orange-300",
+    },
+    dating: {
+      label: "Dating",
+      icon: Heart,
+      className: "bg-pink-500/20 border-pink-400/50 text-pink-300",
+    },
+  };
+
+  const config = types[connectionType] || types.friend;
+  const Icon = config.icon;
+
+  return (
+    <Badge variant="outline" className={`${config.className} text-xs font-medium`}>
+      <Icon className="w-3 h-3 mr-1" />
+      {config.label}
+    </Badge>
+  );
+};
 
 export default function Connections({ currentUser }: ConnectionsProps) {
   const { toast } = useToast();
@@ -143,12 +178,9 @@ export default function Connections({ currentUser }: ConnectionsProps) {
                               {friend?.name || "Unknown"}
                             </h3>
                             <p className="text-sm text-gray-400">@{friend?.username || "unknown"}</p>
-                            <Badge 
-                              variant="outline" 
-                              className="mt-1 bg-white/5 border-purple-500/30 text-gray-300 text-xs"
-                            >
-                              {connection.connectionType}
-                            </Badge>
+                            <div className="mt-1">
+                              {getConnectionBadge(connection.connectionType)}
+                            </div>
                           </div>
                         </div>
                         <Button
@@ -206,12 +238,9 @@ export default function Connections({ currentUser }: ConnectionsProps) {
                           <p className="text-sm text-gray-400">
                             @{connection.requester?.username || "unknown"}
                           </p>
-                          <Badge 
-                            variant="outline" 
-                            className="mt-1 bg-white/5 border-purple-500/30 text-gray-300 text-xs"
-                          >
-                            {connection.connectionType}
-                          </Badge>
+                          <div className="mt-1">
+                            {getConnectionBadge(connection.connectionType)}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -288,9 +317,12 @@ export default function Connections({ currentUser }: ConnectionsProps) {
                           <p className="text-sm text-gray-400">
                             @{connection.receiver?.username || "unknown"}
                           </p>
-                          <Badge className="mt-1 bg-yellow-500/20 border-yellow-500/30 text-yellow-300 text-xs">
-                            Pending
-                          </Badge>
+                          <div className="mt-1 flex gap-2">
+                            {getConnectionBadge(connection.connectionType)}
+                            <Badge className="bg-yellow-500/20 border-yellow-500/30 text-yellow-300 text-xs">
+                              Pending
+                            </Badge>
+                          </div>
                         </div>
                       </div>
                     </div>

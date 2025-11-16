@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useLocation, useParams } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Music, Send, MoreVertical } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Music, Send, MoreVertical, Heart } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import BottomNavigation from "@/components/bottom-navigation";
@@ -77,7 +78,13 @@ export default function Chat({ currentUser }: ChatProps) {
             </span>
           </div>
           <div>
-            <p className="font-semibold text-gray-800">{partner?.name}</p>
+            <div className="flex items-center gap-2">
+              <p className="font-semibold text-gray-800">{partner?.name}</p>
+              <Badge variant="outline" className="bg-pink-500/20 border-pink-400/50 text-pink-600 text-xs font-medium">
+                <Heart className="w-3 h-3 mr-1" />
+                Dating
+              </Badge>
+            </div>
             <p className="text-xs text-green-500">Online now</p>
           </div>
         </div>

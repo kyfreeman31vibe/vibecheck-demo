@@ -1,6 +1,7 @@
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Heart, MessageCircle, User } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import BottomNavigation from "@/components/bottom-navigation";
@@ -68,9 +69,15 @@ export default function Matches({ currentUser }: MatchesProps) {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
-                        <h3 className="font-medium text-white">
-                          {match.name || `User ${match.id}`}
-                        </h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-medium text-white">
+                            {match.name || `User ${match.id}`}
+                          </h3>
+                          <Badge variant="outline" className="bg-pink-500/20 border-pink-400/50 text-pink-300 text-xs font-medium">
+                            <Heart className="w-3 h-3 mr-1" />
+                            Dating
+                          </Badge>
+                        </div>
                         <span className="text-sm text-cyan-400 font-medium">
                           {match.compatibilityScore || 85}% match
                         </span>
