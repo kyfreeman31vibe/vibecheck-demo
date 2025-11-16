@@ -153,6 +153,7 @@ export class MemStorage implements IStorage {
         stripeSubscriptionId: null,
         subscriptionPlan: "free",
         subscriptionStatus: "inactive",
+        connectionInterests: [],
         createdAt: new Date()
       };
       this.users.set(id, newUser);
