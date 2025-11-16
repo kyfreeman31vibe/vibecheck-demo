@@ -1,4 +1,5 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -152,48 +153,42 @@ export default function Connections({ currentUser }: ConnectionsProps) {
                   : connection.requester;
                 
                 return (
-                  <Card
-                    key={connection.id}
-                    className="bg-gray-800/40 backdrop-blur-xl border border-purple-500/30 shadow-xl"
-                    data-testid={`connection-${connection.id}`}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-12 h-12 tech-gradient rounded-full flex items-center justify-center shadow-lg border border-purple-400/50">
-                            {friend?.profilePicture ? (
-                              <img
-                                src={friend.profilePicture}
-                                alt={friend.name}
-                                className="w-full h-full rounded-full object-cover"
-                              />
-                            ) : (
-                              <span className="text-lg font-bold text-white">
-                                {friend?.name?.[0] || "?"}
-                              </span>
-                            )}
-                          </div>
-                          <div>
-                            <h3 className="font-medium text-white" data-testid={`text-friend-name-${connection.id}`}>
-                              {friend?.name || "Unknown"}
-                            </h3>
-                            <p className="text-sm text-gray-400">@{friend?.username || "unknown"}</p>
-                            <div className="mt-1">
-                              {getConnectionBadge(connection.connectionType)}
+                  <Link key={connection.id} href={`/u/${friend?.username}`}>
+                    <Card
+                      className="bg-gray-800/40 backdrop-blur-xl border border-purple-500/30 shadow-xl hover:bg-gray-800/60 transition-all cursor-pointer"
+                      data-testid={`connection-${connection.id}`}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-12 h-12 tech-gradient rounded-full flex items-center justify-center shadow-lg border border-purple-400/50">
+                              {friend?.profilePicture ? (
+                                <img
+                                  src={friend.profilePicture}
+                                  alt={friend.name}
+                                  className="w-full h-full rounded-full object-cover"
+                                />
+                              ) : (
+                                <span className="text-lg font-bold text-white">
+                                  {friend?.name?.[0] || "?"}
+                                </span>
+                              )}
+                            </div>
+                            <div>
+                              <h3 className="font-medium text-white" data-testid={`text-friend-name-${connection.id}`}>
+                                {friend?.name || "Unknown"}
+                              </h3>
+                              <p className="text-sm text-gray-400">@{friend?.username || "unknown"}</p>
+                              <div className="mt-1">
+                                {getConnectionBadge(connection.connectionType)}
+                              </div>
                             </div>
                           </div>
+                          <UserCheck className="w-5 h-5 text-gray-400" />
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-gray-400 hover:text-white"
-                          data-testid={`button-view-profile-${connection.id}`}
-                        >
-                          <UserCheck className="w-5 h-5" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 );
               })
             ) : (
