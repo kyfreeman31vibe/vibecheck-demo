@@ -694,6 +694,115 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Spotify routes
+  app.post("/api/spotify/sync", async (req: any, res) => {
+    try {
+      const userId = req.session?.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const { items } = req.body;
+      
+      const savedItems = [];
+      for (const item of items) {
+        const savedItem = await storage.createSpotifyItem({
+          userId,
+          ...item,
+        });
+        savedItems.push(savedItem);
+      }
+
+      res.json(savedItems);
+    } catch (error) {
+      console.error("Error syncing Spotify items:", error);
+      res.status(500).json({ error: "Failed to sync Spotify items" });
+    }
+  });
+
+  app.get("/api/spotify/items/:userId", async (req: any, res) => {
+    try {
+      const { userId } = req.params;
+      const items = await storage.getUserSpotifyItems(parseInt(userId));
+      res.json(items);
+    } catch (error) {
+      console.error("Error fetching Spotify items:", error);
+      res.status(500).json({ error: "Failed to fetch Spotify items" });
+    }
+  });
+
+  app.delete("/api/spotify/items/:itemId", async (req: any, res) => {
+    try {
+      const userId = req.session?.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const { itemId } = req.params;
+      const item = await storage.getSpotifyItem(parseInt(itemId));
+      
+      if (!item || item.userId !== userId) {
+        return res.status(404).json({ error: "Item not found" });
+      }
+
+      await storage.deleteSpotifyItem(parseInt(itemId));
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting Spotify item:", error);
+      res.status(500).json({ error: "Failed to delete Spotify item" });
+    }
+  });
+
+  app.post("/api/spotify/items/:itemId/comments", async (req: any, res) => {
+    try {
+      const userId = req.session?.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const { itemId } = req.params;
+      const { content } = req.body;
+
+      const comment = await storage.createSpotifyItemComment({
+        userId,
+        spotifyItemId: parseInt(itemId),
+        content,
+      });
+
+      res.json(comment);
+    } catch (error) {
+      console.error("Error creating comment:", error);
+      res.status(500).json({ error: "Failed to create comment" });
+    }
+  });
+
+  app.get("/api/spotify/items/:itemId/comments", async (req: any, res) => {
+    try {
+      const { itemId } = req.params;
+      const comments = await storage.getSpotifyItemComments(parseInt(itemId));
+      
+      const commentsWithUsers = await Promise.all(
+        comments.map(async (comment) => {
+          const user = await storage.getUser(comment.userId);
+          return {
+            ...comment,
+            user: user ? {
+              id: user.id,
+              name: user.name,
+              username: user.username,
+              profilePicture: user.profilePicture,
+            } : null,
+          };
+        })
+      );
+
+      res.json(commentsWithUsers);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      res.status(500).json({ error: "Failed to fetch comments" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

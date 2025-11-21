@@ -1,12 +1,14 @@
 import { 
-  users, matches, messages, swipes, eventAttendances, socialConnections, eventComments,
+  users, matches, messages, swipes, eventAttendances, socialConnections, eventComments, spotifyItems, spotifyItemComments,
   type User, type InsertUser, 
   type Match, type InsertMatch,
   type Message, type InsertMessage,
   type Swipe, type InsertSwipe,
   type EventAttendance, type InsertEventAttendance,
   type SocialConnection, type InsertSocialConnection,
-  type EventComment, type InsertEventComment
+  type EventComment, type InsertEventComment,
+  type SpotifyItem, type InsertSpotifyItem,
+  type SpotifyItemComment, type InsertSpotifyItemComment
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, not, inArray } from "drizzle-orm";
@@ -53,6 +55,17 @@ export interface IStorage {
   // Event comment operations
   createEventComment(comment: InsertEventComment): Promise<EventComment>;
   getEventComments(eventId: string): Promise<EventComment[]>;
+
+  // Spotify item operations
+  createSpotifyItem(item: InsertSpotifyItem): Promise<SpotifyItem>;
+  getUserSpotifyItems(userId: number): Promise<SpotifyItem[]>;
+  getSpotifyItem(id: number): Promise<SpotifyItem | undefined>;
+  updateSpotifyItem(id: number, updates: Partial<InsertSpotifyItem>): Promise<SpotifyItem | undefined>;
+  deleteSpotifyItem(id: number): Promise<boolean>;
+  
+  // Spotify item comment operations
+  createSpotifyItemComment(comment: InsertSpotifyItemComment): Promise<SpotifyItemComment>;
+  getSpotifyItemComments(spotifyItemId: number): Promise<SpotifyItemComment[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -702,6 +715,62 @@ export class DatabaseStorage implements IStorage {
       .from(swipes)
       .where(and(eq(swipes.swiperId, swiperId), eq(swipes.targetId, targetId)));
     return !!swipe;
+  }
+
+  async createSpotifyItem(item: InsertSpotifyItem): Promise<SpotifyItem> {
+    const [newItem] = await db
+      .insert(spotifyItems)
+      .values(item)
+      .returning();
+    return newItem;
+  }
+
+  async getUserSpotifyItems(userId: number): Promise<SpotifyItem[]> {
+    return await db
+      .select()
+      .from(spotifyItems)
+      .where(and(eq(spotifyItems.userId, userId), eq(spotifyItems.isVisible, true)))
+      .orderBy(spotifyItems.displayOrder);
+  }
+
+  async getSpotifyItem(id: number): Promise<SpotifyItem | undefined> {
+    const [item] = await db
+      .select()
+      .from(spotifyItems)
+      .where(eq(spotifyItems.id, id));
+    return item || undefined;
+  }
+
+  async updateSpotifyItem(id: number, updates: Partial<InsertSpotifyItem>): Promise<SpotifyItem | undefined> {
+    const [item] = await db
+      .update(spotifyItems)
+      .set(updates)
+      .where(eq(spotifyItems.id, id))
+      .returning();
+    return item || undefined;
+  }
+
+  async deleteSpotifyItem(id: number): Promise<boolean> {
+    const result = await db
+      .delete(spotifyItems)
+      .where(eq(spotifyItems.id, id));
+    return true;
+  }
+
+  async createSpotifyItemComment(comment: InsertSpotifyItemComment): Promise<SpotifyItemComment> {
+    const [newComment] = await db
+      .insert(spotifyItemComments)
+      .values(comment)
+      .returning();
+    return newComment;
+  }
+
+  async getSpotifyItemComments(spotifyItemId: number): Promise<SpotifyItemComment[]> {
+    return await db
+      .select()
+      .from(spotifyItemComments)
+      .where(eq(spotifyItemComments.spotifyItemId, spotifyItemId))
+      .orderBy(spotifyItemComments.createdAt);
   }
 }
 
