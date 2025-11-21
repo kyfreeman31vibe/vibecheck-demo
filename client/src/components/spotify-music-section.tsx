@@ -23,10 +23,21 @@ export default function SpotifyMusicSection({ userId, isOwnProfile = false }: Sp
 
   const { data: items = [], isLoading: itemsLoading } = useQuery<SpotifyItem[]>({
     queryKey: ["/api/spotify/items", userId],
+    queryFn: async () => {
+      const response = await fetch(`/api/spotify/items/${userId}`);
+      if (!response.ok) throw new Error("Failed to fetch Spotify items");
+      return response.json();
+    },
   });
 
   const { data: comments = [], isLoading: commentsLoading } = useQuery<(SpotifyItemComment & { user: any })[]>({
     queryKey: ["/api/spotify/items", selectedItem?.id, "comments"],
+    queryFn: async () => {
+      if (!selectedItem) return [];
+      const response = await fetch(`/api/spotify/items/${selectedItem.id}/comments`);
+      if (!response.ok) throw new Error("Failed to fetch comments");
+      return response.json();
+    },
     enabled: !!selectedItem,
   });
 
@@ -150,7 +161,7 @@ export default function SpotifyMusicSection({ userId, isOwnProfile = false }: Sp
                   <p className="font-medium text-sm text-gray-900 dark:text-white line-clamp-1" data-testid={`text-item-name-${item.id}`}>
                     {item.name}
                   </p>
-                  {item.metadata && typeof item.metadata === 'object' && 'artist' in item.metadata && (
+                  {item.metadata && typeof item.metadata === 'object' && 'artist' in item.metadata && item.metadata.artist && (
                     <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-1">
                       {String(item.metadata.artist)}
                     </p>
@@ -221,7 +232,7 @@ export default function SpotifyMusicSection({ userId, isOwnProfile = false }: Sp
                           )}
                           <span className="font-medium text-sm text-gray-900 dark:text-white">{comment.user?.name || "Unknown"}</span>
                           <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+                            {comment.createdAt && formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
                           </span>
                         </div>
                         <p className="text-sm text-gray-700 dark:text-gray-300">{comment.content}</p>

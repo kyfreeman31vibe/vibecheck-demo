@@ -19,6 +19,7 @@ import {
   MessageCircle
 } from "lucide-react";
 import BottomNavigation from "@/components/bottom-navigation";
+import SpotifyMusicSection from "@/components/spotify-music-section";
 
 export default function PublicProfile() {
   const [, params] = useRoute("/u/:username");
@@ -354,6 +355,15 @@ export default function PublicProfile() {
             </CardContent>
           </Card>
         )}
+
+        {/* Spotify Music Section */}
+        <div className="mt-6">
+          <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
+            <Music className="w-5 h-5 text-purple-400" />
+            {profileUser.name}'s Music
+          </h3>
+          <SpotifyMusicSection userId={profileUser.id} isOwnProfile={false} />
+        </div>
       </div>
 
       {currentUser && <BottomNavigation currentUser={currentUser} />}

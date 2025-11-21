@@ -36,6 +36,7 @@ Preferred communication style: Simple, everyday language.
     - **Settings Page**: Comprehensive settings with Account, Notifications, Privacy, and mock Billing sections.
     - **Photo Upload System**: Robust photo upload, saving, and persistence.
     - **Event Discovery**: Browse and RSVP to music events, see who else is attending.
+    - **Spotify Music Sharing**: Users can share their Spotify playlists, top artists, and top tracks on their profiles. Other users can view and comment on these shared music items, fostering music-based conversations and connections.
 
 ### Database Design
 - **ORM**: Drizzle ORM with PostgreSQL dialect.
@@ -48,6 +49,8 @@ Preferred communication style: Simple, everyday language.
   - `socialConnections` - Non-romantic connections (friends, music buddies, event buddies) with request/accept flow
   - `eventAttendances` - User RSVPs to music events
   - `eventComments` - User comments on events
+  - `spotifyItems` - Shared Spotify playlists, top artists, and top tracks
+  - `spotifyItemComments` - Comments on shared Spotify music items
 
 ### Deployment Strategy
 - **Development**: Vite dev server (frontend), Express server with `tsx` (backend), environment variables.
