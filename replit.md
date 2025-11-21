@@ -8,6 +8,10 @@ VibeCheck is a full-stack music-based social networking platform designed to con
 
 Preferred communication style: Simple, everyday language.
 
+## Roadmap (Not Yet Implemented)
+
+- **Feed Feature**: A personalized feed showing activity from connections, newly shared Spotify content, and music discoveries
+
 ## System Architecture
 
 ### Frontend
