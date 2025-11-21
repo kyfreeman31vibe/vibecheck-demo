@@ -20,6 +20,7 @@ import Integrations from "@/pages/integrations";
 import Settings from "@/pages/settings";
 import PublicProfile from "@/pages/public-profile";
 import Connections from "@/pages/connections";
+import SpotifySync from "@/pages/spotify-sync";
 
 function Router() {
   const { currentUser, logout } = useAuth();
@@ -112,6 +113,13 @@ function Router() {
       <Route path="/connections">
         {currentUser ? (
           <Connections currentUser={currentUser} />
+        ) : (
+          <Landing />
+        )}
+      </Route>
+      <Route path="/spotify-sync">
+        {currentUser ? (
+          <SpotifySync />
         ) : (
           <Landing />
         )}

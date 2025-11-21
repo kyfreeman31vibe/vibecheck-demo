@@ -8,6 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import BottomNavigation from "@/components/bottom-navigation";
+import SpotifyMusicSection from "@/components/spotify-music-section";
 
 interface ProfileProps {
   currentUser: any;
@@ -284,6 +285,27 @@ export default function Profile({ currentUser, onLogout }: ProfileProps) {
             )}
           </CardContent>
         </Card>
+
+        {/* Spotify Music Section */}
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <Music className="w-5 h-5 text-purple-400" />
+              My Music
+            </h3>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setLocation("/spotify-sync")}
+              className="bg-purple-600/20 border-purple-400/50 text-purple-300 hover:bg-purple-600/30"
+              data-testid="button-add-music"
+            >
+              <Music className="w-4 h-4 mr-1" />
+              Add Music
+            </Button>
+          </div>
+          <SpotifyMusicSection userId={currentUser.id} isOwnProfile={true} />
+        </div>
 
         {/* Shareable Profile Link */}
         <Card className="mt-6 bg-gray-800/40 backdrop-blur-xl border border-purple-500/30">
