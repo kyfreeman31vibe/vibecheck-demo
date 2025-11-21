@@ -1,5 +1,5 @@
 import { useLocation } from "wouter";
-import { Home, Heart, MessageCircle, Calendar, User, Users } from "lucide-react";
+import { Home, Heart, MessageCircle, Calendar, User, Users, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface BottomNavigationProps {
@@ -13,7 +13,7 @@ export default function BottomNavigation({ currentUser }: BottomNavigationProps)
 
   const navItems = [
     { path: "/", icon: Home, label: "Home" },
-    { path: "/connections", icon: Users, label: "Connect" },
+    { path: "/feed", icon: Zap, label: "Feed" },
     { path: "/matches", icon: Heart, label: "Dating" },
     { path: "/events", icon: Calendar, label: "Events" },
     { path: "/profile", icon: User, label: "Profile" },

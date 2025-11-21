@@ -803,6 +803,105 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Feed route - aggregates activity from connections
+  app.get("/api/feed", async (req: any, res) => {
+    try {
+      const userId = req.session?.user?.id;
+      if (!userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const allUsers = await storage.getAllUsers();
+      const userConnections = await storage.getUserSocialConnections(userId);
+      
+      // Get IDs of accepted connections
+      const connectionIds = userConnections
+        .filter((c: any) => c.status === "accepted")
+        .map((c: any) => c.requesterId === userId ? c.receiverId : c.requesterId);
+
+      const feedItems: any[] = [];
+
+      // Get Spotify shares from connections
+      for (const connId of connectionIds) {
+        const items = await storage.getUserSpotifyItems(connId);
+        const user = await storage.getUser(connId);
+        if (items && user) {
+          items.forEach((item: any) => {
+            feedItems.push({
+              type: "spotify_share",
+              user: {
+                id: user.id,
+                name: user.name,
+                username: user.username,
+                profilePicture: user.profilePicture,
+              },
+              item: item,
+              timestamp: item.createdAt,
+            });
+          });
+        }
+      }
+
+      // Get recent connection acceptances
+      const recentConnections = userConnections
+        .filter((c: any) => c.status === "accepted")
+        .sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+        .slice(0, 10);
+
+      for (const conn of recentConnections) {
+        const otherUserId = conn.requesterId === userId ? conn.receiverId : conn.requesterId;
+        const connUser = await storage.getUser(otherUserId);
+        if (connUser) {
+          feedItems.push({
+            type: "new_connection",
+            user: {
+              id: connUser.id,
+              name: connUser.name,
+              username: connUser.username,
+              profilePicture: connUser.profilePicture,
+            },
+            connectionType: conn.connectionType,
+            timestamp: conn.updatedAt,
+          });
+        }
+      }
+
+      // Get recent event attendances from connections
+      const allEvents: any[] = [];
+      for (const connId of connectionIds) {
+        const events = await storage.getUserEventAttendances(connId);
+        const user = await storage.getUser(connId);
+        if (events && user) {
+          events.forEach((event: any) => {
+            allEvents.push({
+              type: "event_attendance",
+              user: {
+                id: user.id,
+                name: user.name,
+                username: user.username,
+                profilePicture: user.profilePicture,
+              },
+              event: event,
+              timestamp: event.createdAt,
+            });
+          });
+        }
+      }
+
+      // Merge and sort by timestamp
+      const combined = [...feedItems, ...allEvents].sort((a: any, b: any) => {
+        const timeA = new Date(a.timestamp).getTime();
+        const timeB = new Date(b.timestamp).getTime();
+        return timeB - timeA;
+      });
+
+      res.json(combined.slice(0, 50));
+    } catch (error) {
+      console.error("Error fetching feed:", error);
+      res.status(500).json({ error: "Failed to fetch feed" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
