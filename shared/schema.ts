@@ -119,6 +119,30 @@ export const eventComments = pgTable("event_comments", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Spotify music items that users can share and comment on
+export const spotifyItems = pgTable("spotify_items", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  itemType: text("item_type").notNull(), // "playlist", "top_artist", "top_track"
+  spotifyId: text("spotify_id").notNull(), // Spotify URI or ID
+  name: text("name").notNull(),
+  imageUrl: text("image_url"),
+  metadata: jsonb("metadata"), // Additional data like artist name, album, etc.
+  displayOrder: integer("display_order").default(0),
+  isVisible: boolean("is_visible").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Comments on Spotify items
+export const spotifyItemComments = pgTable("spotify_item_comments", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  spotifyItemId: integer("spotify_item_id").notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
   createdAt: true,
@@ -156,6 +180,17 @@ export const insertEventCommentSchema = createInsertSchema(eventComments).omit({
   createdAt: true,
 });
 
+export const insertSpotifyItemSchema = createInsertSchema(spotifyItems).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertSpotifyItemCommentSchema = createInsertSchema(spotifyItemComments).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type Match = typeof matches.$inferSelect;
@@ -170,3 +205,7 @@ export type SocialConnection = typeof socialConnections.$inferSelect;
 export type InsertSocialConnection = z.infer<typeof insertSocialConnectionSchema>;
 export type EventComment = typeof eventComments.$inferSelect;
 export type InsertEventComment = z.infer<typeof insertEventCommentSchema>;
+export type SpotifyItem = typeof spotifyItems.$inferSelect;
+export type InsertSpotifyItem = z.infer<typeof insertSpotifyItemSchema>;
+export type SpotifyItemComment = typeof spotifyItemComments.$inferSelect;
+export type InsertSpotifyItemComment = z.infer<typeof insertSpotifyItemCommentSchema>;
