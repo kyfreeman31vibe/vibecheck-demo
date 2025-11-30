@@ -47,6 +47,7 @@ export function ProfileSetup() {
       </header>
       <section className="section glass" style={{ marginBottom: 12 }}>
         <h3>Basics</h3>
+        <p className="caption" style={{ marginTop: 4 }}>Step 1 of 7 · We’ll auto-fill later steps for this demo.</p>
         <form className="steps-list" onSubmit={handleSubmit}>
           <label className="steps-item" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
             <div style={{ flex: 1 }}>
