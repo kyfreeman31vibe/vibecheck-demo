@@ -1,14 +1,59 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-const mockMessages = [
-  { id: 1, from: 'them', text: 'Hey! What are you listening to lately?' },
-  { id: 2, from: 'me', text: "A lot of lo-fi and indie, you?" },
-  { id: 3, from: 'them', text: 'Same! I can send you a playlist.' },
+const initialMessages = [];
+
+const demoReplies = [
+  "Love that. I'll queue some tracks for us.",
+  "Nice pick – that totally fits your vibe.",
+  "We should build a shared playlist around that.",
+  "Okay, I'm sending you a mix that matches that energy.",
 ];
 
 export function Chat() {
   const { id } = useParams();
+  const [messages, setMessages] = useState(initialMessages);
+  const [draft, setDraft] = useState('');
+  const [pendingReply, setPendingReply] = useState(false);
+
+  const handleSend = () => {
+    const trimmed = draft.trim();
+    if (!trimmed) return;
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: prev.length ? prev[prev.length - 1].id + 1 : 1,
+        from: 'me',
+        text: trimmed,
+      },
+    ]);
+    setDraft('');
+
+    if (!pendingReply) {
+      setPendingReply(true);
+      const replyText = demoReplies[Math.floor(Math.random() * demoReplies.length)];
+
+      window.setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: prev.length ? prev[prev.length - 1].id + 1 : 1,
+            from: 'them',
+            text: replyText,
+          },
+        ]);
+        setPendingReply(false);
+      }, 900);
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleSend();
+    }
+  };
 
   return (
     <div className="page chat-page">
@@ -19,7 +64,7 @@ export function Chat() {
         </div>
       </header>
       <div className="chat-thread glass">
-        {mockMessages.map((msg) => (
+        {messages.map((msg) => (
           <div
             key={msg.id}
             className={
@@ -31,8 +76,16 @@ export function Chat() {
         ))}
       </div>
       <div className="chat-input-row">
-        <input className="input" placeholder="Type a message (demo only)" />
-        <button className="btn primary">Send</button>
+        <input
+          className="input"
+          placeholder="Type a message (demo only)"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+        <button className="btn primary" onClick={handleSend}>
+          Send
+        </button>
       </div>
     </div>
   );

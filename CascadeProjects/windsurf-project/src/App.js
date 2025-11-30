@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './theme/ThemeProvider';
 import { DemoUserProvider } from './demo/DemoUserContext';
 import { BottomNav } from './components/BottomNav';
@@ -23,6 +23,9 @@ import { NotFound } from './pages/NotFound';
 import './index.css';
 
 function AppLayout({ children }) {
+  const location = useLocation();
+  const hideNavOnSetup = location.pathname.startsWith('/app/setup');
+
   return (
     <div className="app-root">
       <div className="app-shell">
@@ -30,7 +33,7 @@ function AppLayout({ children }) {
         <p className="caption" style={{ marginTop: 4, textAlign: 'center' }}>
           Demo mode: data lives only on this device. Spotify, events, and chat use sample data.
         </p>
-        <BottomNav />
+        {!hideNavOnSetup && <BottomNav />}
       </div>
     </div>
   );

@@ -42,7 +42,7 @@ export function ProfileSetup() {
       <header className="page-header">
         <div>
           <h2>Profile setup</h2>
-          <p className="subtitle">Guided 7-step onboarding (mocked)</p>
+          <p className="subtitle">Create your demo profile to preview how VibeCheck will feel.</p>
         </div>
       </header>
       <section className="section glass" style={{ marginBottom: 12 }}>

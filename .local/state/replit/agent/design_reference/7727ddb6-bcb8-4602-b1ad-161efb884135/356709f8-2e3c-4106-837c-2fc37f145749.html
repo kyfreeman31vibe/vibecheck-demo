@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TuneMatch - Music Dating App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'music-purple': '#8B5CF6',
+                        'music-pink': '#EC4899',
+                        'music-orange': '#F59E0B',
+                        'music-blue': '#6366F1',
+                        'dark-purple': '#5B21B6'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif']
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s infinite',
+                        'bounce-gentle': 'bounce 1s infinite'
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- @COMPONENT: AppContainer -->
+    <div class="max-w-md mx-auto bg-white shadow-2xl min-h-screen relative overflow-hidden">
+        
+        <!-- Landing Screen -->
+        <!-- @COMPONENT: LandingScreen [initial app screen] -->
+        <div id="landing-screen" class="relative h-screen bg-gradient-to-br from-music-purple via-music-pink to-music-orange flex flex-col items-center justify-center text-white p-6">
+            <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+            <div class="relative z-10 text-center">
+                <div class="mb-8">
+                    <i class="fas fa-music text-6xl mb-4 animate-bounce-gentle"></i>
+                    <h1 class="text-4xl font-bold mb-2">TuneMatch</h1>
+                    <p class="text-xl opacity-90">Find love through music</p>
+                </div>
+                
+                <div class="space-y-4 w-full max-w-sm">
+                    <button data-event="click:showSignup" class="w-full bg-white text-music-purple font-semibold py-4 rounded-full shadow-lg transform transition hover:scale-105">
+                        Get Started
+                    </button>
+                    <button data-event="click:showLogin" class="w-full border-2 border-white text-white font-semibold py-4 rounded-full transform transition hover:scale-105">
+                        Sign In
+                    </button>
+                </div>
+                
+                <p class="text-sm opacity-75 mt-8">Connect hearts through harmonies</p>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: LandingScreen -->
+
+        <!-- Profile Setup Screen -->
+        <!-- @COMPONENT: ProfileSetup [music preferences input] -->
+        <div id="profile-setup" class="hidden p-6 pt-12">
+            <div class="flex items-center justify-between mb-8">
+                <button data-event="click:goBack" class="text-gray-600 hover:text-gray-800">
+                    <i class="fas fa-arrow-left text-xl"></i>
+                </button>
+                <h2 class="text-xl font-bold text-gray-800">Setup Your Profile</h2>
+                <div class="w-6"></div>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Profile Photo Upload -->
+                <div class="text-center">
+                    <!-- Mock profile photo placeholder -->
+                    <div class="w-32 h-32 mx-auto bg-gradient-to-br from-music-purple to-music-pink rounded-full flex items-center justify-center mb-4" data-mock-image="true" data-implementation="Use FileUpload component here">
+                        <i class="fas fa-camera text-white text-3xl"></i>
+                    </div>
+                    <button class="text-music-purple font-semibold">Add Photo</button>
+                </div>
+
+                <!-- Basic Info -->
+                <div class="space-y-4">
+                    <input type="text" placeholder="Your Name" class="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-music-purple focus:border-transparent" data-bind="user.name" data-mock="true">
+                    <input type="number" placeholder="Age" class="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-music-purple focus:border-transparent" data-bind="user.age" data-mock="true">
+                </div>
+
+                <!-- Music Preferences -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Your Music Taste</h3>
+                    
+                    <!-- Favorite Genres -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Favorite Genres</label>
+                        <div class="flex flex-wrap gap-2">
+                            <!-- @MAP: genres.map(genre => ( -->
+                            <button class="genre-tag px-4 py-2 rounded-full border-2 border-gray-300 text-gray-700 text-sm font-medium transition hover:border-music-purple hover:text-music-purple" data-mock="true">Pop</button>
+                            <button class="genre-tag px-4 py-2 rounded-full border-2 border-music-purple bg-music-purple text-white text-sm font-medium" data-mock="true">Rock</button>
+                            <button class="genre-tag px-4 py-2 rounded-full border-2 border-gray-300 text-gray-700 text-sm font-medium transition hover:border-music-purple hover:text-music-purple" data-mock="true">Hip-Hop</button>
+                            <button class="genre-tag px-4 py-2 rounded-full border-2 border-gray-300 text-gray-700 text-sm font-medium transition hover:border-music-purple hover:text-music-purple" data-mock="true">Electronic</button>
+                            <button class="genre-tag px-4 py-2 rounded-full border-2 border-music-purple bg-music-purple text-white text-sm font-medium" data-mock="true">Indie</button>
+                            <button class="genre-tag px-4 py-2 rounded-full border-2 border-gray-300 text-gray-700 text-sm font-medium transition hover:border-music-purple hover:text-music-purple" data-mock="true">Jazz</button>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+
+                    <!-- Favorite Artists -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Top Artists</label>
+                        <input type="text" placeholder="Search and add your favorite artists..." class="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-music-purple focus:border-transparent" data-mock="true">
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="px-3 py-1 bg-music-purple text-white rounded-full text-sm" data-mock="true">The Beatles <i class="fas fa-times ml-1 cursor-pointer"></i></span>
+                            <span class="px-3 py-1 bg-music-purple text-white rounded-full text-sm" data-mock="true">Taylor Swift <i class="fas fa-times ml-1 cursor-pointer"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <button data-event="click:completeSetup" class="w-full bg-gradient-to-r from-music-purple to-music-pink text-white font-semibold py-4 rounded-xl shadow-lg">
+                    Complete Profile
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: ProfileSetup -->
+
+        <!-- Main Discover Screen -->
+        <!-- @COMPONENT: DiscoverScreen [main swiping interface] -->
+        <div id="discover-screen" class="hidden relative h-screen bg-gray-50">
+            <!-- Header -->
+            <div class="flex items-center justify-between p-4 bg-white shadow-sm">
+                <button data-event="click:showProfile" class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                    <i class="fas fa-user text-gray-600"></i>
+                </button>
+                <h1 class="text-xl font-bold bg-gradient-to-r from-music-purple to-music-pink bg-clip-text text-transparent">TuneMatch</h1>
+                <button data-event="click:showMatches" class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center relative">
+                    <i class="fas fa-comments text-gray-600"></i>
+                    <span class="absolute -top-1 -right-1 w-5 h-5 bg-music-pink text-white text-xs rounded-full flex items-center justify-center" data-bind="unreadCount">3</span>
+                </button>
+            </div>
+
+            <!-- Card Stack Area -->
+            <div class="relative px-4 pt-8 pb-24 h-full">
+                <!-- Background Cards -->
+                <div class="absolute inset-x-4 top-12 bottom-28">
+                    <div class="absolute inset-0 bg-white rounded-2xl shadow-lg transform rotate-2 scale-95"></div>
+                    <div class="absolute inset-0 bg-white rounded-2xl shadow-lg transform -rotate-1 scale-97"></div>
+                </div>
+
+                <!-- Main Profile Card -->
+                <!-- @COMPONENT: ProfileCard [swipeable user profile] -->
+                <div class="relative bg-white rounded-2xl shadow-xl overflow-hidden h-full">
+                    <!-- Profile Image -->
+                    <!-- A young woman with headphones listening to music in a colorful music studio -->
+                    <div class="relative h-2/3">
+                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=600" alt="Profile photo" class="w-full h-full object-cover" data-mock="true">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        
+                        <!-- Music Compatibility Badge -->
+                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-2 flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse-slow"></div>
+                            <span class="text-sm font-semibold text-gray-800" data-bind="compatibility.score">94% Match</span>
+                        </div>
+
+                        <!-- Currently Playing -->
+                        <div class="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-sm rounded-xl p-3">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-music-purple to-music-pink rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-play text-white text-sm"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate" data-bind="currentTrack.title" data-mock="true">Bohemian Rhapsody</p>
+                                    <p class="text-xs text-gray-500 truncate" data-bind="currentTrack.artist" data-mock="true">Queen</p>
+                                </div>
+                                <i class="fas fa-heart text-music-pink"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Info -->
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="text-2xl font-bold text-gray-800" data-bind="profile.name" data-mock="true">Emma, 25</h2>
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-music text-music-purple"></i>
+                                <span class="text-sm text-gray-600" data-bind="profile.distance" data-mock="true">2 miles away</span>
+                            </div>
+                        </div>
+
+                        <!-- Shared Music Interests -->
+                        <div class="mb-4">
+                            <h3 class="text-sm font-semibold text-gray-700 mb-2">You both love:</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <!-- @MAP: sharedInterests.map(interest => ( -->
+                                <span class="px-3 py-1 bg-gradient-to-r from-music-purple to-music-pink text-white rounded-full text-xs font-medium" data-mock="true">Rock</span>
+                                <span class="px-3 py-1 bg-gradient-to-r from-music-purple to-music-pink text-white rounded-full text-xs font-medium" data-mock="true">The Beatles</span>
+                                <span class="px-3 py-1 bg-gradient-to-r from-music-purple to-music-pink text-white rounded-full text-xs font-medium" data-mock="true">Live Concerts</span>
+                                <!-- @END_MAP )) -->
+                            </div>
+                        </div>
+
+                        <!-- Music Stats -->
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div>
+                                <p class="text-lg font-bold text-music-purple" data-bind="stats.genres" data-mock="true">8</p>
+                                <p class="text-xs text-gray-500">Genres</p>
+                            </div>
+                            <div>
+                                <p class="text-lg font-bold text-music-pink" data-bind="stats.artists" data-mock="true">127</p>
+                                <p class="text-xs text-gray-500">Artists</p>
+                            </div>
+                            <div>
+                                <p class="text-lg font-bold text-music-orange" data-bind="stats.concerts" data-mock="true">15</p>
+                                <p class="text-xs text-gray-500">Concerts</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: ProfileCard -->
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex items-center space-x-6">
+                <button data-event="click:reject" class="w-14 h-14 bg-white rounded-full shadow-lg flex items-center justify-center border-2 border-gray-200 hover:border-red-300 transition">
+                    <i class="fas fa-times text-red-500 text-xl"></i>
+                </button>
+                <button data-event="click:superLike" class="w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center border-2 border-blue-200 hover:border-blue-400 transition">
+                    <i class="fas fa-star text-blue-500"></i>
+                </button>
+                <button data-event="click:like" class="w-14 h-14 bg-white rounded-full shadow-lg flex items-center justify-center border-2 border-green-200 hover:border-green-400 transition">
+                    <i class="fas fa-heart text-green-500 text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: DiscoverScreen -->
+
+        <!-- Match Screen -->
+        <!-- @COMPONENT: MatchScreen [successful match notification] -->
+        <div id="match-screen" class="hidden relative h-screen bg-gradient-to-br from-music-purple via-music-pink to-music-orange flex flex-col items-center justify-center text-white p-6">
+            <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+            
+            <div class="relative z-10 text-center">
+                <div class="mb-8">
+                    <h1 class="text-4xl font-bold mb-2 animate-bounce">It's a Match!</h1>
+                    <p class="text-lg opacity-90">You and Emma love the same music</p>
+                </div>
+
+                <!-- Matched Profiles -->
+                <div class="flex items-center justify-center space-x-4 mb-8">
+                    <!-- User's photo -->
+                    <!-- A young man wearing headphones with a musical background -->
+                    <div class="w-24 h-24 rounded-full border-4 border-white overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=150" alt="Your profile" class="w-full h-full object-cover" data-mock="true">
+                    </div>
+                    
+                    <div class="flex flex-col items-center">
+                        <i class="fas fa-heart text-3xl mb-2 animate-pulse"></i>
+                        <span class="text-sm font-semibold">94% Music Match</span>
+                    </div>
+                    
+                    <!-- Match's photo -->
+                    <!-- A young woman with headphones listening to music in a colorful music studio -->
+                    <div class="w-24 h-24 rounded-full border-4 border-white overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=150&h=150" alt="Match profile" class="w-full h-full object-cover" data-mock="true">
+                    </div>
+                </div>
+
+                <!-- Shared Song -->
+                <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4 mb-8 max-w-sm">
+                    <p class="text-sm opacity-90 mb-2">You both have this on repeat:</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-white/30 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-music text-white"></i>
+                        </div>
+                        <div class="text-left">
+                            <p class="font-semibold" data-mock="true">Bohemian Rhapsody</p>
+                            <p class="text-sm opacity-75" data-mock="true">Queen</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 w-full max-w-sm">
+                    <button data-event="click:sendMessage" class="w-full bg-white text-music-purple font-semibold py-4 rounded-full shadow-lg">
+                        Send Message
+                    </button>
+                    <button data-event="click:keepSwiping" class="w-full border-2 border-white text-white font-semibold py-4 rounded-full">
+                        Keep Swiping
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: MatchScreen -->
+
+        <!-- Matches/Chat List Screen -->
+        <!-- @COMPONENT: MatchesScreen [list of matches and conversations] -->
+        <div id="matches-screen" class="hidden bg-white min-h-screen">
+            <!-- Header -->
+            <div class="flex items-center justify-between p-4 border-b border-gray-200">
+                <button data-event="click:goBack" class="text-gray-600 hover:text-gray-800">
+                    <i class="fas fa-arrow-left text-xl"></i>
+                </button>
+                <h2 class="text-xl font-bold text-gray-800">Your Matches</h2>
+                <div class="w-6"></div>
+            </div>
+
+            <!-- New Matches Section -->
+            <div class="p-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">New Matches</h3>
+                <div class="flex space-x-4 overflow-x-auto pb-4">
+                    <!-- @MAP: newMatches.map(match => ( -->
+                    <!-- A young woman with headphones in a music studio -->
+                    <div class="flex-shrink-0 text-center" data-mock="true">
+                        <div class="w-16 h-16 rounded-full border-3 border-music-pink overflow-hidden mb-2 relative">
+                            <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=100" alt="Match" class="w-full h-full object-cover">
+                            <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full"></div>
+                        </div>
+                        <p class="text-xs font-medium">Emma</p>
+                    </div>
+                    
+                    <!-- A young man with headphones looking happy -->
+                    <div class="flex-shrink-0 text-center" data-mock="true">
+                        <div class="w-16 h-16 rounded-full border-3 border-music-purple overflow-hidden mb-2 relative">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=100&h=100" alt="Match" class="w-full h-full object-cover">
+                            <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full"></div>
+                        </div>
+                        <p class="text-xs font-medium">Alex</p>
+                    </div>
+                    
+                    <!-- A young woman with curly hair and headphones -->
+                    <div class="flex-shrink-0 text-center" data-mock="true">
+                        <div class="w-16 h-16 rounded-full border-3 border-music-orange overflow-hidden mb-2">
+                            <img src="https://pixabay.com/get/g17409ae2cf0a2ff88ce4821f2be3336c6aea0b217940778bcc9589a6fbcfcdeaf971c8acdf6469c33b51609c55bcb9be8a2abca0a1d9003b5488eda7395b0ebe_1280.jpg" alt="Match" class="w-full h-full object-cover">
+                        </div>
+                        <p class="text-xs font-medium">Sarah</p>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+
+            <!-- Conversations -->
+            <div class="px-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Messages</h3>
+                <div class="space-y-3">
+                    <!-- @MAP: conversations.map(conversation => ( -->
+                    <div class="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer" data-event="click:openChat" data-mock="true">
+                        <!-- A young woman with headphones in a music studio -->
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=60&h=60" alt="Emma" class="w-14 h-14 rounded-full object-cover">
+                            <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <p class="font-semibold text-gray-800" data-bind="conversation.name">Emma</p>
+                                <span class="text-xs text-gray-500" data-bind="conversation.time">2m</span>
+                            </div>
+                            <p class="text-sm text-gray-600 truncate" data-bind="conversation.lastMessage">I love that Queen song too! 🎵</p>
+                            <div class="flex items-center mt-1">
+                                <span class="text-xs text-music-purple font-medium" data-bind="conversation.compatibility">94% match</span>
+                                <div class="w-2 h-2 bg-music-pink rounded-full ml-auto"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer" data-event="click:openChat" data-mock="true">
+                        <!-- A young man with headphones looking happy -->
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=60&h=60" alt="Alex" class="w-14 h-14 rounded-full object-cover">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <p class="font-semibold text-gray-800" data-bind="conversation.name">Alex</p>
+                                <span class="text-xs text-gray-500" data-bind="conversation.time">1h</span>
+                            </div>
+                            <p class="text-sm text-gray-600 truncate" data-bind="conversation.lastMessage">Want to go to the concert together?</p>
+                            <div class="flex items-center mt-1">
+                                <span class="text-xs text-music-purple font-medium" data-bind="conversation.compatibility">89% match</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer" data-event="click:openChat" data-mock="true">
+                        <!-- A young woman with curly hair and headphones -->
+                        <div class="relative">
+                            <img src="https://pixabay.com/get/g17409ae2cf0a2ff88ce4821f2be3336c6aea0b217940778bcc9589a6fbcfcdeaf971c8acdf6469c33b51609c55bcb9be8a2abca0a1d9003b5488eda7395b0ebe_1280.jpg" alt="Sarah" class="w-14 h-14 rounded-full object-cover">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <p class="font-semibold text-gray-800" data-bind="conversation.name">Sarah</p>
+                                <span class="text-xs text-gray-500" data-bind="conversation.time">3h</span>
+                            </div>
+                            <p class="text-sm text-gray-600 truncate" data-bind="conversation.lastMessage">Your playlist is amazing!</p>
+                            <div class="flex items-center mt-1">
+                                <span class="text-xs text-music-purple font-medium" data-bind="conversation.compatibility">92% match</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: MatchesScreen -->
+
+        <!-- Chat Screen -->
+        <!-- @COMPONENT: ChatScreen [individual conversation interface] -->
+        <div id="chat-screen" class="hidden bg-white min-h-screen flex flex-col">
+            <!-- Chat Header -->
+            <div class="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
+                <div class="flex items-center space-x-3">
+                    <button data-event="click:goBack" class="text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </button>
+                    <!-- A young woman with headphones in a music studio -->
+                    <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=50&h=50" alt="Emma" class="w-10 h-10 rounded-full object-cover" data-mock="true">
+                    <div>
+                        <p class="font-semibold text-gray-800" data-bind="chat.partnerName" data-mock="true">Emma</p>
+                        <p class="text-xs text-green-500">Online now</p>
+                    </div>
+                </div>
+                <button class="w-8 h-8 flex items-center justify-center text-gray-600">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </div>
+
+            <!-- Music Compatibility Bar -->
+            <div class="bg-gradient-to-r from-music-purple to-music-pink p-3">
+                <div class="flex items-center justify-center space-x-2 text-white">
+                    <i class="fas fa-music"></i>
+                    <span class="text-sm font-medium" data-bind="compatibility.details" data-mock="true">94% Music Match • You both love Rock & The Beatles</span>
+                </div>
+            </div>
+
+            <!-- Messages Area -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-4">
+                <!-- @MAP: messages.map(message => ( -->
+                
+                <!-- Match Message -->
+                <div class="text-center" data-mock="true">
+                    <div class="inline-block bg-gradient-to-r from-music-purple to-music-pink text-white px-4 py-2 rounded-full text-sm font-medium mb-2">
+                        🎵 You matched on music taste! 🎵
+                    </div>
+                    <p class="text-xs text-gray-500">Yesterday</p>
+                </div>
+
+                <!-- Partner Message -->
+                <div class="flex items-start space-x-2" data-mock="true">
+                    <!-- A young woman with headphones in a music studio -->
+                    <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=40&h=40" alt="Emma" class="w-8 h-8 rounded-full object-cover">
+                    <div class="max-w-xs">
+                        <div class="bg-gray-100 rounded-2xl rounded-tl-md p-3">
+                            <p class="text-sm" data-bind="message.text">Hey! I saw we both love Queen - that's so cool! 🎸</p>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1 ml-3" data-bind="message.time">2:45 PM</p>
+                    </div>
+                </div>
+
+                <!-- User Message -->
+                <div class="flex items-start space-x-2 justify-end" data-mock="true">
+                    <div class="max-w-xs">
+                        <div class="bg-gradient-to-r from-music-purple to-music-pink text-white rounded-2xl rounded-tr-md p-3">
+                            <p class="text-sm" data-bind="message.text">Right?! Bohemian Rhapsody is my absolute favorite 🎵</p>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1 mr-3 text-right" data-bind="message.time">2:46 PM</p>
+                    </div>
+                </div>
+
+                <!-- Shared Song Message -->
+                <div class="flex justify-center" data-mock="true">
+                    <div class="bg-white border border-gray-200 rounded-xl p-4 max-w-sm shadow-sm">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-gradient-to-br from-music-purple to-music-pink rounded-lg flex items-center justify-center">
+                                <i class="fas fa-play text-white"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-800" data-mock="true">Bohemian Rhapsody</p>
+                                <p class="text-sm text-gray-500" data-mock="true">Queen • 5:55</p>
+                            </div>
+                            <button class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-external-link-alt text-gray-600 text-xs"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2 text-center">🎵 Shared by Emma</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-2" data-mock="true">
+                    <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=40&h=40" alt="Emma" class="w-8 h-8 rounded-full object-cover">
+                    <div class="max-w-xs">
+                        <div class="bg-gray-100 rounded-2xl rounded-tl-md p-3">
+                            <p class="text-sm" data-bind="message.text">I love that Queen song too! 🎵 Want to share playlists?</p>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1 ml-3" data-bind="message.time">Just now</p>
+                    </div>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+
+            <!-- Message Input -->
+            <div class="border-t border-gray-200 p-4 bg-white">
+                <div class="flex items-center space-x-3">
+                    <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600">
+                        <i class="fas fa-music"></i>
+                    </button>
+                    <div class="flex-1 relative">
+                        <input type="text" placeholder="Type a message..." class="w-full p-3 pr-12 border border-gray-300 rounded-full focus:ring-2 focus:ring-music-purple focus:border-transparent" data-mock="true">
+                        <button class="absolute right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-gradient-to-r from-music-purple to-music-pink rounded-full flex items-center justify-center">
+                            <i class="fas fa-paper-plane text-white text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: ChatScreen -->
+
+    </div>
+    <!-- @END_COMPONENT: AppContainer -->
+
+    <script>
+        // TODO: Implement business logic, API calls, or state management
+        (function() {
+            // Simple screen navigation simulation
+            let currentScreen = 'landing-screen';
+            
+            function showScreen(screenId) {
+                // Hide all screens
+                document.querySelectorAll('[id$="-screen"]').forEach(screen => {
+                    screen.classList.add('hidden');
+                });
+                
+                // Show target screen
+                const targetScreen = document.getElementById(screenId);
+                if (targetScreen) {
+                    targetScreen.classList.remove('hidden');
+                    currentScreen = screenId;
+                }
+            }
+            
+            // Demo navigation flows
+            document.addEventListener('click', function(e) {
+                const target = e.target.closest('[data-event]');
+                if (!target) return;
+                
+                const event = target.getAttribute('data-event');
+                
+                switch(event) {
+                    case 'click:showSignup':
+                        showScreen('profile-setup');
+                        break;
+                    case 'click:completeSetup':
+                        showScreen('discover-screen');
+                        break;
+                    case 'click:like':
+                        showScreen('match-screen');
+                        break;
+                    case 'click:sendMessage':
+                        showScreen('chat-screen');
+                        break;
+                    case 'click:showMatches':
+                        showScreen('matches-screen');
+                        break;
+                    case 'click:openChat':
+                        showScreen('chat-screen');
+                        break;
+                    case 'click:goBack':
+                        if (currentScreen === 'profile-setup') {
+                            showScreen('landing-screen');
+                        } else if (currentScreen === 'matches-screen') {
+                            showScreen('discover-screen');
+                        } else if (currentScreen === 'chat-screen') {
+                            showScreen('matches-screen');
+                        }
+                        break;
+                    case 'click:keepSwiping':
+                        showScreen('discover-screen');
+                        break;
+                }
+            });
+            
+            // Genre selection demo
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('genre-tag')) {
+                    e.target.classList.toggle('border-music-purple');
+                    e.target.classList.toggle('bg-music-purple');
+                    e.target.classList.toggle('text-white');
+                    e.target.classList.toggle('border-gray-300');
+                    e.target.classList.toggle('text-gray-700');
+                }
+            });
+            
+            // Start with landing screen
+            showScreen('landing-screen');
+        })();
+    </script>
+</body>
+</html>
