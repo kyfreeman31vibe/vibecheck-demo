@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 const initialMessages = [];
@@ -13,8 +13,19 @@ const demoReplies = [
 export function Chat() {
   const { id } = useParams();
   const [messages, setMessages] = useState(initialMessages);
-  const [draft, setDraft] = useState('');
   const [pendingReply, setPendingReply] = useState(false);
+  const [draft, setDraft] = useState('');
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 50);
+
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const handleSend = () => {
     const trimmed = draft.trim();
@@ -75,15 +86,24 @@ export function Chat() {
           </div>
         ))}
       </div>
-      <div className="chat-input-row">
+      <div
+        className="chat-input-row"
+        onClick={() => {
+          if (inputRef.current) {
+            inputRef.current.focus();
+          }
+        }}
+      >
         <input
           className="input"
+          type="text"
           placeholder="Type a message (demo only)"
+          ref={inputRef}
           value={draft}
-          onChange={(e) => setDraft(e.target.value)}
+          onChange={(event) => setDraft(event.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <button className="btn primary" onClick={handleSend}>
+        <button className="btn primary" type="button" onClick={handleSend}>
           Send
         </button>
       </div>
