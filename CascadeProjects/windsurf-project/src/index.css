@@ -395,17 +395,40 @@ body {
 
 .chat-page {
   gap: 10px;
+  padding-bottom: 180px; /* extra space so content doesn't sit under nav / fixed input */
 }
-
-.chat-page {
-  padding-bottom: 96px;
-}
-
 .chat-thread {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
+}.chat-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+/* Mobile: keep chat input fixed above the bottom nav and ensure taps hit it */
+@media (max-width: 768px) {
+  .chat-input-row {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 96px;                  /* just above the bottom nav */
+    width: calc(100% - 32px);      /* match app padding */
+    max-width: 480px;
+    z-index: 30;                    /* above .bottom-nav */
+  }
+}
+
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 8px 14px 12px;
+  display: flex;
+  justify-content: center;
+  z-index: 20;                      /* lower than chat-input-row */
 }
 
 .chat-message {
