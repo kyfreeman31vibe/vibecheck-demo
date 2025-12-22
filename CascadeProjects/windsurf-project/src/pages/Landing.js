@@ -1,9 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { useDemoUser } from '../demo/DemoUserContext';
 
 export function Landing() {
   const navigate = useNavigate();
+  const { user } = useDemoUser();
+
+  const handleGetStarted = () => {
+    if (user) {
+      navigate('/app/dashboard');   // returning user -> straight to app
+    } else {
+      navigate('/app/setup');       // first-time -> profile setup
+    }
+  };
 
   return (
     <div className="page landing-page">
@@ -19,11 +29,8 @@ export function Landing() {
             based on your real music taste.
           </p>
           <div className="cta-row">
-            <button className="btn primary" onClick={() => navigate('/app/setup')}>
-              Get Started
-            </button>
-            <button className="btn ghost" onClick={() => navigate('/app/dashboard')}>
-              Continue as demo
+            <button className="btn primary" onClick={handleGetStarted}>
+              Let’s get started
             </button>
           </div>
           <p className="caption">Spotify, events, and chat are mocked for this demo.</p>
