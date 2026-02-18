@@ -12,6 +12,21 @@ const steps = [
   'Review',
 ];
 
+const AVAILABLE_ARTISTS = [
+  'Tame Impala',
+  'Kaytranada',
+  'Phoebe Bridgers',
+  'SZA',
+  'Kendrick Lamar',
+  'Frank Ocean',
+  'Billie Eilish',
+  'Fred again..',
+  'Bad Bunny',
+  'Rosalía',
+];
+
+const AVAILABLE_MOODS = ['Happy', 'Chill', 'Energetic', 'Reflective', 'Romantic', 'Social'];
+
 export function ProfileSetup() {
   const { user, setUser } = useDemoUser();
   const navigate = useNavigate();
@@ -20,6 +35,31 @@ export function ProfileSetup() {
   const [username, setUsername] = useState(user?.username || '');
   const [intent, setIntent] = useState(user?.intent || 'Friends');
   const [genres, setGenres] = useState(user?.genres?.join(', ') || '');
+  const [city, setCity] = useState(user?.city || '');
+  const [bio, setBio] = useState(user?.bio || '');
+  const [artistSearch, setArtistSearch] = useState('');
+  const [favoriteArtists, setFavoriteArtists] = useState(user?.favoriteArtists || []);
+  const [moods, setMoods] = useState(user?.moods || []);
+
+  const filteredArtists = AVAILABLE_ARTISTS.filter((artist) =>
+    artist.toLowerCase().includes(artistSearch.toLowerCase())
+  );
+
+  const toggleArtist = (artist) => {
+    if (favoriteArtists.includes(artist)) {
+      setFavoriteArtists(favoriteArtists.filter((a) => a !== artist));
+    } else if (favoriteArtists.length < 5) {
+      setFavoriteArtists([...favoriteArtists, artist]);
+    }
+  };
+
+  const toggleMood = (mood) => {
+    if (moods.includes(mood)) {
+      setMoods(moods.filter((m) => m !== mood));
+    } else {
+      setMoods([...moods, mood]);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -33,6 +73,10 @@ export function ProfileSetup() {
         .split(',')
         .map((g) => g.trim())
         .filter(Boolean),
+      city,
+      bio,
+      favoriteArtists,
+      moods,
     });
     navigate('/app/dashboard');
   };
@@ -73,6 +117,29 @@ export function ProfileSetup() {
           </label>
           <label className="steps-item" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
             <div style={{ flex: 1 }}>
+              <div className="steps-title">City</div>
+              <input
+                className="input"
+                placeholder="Your city"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              />
+            </div>
+          </label>
+          <label className="steps-item" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
+            <div style={{ flex: 1 }}>
+              <div className="steps-title">Short bio</div>
+              <textarea
+                className="input"
+                placeholder="A few words about your vibe"
+                rows={3}
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+              />
+            </div>
+          </label>
+          <label className="steps-item" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
+            <div style={{ flex: 1 }}>
               <div className="steps-title">Connection intent</div>
               <select
                 className="input"
@@ -95,6 +162,54 @@ export function ProfileSetup() {
                 onChange={(e) => setGenres(e.target.value)}
               />
               <div className="steps-caption">Comma-separated; used to personalize your demo profile.</div>
+            </div>
+          </label>
+          <label className="steps-item" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
+            <div style={{ flex: 1 }}>
+              <div className="steps-title">Favorite artists</div>
+              <input
+                className="input"
+                placeholder="Search artists"
+                value={artistSearch}
+                onChange={(e) => setArtistSearch(e.target.value)}
+              />
+              <div className="steps-caption">Select up to 5 artists you vibe with most.</div>
+              <div className="tag-row" style={{ marginTop: 8 }}>
+                {filteredArtists.map((artist) => {
+                  const selected = favoriteArtists.includes(artist);
+                  return (
+                    <button
+                      key={artist}
+                      type="button"
+                      className={selected ? 'btn small primary' : 'btn small ghost'}
+                      onClick={() => toggleArtist(artist)}
+                    >
+                      {artist}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </label>
+          <label className="steps-item" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
+            <div style={{ flex: 1 }}>
+              <div className="steps-title">Mood tags</div>
+              <div className="steps-caption">Pick a few that best match your usual vibe.</div>
+              <div className="tag-row" style={{ marginTop: 8 }}>
+                {AVAILABLE_MOODS.map((mood) => {
+                  const selected = moods.includes(mood);
+                  return (
+                    <button
+                      key={mood}
+                      type="button"
+                      className={selected ? 'btn small primary' : 'btn small ghost'}
+                      onClick={() => toggleMood(mood)}
+                    >
+                      {mood}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </label>
           <button type="submit" className="btn primary full-width" style={{ marginTop: 12 }}>

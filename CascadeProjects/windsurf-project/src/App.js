@@ -20,7 +20,6 @@ import { Integrations } from './pages/Integrations';
 import { Settings } from './pages/Settings';
 import { Messages } from './pages/Messages';
 import { NotFound } from './pages/NotFound';
-import { Auth } from './pages/Auth';  
 function AppLayout({ children }) {
   const location = useLocation();
   const hideNavOnSetup = location.pathname.startsWith('/app/setup');
@@ -44,7 +43,6 @@ function App() {
       <DemoUserProvider>
       <Routes>
   <Route path="/" element={<Landing />} />
-  <Route path="/auth" element={<Auth />} />
 
   <Route
     path="/app/*"
@@ -81,21 +79,4 @@ function App() {
 }
 
 export default App;
-import { Landing } from './pages/Landing';
-import { Dashboard } from './pages/Dashboard';
-import { ProfileSetup } from './pages/ProfileSetup';
-import { Profile } from './pages/Profile';
-import { PublicProfile } from './pages/PublicProfile';
-import { Discover } from './pages/Discover';
-import { Match } from './pages/Match';
-import { Matches } from './pages/Matches';
-import { Chat } from './pages/Chat';
-import { Connections } from './pages/Connections';
-import { Feed } from './pages/Feed';
-import { Events } from './pages/Events';
-import { SpotifySync } from './pages/SpotifySync';
-import { Integrations } from './pages/Integrations';
-import { Settings } from './pages/Settings';
-import { Messages } from './pages/Messages';
-import { NotFound } from './pages/NotFound';
 

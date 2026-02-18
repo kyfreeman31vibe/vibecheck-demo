@@ -1,45 +1,35 @@
 import React from 'react';
-import { useDemoUser } from '../demo/DemoUserContext';
-
-const fallbackProfile = {
-  username: 'demo_user',
-  name: 'Demo User',
-  bio: 'Lo-fi beats, rooftop shows, and late-night playlists.',
-  location: 'Los Angeles, CA',
-  connections: ['Friends', 'Music Buddies', 'Dating'],
-  genres: ['Indie', 'Lo-fi', 'Alt R&B'],
-  topArtists: ['Tame Impala', 'Kaytranada', 'Phoebe Bridgers'],
-  topSongs: ['The Less I Know The Better', 'Weight Off', 'Moon Song'],
-};
+import { useNavigate } from 'react-router-dom';
+import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
 
 export function Profile() {
-  const { user } = useDemoUser();
-  const profile = {
-    ...fallbackProfile,
-    ...(user
-      ? {
-          name: user.name || fallbackProfile.name,
-          username: user.username || fallbackProfile.username,
-          genres: user.genres?.length ? user.genres : fallbackProfile.genres,
-        }
-      : {}),
-  };
+  const navigate = useNavigate();
+  const { profile } = useCurrentUserProfile();
+
+  const initials = profile.name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join('');
 
   return (
     <div className="page">
       <header className="page-header">
         <div>
           <h2>My profile</h2>
-          <p className="subtitle">Edit music preferences and details (mock)</p>
+          <p className="subtitle">Your current VibeCheck demo profile.</p>
         </div>
-        <button className="btn ghost">Edit</button>
+        <button className="btn ghost" onClick={() => navigate('/app/setup')}>
+          Edit profile
+        </button>
       </header>
       <section className="section glass profile-header">
-        <div className="avatar-circle">DU</div>
+        <div className="avatar-circle">{initials}</div>
         <div>
           <h3>{profile.name}</h3>
           <p className="subtitle">@{profile.username}</p>
-          <p className="caption">{profile.location}</p>
+          <p className="caption">{profile.city}</p>
         </div>
       </section>
       <section className="section glass">
@@ -57,21 +47,34 @@ export function Profile() {
         </div>
         <div className="two-column">
           <div>
-            <h4>Top artists</h4>
+            <h4>Favorite artists</h4>
             <ul className="simple-list">
-              {profile.topArtists.map((a) => (
+              {profile.favoriteArtists.map((a) => (
                 <li key={a}>{a}</li>
               ))}
             </ul>
           </div>
           <div>
-            <h4>Top songs</h4>
-            <ul className="simple-list">
-              {profile.topSongs.map((s) => (
-                <li key={s}>{s}</li>
+            <h4>Mood tags</h4>
+            <div className="tag-row">
+              {profile.moods.map((mood) => (
+                <span key={mood} className="tag">
+                  {mood}
+                </span>
               ))}
-            </ul>
+            </div>
           </div>
+        </div>
+      </section>
+      <section className="section glass">
+        <div className="list-title-row">
+          <div>
+            <h3>Next step</h3>
+            <p className="caption">See who you vibe with based on music and mood.</p>
+          </div>
+          <button className="btn primary" onClick={() => navigate('/app/matches')}>
+            View matches
+          </button>
         </div>
       </section>
     </div>

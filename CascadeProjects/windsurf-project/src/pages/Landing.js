@@ -8,11 +8,9 @@ export function Landing() {
   const { user } = useDemoUser();
 
   const handleGetStarted = () => {
-    if (user) {
-      navigate('/app/dashboard');   // returning user -> straight to app
-    } else {
-      navigate('/app/setup');       // first-time -> profile setup
-    }
+    // For this MVP, always go through profile setup so testers can
+    // easily create or update their demo profile.
+    navigate('/app/setup');
   };
 
   return (
