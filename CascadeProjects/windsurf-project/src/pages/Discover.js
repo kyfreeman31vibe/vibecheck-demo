@@ -2,8 +2,6 @@ import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { DEMO_USERS } from '../hooks/useMatches';
 import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
-import { mockEventsByCity } from './Events';
-
 function computeScore(current, other) {
   const sharedArtists = (other.favoriteArtists || []).filter((a) =>
     (current.favoriteArtists || []).includes(a)
@@ -18,7 +16,19 @@ function computeScore(current, other) {
   };
 }
 
-const ALL_EVENTS = Object.values(mockEventsByCity).flat();
+const DISCOVER_EVENTS = [
+  { id: 1, name: 'Golden Gate Sunset Sessions', date: 'Fri, Aug 8', location: 'Marina District · San Francisco', type: 'Concert', attendees: 42 },
+  { id: 2, name: 'Lo-Fi Rooftop Listening', date: 'Sat, Aug 16', location: 'SoMa · San Francisco', type: 'Casual', attendees: 28 },
+  { id: 3, name: 'Lake Merritt Night Cypher', date: 'Thu, Aug 14', location: 'Lake Merritt · Oakland', type: 'Casual', attendees: 31 },
+  { id: 5, name: 'Neon Nights Festival', date: 'Sat, Jul 26', location: 'Downtown · Los Angeles', type: 'Festival', attendees: 128 },
+  { id: 6, name: 'Rooftop Lo-Fi Session', date: 'Fri, Aug 2', location: 'Hollywood · Los Angeles', type: 'Casual', attendees: 64 },
+  { id: 7, name: 'Midtown R&B Mixer', date: 'Fri, Aug 1', location: 'Midtown · Atlanta', type: 'Casual', attendees: 54 },
+  { id: 8, name: 'ATL Hip-Hop Block Party', date: 'Sat, Aug 16', location: 'East Atlanta · Atlanta', type: 'Festival', attendees: 91 },
+  { id: 9, name: 'Lakeshore House Music Fest', date: 'Sat, Aug 9', location: 'Lakeshore · Chicago', type: 'Festival', attendees: 110 },
+  { id: 11, name: 'Brooklyn Warehouse Rave', date: 'Fri, Aug 8', location: 'Bushwick · Brooklyn', type: 'Concert', attendees: 75 },
+  { id: 12, name: 'Central Park Acoustic Set', date: 'Sun, Aug 17', location: 'Central Park · New York', type: 'Casual', attendees: 38 },
+  { id: 13, name: 'U Street Groove Night', date: 'Sat, Aug 9', location: 'U Street Corridor · DC', type: 'Concert', attendees: 44 },
+];
 
 export function Discover() {
   const { profile } = useCurrentUserProfile();
@@ -38,11 +48,11 @@ export function Discover() {
   };
 
   const eventsWithAttendees = useMemo(() => {
-    return ALL_EVENTS.map((event) => {
-      const attendees = DEMO_USERS.filter((u) =>
+    return DISCOVER_EVENTS.map((event) => {
+      const matched = DEMO_USERS.filter((u) =>
         u.eventsAttending?.includes(event.id)
       );
-      return { ...event, matchedUsers: attendees };
+      return { ...event, matchedUsers: matched };
     });
   }, []);
 
