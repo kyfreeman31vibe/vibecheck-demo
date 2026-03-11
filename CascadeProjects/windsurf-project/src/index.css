@@ -528,6 +528,7 @@ body {
     transparent 65%
   );
   mix-blend-mode: soft-light;
+  pointer-events: none;
 }
 
 .sunset-haze-bg::after {
