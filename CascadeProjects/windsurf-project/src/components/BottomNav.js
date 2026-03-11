@@ -1,12 +1,12 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, MessageCircle, Compass, CalendarDays, User } from 'lucide-react';
+import { Home, MessageCircle, PlusSquare, Compass, User } from 'lucide-react';
 
 const tabs = [
   { to: '/app/dashboard', label: 'Home', Icon: Home },
-  { to: '/app/feed', label: 'Feed', Icon: MessageCircle },
-  { to: '/app/discover', label: 'Connect', Icon: Compass },
-  { to: '/app/events', label: 'Events', Icon: CalendarDays },
+  { to: '/app/messages', label: 'Messages', Icon: MessageCircle },
+  { to: '/app/post', label: 'Post', Icon: PlusSquare },
+  { to: '/app/discover', label: 'Discover', Icon: Compass },
   { to: '/app/profile', label: 'Profile', Icon: User },
 ];
 

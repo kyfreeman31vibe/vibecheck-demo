@@ -19,6 +19,7 @@ import { SpotifySync } from './pages/SpotifySync';
 import { Integrations } from './pages/Integrations';
 import { Settings } from './pages/Settings';
 import { Messages } from './pages/Messages';
+import { Post } from './pages/Post';
 import { NotFound } from './pages/NotFound';
 function AppLayout({ children }) {
   const location = useLocation();
@@ -64,6 +65,7 @@ function App() {
           <Route path="integrations" element={<Integrations />} />
           <Route path="settings" element={<Settings />} />
           <Route path="messages" element={<Messages />} />
+          <Route path="post" element={<Post />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AppLayout>

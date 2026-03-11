@@ -1,27 +1,17 @@
 import { useMemo, useState } from 'react';
-import { useCurrentUserProfile } from './useCurrentUserProfile';
 import { useMatches } from './useMatches';
-import { Events as EventsData } from '../pages/Events';
+import { DEMO_USERS } from './useMatches';
 
-// This hook will later be refactored to consume raw data rather than importing from a page.
-// For now, we’ll keep it minimal and only manage inline expansion state.
-
-export function useEvents(events) {
-  const { profile } = useCurrentUserProfile();
+export function useEvents(rawEvents) {
   const { matches } = useMatches();
   const [expandedEventIds, setExpandedEventIds] = useState([]);
 
   const eventsWithMatches = useMemo(() => {
-    return (events || []).map((event) => {
+    return (rawEvents || []).map((event) => {
       const matchedAttendees = matches
-        .filter((m) => m.user.city === profile.city)
         .filter((m) => {
-          // For now, assume first two events in the city have some of the matches attending.
-          // Later this will be explicit data from backend.
-          if (event.id % 2 === 0) {
-            return parseInt(m.id, 10) % 2 === 0;
-          }
-          return parseInt(m.id, 10) % 2 === 1;
+          const demoUser = DEMO_USERS.find((u) => u.id === m.id);
+          return demoUser?.eventsAttending?.includes(event.id);
         })
         .map((m) => m.user);
 
@@ -30,7 +20,7 @@ export function useEvents(events) {
         matchedAttendees,
       };
     });
-  }, [events, matches, profile.city]);
+  }, [rawEvents, matches]);
 
   const toggleExpand = (eventId) => {
     setExpandedEventIds((prev) =>
