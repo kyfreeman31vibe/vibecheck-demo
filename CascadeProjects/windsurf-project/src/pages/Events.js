@@ -44,8 +44,6 @@ const mockEventsByCity = {
   ],
 };
 
-export { mockEventsByCity };
-
 const EVENT_TYPES = ['All', 'Concert', 'Festival', 'Casual'];
 
 export function Events() {
