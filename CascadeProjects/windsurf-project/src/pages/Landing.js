@@ -5,7 +5,7 @@ import { useDemoUser } from '../demo/DemoUserContext';
 
 export function Landing() {
   const navigate = useNavigate();
-  const { user } = useDemoUser();
+  useDemoUser();
 
   const handleGetStarted = () => {
     // For this MVP, always go through profile setup so testers can

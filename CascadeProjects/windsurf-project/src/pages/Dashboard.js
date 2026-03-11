@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Bell } from 'lucide-react';
 import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
+
+const initialNotifications = [
+  { id: 1, text: 'Jordan sent you a Vibe Ping!', time: '1m ago', read: false },
+  { id: 2, text: 'Alex added a new playlist: Late Night Lo-Fi', time: '30m ago', read: false },
+  { id: 3, text: 'Riley reacted 🔥 to your Musical Thought', time: '2h ago', read: false },
+  { id: 4, text: 'You matched with Sam — 75% compatible!', time: '5h ago', read: true },
+  { id: 5, text: 'Taylor is going to Midtown R&B Mixer', time: '1d ago', read: true },
+];
 
 const REACTION_EMOJIS = ['🔥', '💫', '🎧', '💜'];
 
@@ -43,12 +51,28 @@ const mockFeed = [
 ];
 
 export function Dashboard() {
-  const navigate = useNavigate();
   const { profile } = useCurrentUserProfile();
   const [search, setSearch] = useState('');
   const [reactions, setReactions] = useState({});
   const [commentsByItem, setCommentsByItem] = useState({});
   const [drafts, setDrafts] = useState({});
+  const [showNotifs, setShowNotifs] = useState(false);
+  const [notifications, setNotifications] = useState(initialNotifications);
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const handleOpenNotifs = () => {
+    setShowNotifs((prev) => !prev);
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
+
+  const handleDeleteNotif = (id) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  };
+
+  const handleClearAll = () => {
+    setNotifications([]);
+  };
 
   const filteredFeed = search.trim()
     ? mockFeed.filter(
@@ -79,7 +103,84 @@ export function Dashboard() {
           <h2>Home</h2>
           <p className="subtitle">Your music-powered social hub</p>
         </div>
+        <button
+          type="button"
+          className="btn ghost"
+          style={{ position: 'relative' }}
+          onClick={handleOpenNotifs}
+        >
+          <Bell size={22} />
+          {unreadCount > 0 && (
+            <span
+              style={{
+                position: 'absolute',
+                top: 2,
+                right: 2,
+                background: '#ef4444',
+                color: '#fff',
+                borderRadius: '50%',
+                width: 18,
+                height: 18,
+                fontSize: 11,
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {unreadCount}
+            </span>
+          )}
+        </button>
       </header>
+
+      {showNotifs && (
+        <section className="section glass" style={{ marginBottom: 12 }}>
+          <div className="list-title-row" style={{ marginBottom: 8 }}>
+            <h3>Notifications</h3>
+            {notifications.length > 0 && (
+              <button
+                type="button"
+                className="btn ghost small"
+                onClick={handleClearAll}
+              >
+                Clear All
+              </button>
+            )}
+          </div>
+          {notifications.length === 0 && (
+            <p className="caption">No notifications.</p>
+          )}
+          <div style={{ maxHeight: 240, overflowY: 'auto' }}>
+            {notifications.map((n) => (
+              <div
+                key={n.id}
+                className="list-item"
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '8px 0',
+                  borderBottom: '1px solid var(--border, rgba(255,255,255,0.08))',
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: 14 }}>{n.text}</div>
+                  <div className="caption">{n.time}</div>
+                </div>
+                <button
+                  type="button"
+                  className="btn ghost small"
+                  onClick={() => handleDeleteNotif(n.id)}
+                  style={{ flexShrink: 0, marginLeft: 8 }}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="section glass" style={{ marginBottom: 12 }}>
         <input
