@@ -7,7 +7,6 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Initial session + auth state listener
   useEffect(() => {
     let ignore = false;
 
@@ -31,18 +30,33 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  const signInWithEmail = async (email) => {
-    return supabase.auth.signInWithOtp({
+  const signUp = async (email, password, metadata = {}) => {
+    return supabase.auth.signUp({
       email,
-      options: {
-        emailRedirectTo: 'http://localhost:3001/auth/callback', // adjust port if needed
-      },
+      password,
+      options: { data: metadata },
     });
   };
 
-  const signOut = () => supabase.auth.signOut();
+  const signIn = async (email, password) => {
+    return supabase.auth.signInWithPassword({ email, password });
+  };
 
-  const value = { user, loading, signInWithEmail, signOut };
+  const signOut = async () => {
+    return supabase.auth.signOut();
+  };
+
+  const resetPassword = async (email) => {
+    return supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/auth/reset',
+    });
+  };
+
+  const updatePassword = async (newPassword) => {
+    return supabase.auth.updateUser({ password: newPassword });
+  };
+
+  const value = { user, loading, signUp, signIn, signOut, resetPassword, updatePassword };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

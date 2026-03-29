@@ -1,17 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ThemeToggle } from '../components/ThemeToggle';
-import { useDemoUser } from '../demo/DemoUserContext';
 
 export function Landing() {
   const navigate = useNavigate();
-  useDemoUser();
-
-  const handleGetStarted = () => {
-    // For this MVP, always go through profile setup so testers can
-    // easily create or update their demo profile.
-    navigate('/app/setup');
-  };
 
   return (
     <div className="page landing-page">
@@ -27,11 +19,13 @@ export function Landing() {
             based on your real music taste.
           </p>
           <div className="cta-row">
-            <button className="btn primary" onClick={handleGetStarted}>
-              Let’s get started
+            <button className="btn primary" onClick={() => navigate('/auth/signup')}>
+              Sign Up
+            </button>
+            <button className="btn ghost" onClick={() => navigate('/auth/signin')}>
+              Sign In
             </button>
           </div>
-          <p className="caption">Spotify, events, and chat are mocked for this demo.</p>
         </div>
       </main>
     </div>

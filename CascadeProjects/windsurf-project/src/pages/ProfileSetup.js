@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDemoUser } from '../demo/DemoUserContext';
+import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
 
 const steps = [
   'Basics',
@@ -28,18 +28,20 @@ const AVAILABLE_ARTISTS = [
 const AVAILABLE_MOODS = ['Happy', 'Chill', 'Energetic', 'Reflective', 'Romantic', 'Social'];
 
 export function ProfileSetup() {
-  const { user, setUser } = useDemoUser();
+  const { profile, saveProfile } = useCurrentUserProfile();
   const navigate = useNavigate();
 
-  const [name, setName] = useState(user?.name || '');
-  const [username, setUsername] = useState(user?.username || '');
-  const [intent, setIntent] = useState(user?.intent || 'Friends');
-  const [genres, setGenres] = useState(user?.genres?.join(', ') || '');
-  const [city, setCity] = useState(user?.city || '');
-  const [bio, setBio] = useState(user?.bio || '');
+  const [name, setName] = useState(profile?.name || '');
+  const [username, setUsername] = useState(profile?.username || '');
+  const [intent, setIntent] = useState(profile?.intent || 'Friends');
+  const [genres, setGenres] = useState(profile?.genres?.join(', ') || '');
+  const [city, setCity] = useState(profile?.city || '');
+  const [bio, setBio] = useState(profile?.bio || '');
   const [artistSearch, setArtistSearch] = useState('');
-  const [favoriteArtists, setFavoriteArtists] = useState(user?.favoriteArtists || []);
-  const [moods, setMoods] = useState(user?.moods || []);
+  const [favoriteArtists, setFavoriteArtists] = useState(profile?.favoriteArtists || []);
+  const [moods, setMoods] = useState(profile?.moods || []);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   const filteredArtists = AVAILABLE_ARTISTS.filter((artist) =>
     artist.toLowerCase().includes(artistSearch.toLowerCase())
@@ -61,13 +63,14 @@ export function ProfileSetup() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const trimmedName = name.trim();
-    const trimmedUsername = username.trim();
-    setUser({
-      name: trimmedName || 'Demo User',
-      username: trimmedUsername || 'demo_user',
+    setSaving(true);
+    setSaveError('');
+
+    const result = await saveProfile({
+      name: name.trim() || 'New User',
+      username: username.trim() || 'user',
       intent,
       genres: genres
         .split(',')
@@ -78,6 +81,12 @@ export function ProfileSetup() {
       favoriteArtists,
       moods,
     });
+
+    setSaving(false);
+    if (result?.error) {
+      setSaveError(result.error.message || 'Failed to save profile.');
+      return;
+    }
     navigate('/app/dashboard');
   };
 
@@ -86,12 +95,12 @@ export function ProfileSetup() {
       <header className="page-header">
         <div>
           <h2>Profile setup</h2>
-          <p className="subtitle">Create your demo profile to preview how VibeCheck will feel.</p>
+          <p className="subtitle">Set up your profile so we can find your people.</p>
         </div>
       </header>
       <section className="section glass" style={{ marginBottom: 12 }}>
         <h3>Basics</h3>
-        <p className="caption" style={{ marginTop: 4 }}>Step 1 of 7 · We’ll auto-fill later steps for this demo.</p>
+        <p className="caption" style={{ marginTop: 4 }}>Step 1 of 7 · Complete the basics to get started.</p>
         <form className="steps-list" onSubmit={handleSubmit}>
           <label className="steps-item" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
             <div style={{ flex: 1 }}>
@@ -212,8 +221,9 @@ export function ProfileSetup() {
               </div>
             </div>
           </label>
-          <button type="submit" className="btn primary full-width" style={{ marginTop: 12 }}>
-            Finish demo setup
+          {saveError && <p style={{ color: 'var(--danger)', fontSize: '0.85rem', margin: 0 }}>{saveError}</p>}
+          <button type="submit" className="btn primary full-width" style={{ marginTop: 12 }} disabled={saving}>
+            {saving ? 'Saving...' : 'Save profile'}
           </button>
         </form>
       </section>
@@ -223,7 +233,7 @@ export function ProfileSetup() {
             <div className="steps-index">{idx + 1}</div>
             <div>
               <div className="steps-title">{step}</div>
-              <div className="steps-caption">This step is represented only in UI for this demo.</div>
+              <div className="steps-caption">Coming soon.</div>
             </div>
           </li>
         ))}

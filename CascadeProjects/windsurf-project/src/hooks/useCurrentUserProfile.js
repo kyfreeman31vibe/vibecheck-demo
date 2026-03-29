@@ -1,52 +1,103 @@
-import { useMemo } from 'react';
-import { useDemoUser } from '../demo/DemoUserContext';
+import { useCallback, useEffect, useState } from 'react';
+import { supabase } from '../lib/supabaseClient';
+import { useAuth } from '../auth/AuthContext';
 
-const fallbackProfile = {
-  id: 'demo-user',
-  username: 'demo_user',
-  name: 'Demo User',
-  bio: 'Lo-fi beats, rooftop shows, and late-night playlists.',
-  city: 'Los Angeles, CA',
-  favoriteArtists: ['Tame Impala', 'Kaytranada', 'Phoebe Bridgers'],
-  moods: ['Chill', 'Reflective'],
+const emptyProfile = {
+  id: '',
+  username: '',
+  name: '',
+  bio: '',
+  city: '',
+  favoriteArtists: [],
+  moods: [],
   intent: 'Friends',
-  genres: ['Indie', 'Lo-fi', 'Alt R&B'],
+  genres: [],
+  avatar_url: null,
+  location_public: true,
 };
 
-export function useCurrentUserProfile() {
-  const { user, setUser } = useDemoUser();
+function rowToProfile(row) {
+  if (!row) return emptyProfile;
+  return {
+    id: row.id,
+    username: row.username || '',
+    name: row.name || '',
+    bio: row.bio || '',
+    city: row.city || '',
+    favoriteArtists: row.favorite_artists || [],
+    moods: row.moods || [],
+    intent: row.intent || 'Friends',
+    genres: row.genres || [],
+    avatar_url: row.avatar_url || null,
+    location_public: row.location_public !== false,
+  };
+}
 
-  const profile = useMemo(() => {
+export function useCurrentUserProfile() {
+  const { user } = useAuth();
+  const [profile, setProfile] = useState(emptyProfile);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
     if (!user) {
-      return fallbackProfile;
+      setProfile(emptyProfile);
+      setLoading(false);
+      return;
     }
-    return {
-      ...fallbackProfile,
-      ...user,
-      username: user.username || fallbackProfile.username,
-      name: user.name || fallbackProfile.name,
-      city: user.city || fallbackProfile.city,
-      bio: user.bio || fallbackProfile.bio,
-      favoriteArtists:
-        Array.isArray(user.favoriteArtists) && user.favoriteArtists.length
-          ? user.favoriteArtists
-          : fallbackProfile.favoriteArtists,
-      moods:
-        Array.isArray(user.moods) && user.moods.length ? user.moods : fallbackProfile.moods,
-      genres:
-        Array.isArray(user.genres) && user.genres.length ? user.genres : fallbackProfile.genres,
-    };
+
+    let ignore = false;
+    setLoading(true);
+
+    supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single()
+      .then(({ data, error: fetchErr }) => {
+        if (ignore) return;
+        if (fetchErr) {
+          setError(fetchErr.message);
+        } else {
+          setProfile(rowToProfile(data));
+        }
+        setLoading(false);
+      });
+
+    return () => { ignore = true; };
   }, [user]);
 
-  const saveProfile = (updates) => {
-    const next = { ...(user || {}), ...updates };
-    setUser(next);
-  };
+  const saveProfile = useCallback(async (updates) => {
+    if (!user) return;
 
-  return {
-    profile,
-    saveProfile,
-    loading: false,
-    error: null,
-  };
+    const payload = {};
+    if (updates.name !== undefined) payload.name = updates.name;
+    if (updates.username !== undefined) payload.username = updates.username;
+    if (updates.city !== undefined) payload.city = updates.city;
+    if (updates.bio !== undefined) payload.bio = updates.bio;
+    if (updates.intent !== undefined) payload.intent = updates.intent;
+    if (updates.genres !== undefined) payload.genres = updates.genres;
+    if (updates.favoriteArtists !== undefined) payload.favorite_artists = updates.favoriteArtists;
+    if (updates.moods !== undefined) payload.moods = updates.moods;
+    if (updates.avatar_url !== undefined) payload.avatar_url = updates.avatar_url;
+    if (updates.location_public !== undefined) payload.location_public = updates.location_public;
+    payload.updated_at = new Date().toISOString();
+
+    const { data, error: updateErr } = await supabase
+      .from('profiles')
+      .update(payload)
+      .eq('id', user.id)
+      .select()
+      .single();
+
+    if (updateErr) {
+      setError(updateErr.message);
+      return { error: updateErr };
+    }
+
+    setProfile(rowToProfile(data));
+    return { error: null };
+  }, [user]);
+
+  return { profile, saveProfile, loading, error };
 }
