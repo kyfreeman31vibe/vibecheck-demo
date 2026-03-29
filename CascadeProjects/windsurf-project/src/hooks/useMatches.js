@@ -1,10 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { supabase } from '../lib/supabaseClient';
+import { useAuth } from '../auth/AuthContext';
 import { useCurrentUserProfile } from './useCurrentUserProfile';
 
-// Simple static demo users; later this will come from Supabase
+// Fallback demo users shown alongside any real Supabase profiles
 const DEMO_USERS = [
   {
-    id: '1',
+    id: 'demo-1',
     name: 'Jordan',
     city: 'Los Angeles',
     locationPublic: true,
@@ -17,7 +19,7 @@ const DEMO_USERS = [
     mostListened: ['Let It Happen', 'GLOWED UP', 'Kill Bill'],
   },
   {
-    id: '2',
+    id: 'demo-2',
     name: 'Alex',
     city: 'Los Angeles',
     locationPublic: true,
@@ -30,7 +32,7 @@ const DEMO_USERS = [
     mostListened: ['Kyoto', 'Nights', 'Moon Song'],
   },
   {
-    id: '3',
+    id: 'demo-3',
     name: 'Riley',
     city: 'San Francisco',
     locationPublic: true,
@@ -43,7 +45,7 @@ const DEMO_USERS = [
     mostListened: ['GLOWED UP', 'Delilah (pull me out of this)', 'Bleu'],
   },
   {
-    id: '4',
+    id: 'demo-4',
     name: 'Sam',
     city: 'San Francisco',
     locationPublic: false,
@@ -56,7 +58,7 @@ const DEMO_USERS = [
     mostListened: ['Kyoto', 'The Less I Know the Better', 'Happier Than Ever'],
   },
   {
-    id: '5',
+    id: 'demo-5',
     name: 'Taylor',
     city: 'Atlanta',
     locationPublic: true,
@@ -69,7 +71,7 @@ const DEMO_USERS = [
     mostListened: ['Shirt', 'Self Control', 'United in Grief'],
   },
   {
-    id: '6',
+    id: 'demo-6',
     name: 'Morgan',
     city: 'Chicago',
     locationPublic: true,
@@ -82,7 +84,7 @@ const DEMO_USERS = [
     mostListened: ['10%', 'Turn On The Lights again..', 'Tití Me Preguntó'],
   },
   {
-    id: '7',
+    id: 'demo-7',
     name: 'Casey',
     city: 'New York',
     locationPublic: false,
@@ -103,45 +105,115 @@ function computeCompatibility(current, other) {
     (current.favoriteArtists || []).includes(a)
   );
   const sharedMoods = (other.moods || []).filter((m) => (current.moods || []).includes(m));
-
   const score = Math.min(100, sharedArtists.length * 20 + sharedMoods.length * 15 + 40);
+  return { compatibilityScore: score, sharedArtists, sharedMoods };
+}
 
+function profileRowToUser(row) {
   return {
-    compatibilityScore: score,
-    sharedArtists,
-    sharedMoods,
+    id: row.id,
+    name: row.name || '',
+    city: row.city || '',
+    locationPublic: row.location_public !== false,
+    bio: row.bio || '',
+    favoriteArtists: row.favorite_artists || [],
+    moods: row.moods || [],
+    genres: row.genres || [],
+    eventsAttending: [],
+    recentListening: [],
+    playlists: [],
+    mostListened: [],
   };
 }
 
 export function useMatches() {
+  const { user } = useAuth();
   const { profile } = useCurrentUserProfile();
-  const [sentPings, setSentPings] = useState({}); // { userId: boolean }
+  const [sentPings, setSentPings] = useState({});
+  const [realUsers, setRealUsers] = useState([]);
+
+  // Fetch real profiles from Supabase
+  useEffect(() => {
+    if (!user) return;
+    let ignore = false;
+
+    supabase
+      .from('profiles')
+      .select('*')
+      .neq('id', user.id)
+      .then(({ data }) => {
+        if (!ignore && data) {
+          setRealUsers(data.map(profileRowToUser));
+        }
+      });
+
+    return () => { ignore = true; };
+  }, [user]);
+
+  // Fetch existing vibe pings from Supabase
+  useEffect(() => {
+    if (!user) return;
+    let ignore = false;
+
+    supabase
+      .from('vibe_pings')
+      .select('receiver_id')
+      .eq('sender_id', user.id)
+      .then(({ data }) => {
+        if (!ignore && data) {
+          const pings = {};
+          data.forEach((p) => { pings[p.receiver_id] = true; });
+          setSentPings(pings);
+        }
+      });
+
+    return () => { ignore = true; };
+  }, [user]);
+
+  // Combine real users with demo users, deduplicating by name
+  const allUsers = useMemo(() => {
+    const realNames = new Set(realUsers.map((u) => u.name.toLowerCase()));
+    const filteredDemo = DEMO_USERS.filter((u) => !realNames.has(u.name.toLowerCase()));
+    return [...realUsers, ...filteredDemo];
+  }, [realUsers]);
 
   const matches = useMemo(() => {
-    const sameCityUsers = DEMO_USERS.filter((u) => u.city === profile.city);
+    return allUsers
+      .filter((u) => u.id !== profile.id)
+      .map((u) => {
+        const { compatibilityScore, sharedArtists, sharedMoods } = computeCompatibility(profile, u);
+        return {
+          id: u.id,
+          user: u,
+          compatibilityScore,
+          sharedArtists,
+          sharedMoods,
+          hasPinged: !!sentPings[u.id],
+        };
+      })
+      .sort((a, b) => b.compatibilityScore - a.compatibilityScore);
+  }, [allUsers, profile, sentPings]);
 
-    return sameCityUsers.map((u) => {
-      const { compatibilityScore, sharedArtists, sharedMoods } = computeCompatibility(
-        profile,
-        u
-      );
-      return {
-        id: u.id,
-        user: u,
-        compatibilityScore,
-        sharedArtists,
-        sharedMoods,
-        hasPinged: !!sentPings[u.id],
-      };
-    });
-  }, [profile, sentPings]);
-
-  const sendVibePing = (userId) => {
+  const sendVibePing = useCallback(async (userId) => {
     setSentPings((prev) => ({ ...prev, [userId]: true }));
-  };
 
-  return {
-    matches,
-    sendVibePing,
-  };
+    if (user && !String(userId).startsWith('demo-')) {
+      await supabase.from('vibe_pings').insert({
+        sender_id: user.id,
+        receiver_id: userId,
+      });
+
+      // Create a notification for the receiver
+      const senderName = profile.name || 'Someone';
+      await supabase.from('notifications').insert({
+        user_id: userId,
+        type: 'vibe_ping',
+        title: `${senderName} sent you a Vibe Ping!`,
+        body: null,
+        data: { sender_id: user.id },
+      });
+    }
+  }, [user, profile]);
+
+  return { matches, sendVibePing };
 }

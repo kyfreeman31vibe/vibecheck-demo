@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { DEMO_USERS } from '../hooks/useMatches';
 import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
+import { supabase } from '../lib/supabaseClient';
 
 const EMOJIS = ['🔥', '💫', '🎧', '💜'];
 
@@ -26,13 +27,62 @@ export function Match() {
   const [selectedEmoji, setSelectedEmoji] = useState(null);
   const [inCircle, setInCircle] = useState(false);
   const [pinged, setPinged] = useState(false);
+  const [supaUser, setSupaUser] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(false);
 
-  const user = DEMO_USERS.find((u) => String(u.id) === String(id));
+  // Check demo users first
+  const demoUser = DEMO_USERS.find((u) => String(u.id) === String(id));
+
+  // If not a demo user, fetch from Supabase
+  useEffect(() => {
+    if (demoUser || !id) return;
+    let ignore = false;
+    setLoadingUser(true);
+
+    supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', id)
+      .single()
+      .then(({ data }) => {
+        if (ignore) return;
+        if (data) {
+          setSupaUser({
+            id: data.id,
+            name: data.name || '',
+            city: data.city || '',
+            locationPublic: data.location_public !== false,
+            bio: data.bio || '',
+            favoriteArtists: data.favorite_artists || [],
+            moods: data.moods || [],
+            genres: data.genres || [],
+            recentListening: [],
+            playlists: [],
+            mostListened: [],
+          });
+        }
+        setLoadingUser(false);
+      });
+
+    return () => { ignore = true; };
+  }, [id, demoUser]);
+
+  const user = demoUser || supaUser;
 
   const compat = useMemo(() => {
     if (!user) return { score: 0, sharedArtists: [], sharedMoods: [] };
     return computeCompat(profile, user);
   }, [profile, user]);
+
+  if (loadingUser) {
+    return (
+      <div className="page">
+        <header className="page-header">
+          <div><h2>Loading...</h2></div>
+        </header>
+      </div>
+    );
+  }
 
   if (!user) {
     return (
@@ -40,7 +90,7 @@ export function Match() {
         <header className="page-header">
           <div>
             <h2>Profile not found</h2>
-            <p className="subtitle">This user doesn&apos;t exist in the demo.</p>
+            <p className="subtitle">This user doesn&apos;t exist.</p>
           </div>
         </header>
       </div>

@@ -1,29 +1,32 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useConversations } from '../hooks/useConversations';
 
-const initialThreads = [
-  { id: 1, name: 'Jordan', last: 'I can send you a playlist.', time: '2m ago' },
-  { id: 2, name: 'Alex', last: 'See you at Neon Nights!', time: '1h ago' },
-  { id: 3, name: 'Riley', last: 'That album is a masterpiece.', time: '3h ago' },
-  { id: 4, name: 'Sam', last: 'Added you to my circle!', time: '6h ago' },
-];
+function formatTimeAgo(dateStr) {
+  if (!dateStr) return '';
+  const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+  return Math.floor(diff / 86400) + 'd ago';
+}
 
 export function Messages() {
   const navigate = useNavigate();
-  const [threads, setThreads] = useState(initialThreads);
+  const { conversations, loading, deleteConversation } = useConversations();
   const [menuOpenId, setMenuOpenId] = useState(null);
 
   const handleOpenThread = (id) => {
     navigate(`/app/chat/${id}`);
   };
 
-  const handleDelete = (id) => {
-    setThreads((prev) => prev.filter((t) => t.id !== id));
+  const handleDelete = async (id) => {
+    await deleteConversation(id);
     setMenuOpenId(null);
   };
 
-  const handleBlock = (id) => {
-    setThreads((prev) => prev.filter((t) => t.id !== id));
+  const handleBlock = async (id) => {
+    await deleteConversation(id);
     setMenuOpenId(null);
   };
 
@@ -36,32 +39,37 @@ export function Messages() {
         </div>
       </header>
       <div className="list">
-        {threads.length === 0 && (
+        {!loading && conversations.length === 0 && (
           <div className="list-item glass">
             <p className="caption">No messages yet. Send a Vibe Ping to start chatting!</p>
           </div>
         )}
-        {threads.map((t) => (
-          <div key={t.id} className="list-item glass">
+        {loading && (
+          <div className="list-item glass">
+            <p className="caption">Loading conversations...</p>
+          </div>
+        )}
+        {conversations.map((c) => (
+          <div key={c.id} className="list-item glass">
             <div
               style={{ flex: 1, cursor: 'pointer' }}
-              onClick={() => handleOpenThread(t.id)}
+              onClick={() => handleOpenThread(c.id)}
             >
               <div className="list-title-row">
-                <span className="list-title">{t.name}</span>
-                <span className="caption">{t.time}</span>
+                <span className="list-title">{c.otherUser.name}</span>
+                <span className="caption">{formatTimeAgo(c.lastMessageAt)}</span>
               </div>
-              <div className="caption" style={{ marginTop: 2 }}>{t.last}</div>
+              <div className="caption" style={{ marginTop: 2 }}>@{c.otherUser.username}</div>
             </div>
             <div style={{ position: 'relative' }}>
               <button
                 type="button"
                 className="btn ghost small"
-                onClick={() => setMenuOpenId(menuOpenId === t.id ? null : t.id)}
+                onClick={() => setMenuOpenId(menuOpenId === c.id ? null : c.id)}
               >
                 ···
               </button>
-              {menuOpenId === t.id && (
+              {menuOpenId === c.id && (
                 <div
                   className="glass"
                   style={{
@@ -78,7 +86,7 @@ export function Messages() {
                     type="button"
                     className="btn ghost small"
                     style={{ width: '100%', textAlign: 'left', borderRadius: 0 }}
-                    onClick={() => handleDelete(t.id)}
+                    onClick={() => handleDelete(c.id)}
                   >
                     Delete chat
                   </button>
@@ -86,7 +94,7 @@ export function Messages() {
                     type="button"
                     className="btn ghost small"
                     style={{ width: '100%', textAlign: 'left', borderRadius: 0, color: '#ef4444' }}
-                    onClick={() => handleBlock(t.id)}
+                    onClick={() => handleBlock(c.id)}
                   >
                     Block / Report
                   </button>

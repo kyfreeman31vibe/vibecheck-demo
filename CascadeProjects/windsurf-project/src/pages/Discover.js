@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { DEMO_USERS } from '../hooks/useMatches';
-import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
+import { useMatches, DEMO_USERS } from '../hooks/useMatches';
 
 const EVENTS = [
   { id: 1, name: 'Golden Gate Sunset Sessions', date: 'Fri, Aug 8', location: 'Marina District · San Francisco', type: 'Concert', attendees: 42 },
@@ -17,31 +16,15 @@ const EVENTS = [
   { id: 13, name: 'U Street Groove Night', date: 'Sat, Aug 9', location: 'U Street Corridor · DC', type: 'Concert', attendees: 44 },
 ];
 
-function getCompatibility(current, other) {
-  var sharedArtists = (other.favoriteArtists || []).filter(function (a) {
-    return (current.favoriteArtists || []).indexOf(a) !== -1;
-  });
-  var sharedMoods = (other.moods || []).filter(function (m) {
-    return (current.moods || []).indexOf(m) !== -1;
-  });
-  var score = Math.min(100, sharedArtists.length * 20 + sharedMoods.length * 15 + 40);
-  return { score: score, sharedArtists: sharedArtists, sharedMoods: sharedMoods };
-}
-
-function UsersTab({ profile, sentPings, onPing }) {
-  var users = DEMO_USERS.map(function (u) {
-    var c = getCompatibility(profile, u);
-    return Object.assign({}, u, { compatibilityScore: c.score, sharedArtists: c.sharedArtists, sharedMoods: c.sharedMoods });
-  }).sort(function (a, b) { return b.compatibilityScore - a.compatibilityScore; });
-
+function UsersTab({ matches, onPing }) {
   return (
     <div className="list">
-      {users.map(function (u) {
+      {matches.map(function (m) {
+        var u = m.user;
         var topArtists = (u.favoriteArtists || []).slice(0, 5).join(', ');
         var initials = u.name.charAt(0).toUpperCase();
-        var pinged = !!sentPings[u.id];
         return (
-          <div key={u.id} className="list-item glass">
+          <div key={m.id} className="list-item glass">
             <div className="profile-card-header" style={{ marginBottom: 6 }}>
               <div className="avatar-circle">{initials}</div>
               <div>
@@ -52,15 +35,15 @@ function UsersTab({ profile, sentPings, onPing }) {
             <div className="caption">Top artists: {topArtists}</div>
             <div className="caption" style={{ marginTop: 2 }}>{u.city}</div>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6 }}>
-              <div className="pill small">{u.compatibilityScore}% compatible</div>
-              {u.sharedArtists.length > 0 && (
-                <span className="caption">Shared: {u.sharedArtists.join(', ')}</span>
+              <div className="pill small">{m.compatibilityScore}% compatible</div>
+              {m.sharedArtists.length > 0 && (
+                <span className="caption">Shared: {m.sharedArtists.join(', ')}</span>
               )}
             </div>
             <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-              <Link to={'/app/match/' + u.id} className="btn small ghost">View Profile</Link>
-              <button type="button" className="btn small primary" onClick={function () { onPing(u.id); }} disabled={pinged}>
-                {pinged ? 'Vibe sent' : 'Send Vibe Ping'}
+              <Link to={'/app/match/' + m.id} className="btn small ghost">View Profile</Link>
+              <button type="button" className="btn small primary" onClick={function () { onPing(m.id); }} disabled={m.hasPinged}>
+                {m.hasPinged ? 'Vibe sent' : 'Send Vibe Ping'}
               </button>
             </div>
           </div>
@@ -153,20 +136,7 @@ export function Discover() {
   var tab = ref[0];
   var setTab = ref[1];
 
-  var pingRef = React.useState({});
-  var sentPings = pingRef[0];
-  var setSentPings = pingRef[1];
-
-  var profileHook = useCurrentUserProfile();
-  var profile = profileHook.profile;
-
-  function handlePing(id) {
-    setSentPings(function (prev) {
-      var next = Object.assign({}, prev);
-      next[id] = true;
-      return next;
-    });
-  }
+  var { matches, sendVibePing } = useMatches();
 
   return (
     <div className="page">
@@ -215,7 +185,7 @@ export function Discover() {
       </div>
 
       {tab === 'users' ? (
-        <UsersTab profile={profile} sentPings={sentPings} onPing={handlePing} />
+        <UsersTab matches={matches} onPing={sendVibePing} />
       ) : (
         <EventsTab />
       )}
