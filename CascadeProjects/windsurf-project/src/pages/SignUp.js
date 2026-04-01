@@ -42,19 +42,37 @@ export function SignUp() {
     }
 
     setLoading(true);
-    const { error: authError } = await signUp(email, password, {
-      name: name.trim(),
-      username: username.trim(),
-    });
-    setLoading(false);
+    try {
+      const { data, error: authError } = await signUp(email, password, {
+        name: name.trim(),
+        username: username.trim(),
+      });
+      setLoading(false);
 
-    if (authError) {
-      setError(authError.message);
-      return;
+      if (authError) {
+        const msg = authError.message || '';
+        if (msg.toLowerCase().includes('already registered')) {
+          setError('An account with this email already exists. Try signing in instead.');
+        } else if (msg.toLowerCase().includes('password')) {
+          setError('Password is too weak. Use 8+ characters with an uppercase letter and a number.');
+        } else {
+          setError(msg || 'Account creation failed. Please try again.');
+        }
+        return;
+      }
+
+      // Check if Supabase returned a user but no session (email confirmation still required)
+      if (data?.user && !data?.session) {
+        setError('Account created but email confirmation is pending. Please check your inbox, or ask the admin to disable email confirmation.');
+        return;
+      }
+
+      // Account created and session active — redirect to profile setup
+      navigate('/app/setup');
+    } catch (err) {
+      setLoading(false);
+      setError('Network error. Please check your connection and try again.');
     }
-
-    // Account created — redirect to app (email confirmation disabled)
-    navigate('/app/setup');
   }
 
   return (

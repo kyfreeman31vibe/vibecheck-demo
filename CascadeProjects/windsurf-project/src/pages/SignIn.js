@@ -16,15 +16,29 @@ export function SignIn() {
     setError('');
     setLoading(true);
 
-    const { error: authError } = await signIn(email, password);
-    setLoading(false);
+    try {
+      const { error: authError } = await signIn(email, password);
+      setLoading(false);
 
-    if (authError) {
-      setError(authError.message);
-      return;
+      if (authError) {
+        const msg = authError.message || '';
+        if (msg.toLowerCase().includes('invalid login')) {
+          setError('Incorrect email or password. Please try again.');
+        } else if (msg.toLowerCase().includes('email not confirmed')) {
+          setError('Your email is not confirmed. Please check your inbox or sign up again.');
+        } else if (msg.toLowerCase().includes('too many requests')) {
+          setError('Too many attempts. Please wait a moment and try again.');
+        } else {
+          setError(msg || 'Sign in failed. Please try again.');
+        }
+        return;
+      }
+
+      navigate('/app/dashboard');
+    } catch (err) {
+      setLoading(false);
+      setError('Network error. Please check your connection and try again.');
     }
-
-    navigate('/app/dashboard');
   }
 
   return (
