@@ -25,6 +25,7 @@ import { Integrations } from './pages/Integrations';
 import { Settings } from './pages/Settings';
 import { Messages } from './pages/Messages';
 import { Post } from './pages/Post';
+import { CompetitionDetail } from './pages/CompetitionDetail';
 import { NotFound } from './pages/NotFound';
 
 function AppLayout({ children }) {
@@ -96,6 +97,7 @@ function App() {
                     <Route path="settings" element={<Settings />} />
                     <Route path="messages" element={<Messages />} />
                     <Route path="post" element={<Post />} />
+                    <Route path="competition/:id" element={<CompetitionDetail />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </AppLayout>
