@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 
 export function SignUp() {
+  const navigate = useNavigate();
   const { signUp } = useAuth();
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
@@ -52,28 +53,8 @@ export function SignUp() {
       return;
     }
 
-    setSuccess(true);
-  }
-
-  if (success) {
-    return (
-      <div className="app-root">
-        <div className="app-shell">
-          <div className="page" style={{ justifyContent: 'center', minHeight: '60vh' }}>
-            <section className="section glass" style={{ textAlign: 'center' }}>
-              <h2>Check your email</h2>
-              <p style={{ marginTop: 8 }}>
-                We sent a verification link to <strong>{email}</strong>.
-                Click the link to activate your account, then sign in.
-              </p>
-              <Link to="/auth/signin" className="btn primary" style={{ marginTop: 16 }}>
-                Go to Sign In
-              </Link>
-            </section>
-          </div>
-        </div>
-      </div>
-    );
+    // Account created — redirect to app (email confirmation disabled)
+    navigate('/app/setup');
   }
 
   return (
