@@ -57,15 +57,30 @@ create or replace trigger on_auth_user_created
   for each row execute function public.handle_new_user();
 
 -- ============================================================
--- 2. POSTS — Musical Thoughts
+-- 2. POSTS — Musical Thoughts, Songs, and Playlists
 -- ============================================================
 create table if not exists public.posts (
   id uuid default gen_random_uuid() primary key,
   user_id uuid references public.profiles(id) on delete cascade not null,
   content text not null,
+  post_type text not null default 'thought',  -- 'thought', 'song', 'playlist'
+  song_title text,
+  song_artist text,
+  playlist_name text,
+  playlist_songs jsonb default '[]',  -- array of { title, artist }
   reactions jsonb default '{}',
   created_at timestamptz default now()
 );
+
+-- Safe column additions for existing tables
+do $$ begin
+  alter table public.posts add column if not exists post_type text not null default 'thought';
+  alter table public.posts add column if not exists song_title text;
+  alter table public.posts add column if not exists song_artist text;
+  alter table public.posts add column if not exists playlist_name text;
+  alter table public.posts add column if not exists playlist_songs jsonb default '[]';
+exception when others then null;
+end $$;
 
 alter table public.posts enable row level security;
 
@@ -214,10 +229,76 @@ create policy "Users can send pings"
   with check (auth.uid() = sender_id);
 
 -- ============================================================
--- 7. INDEXES for performance
+-- 7. POST REACTIONS — heart, like, dislike per user per post
+-- ============================================================
+create table if not exists public.post_reactions (
+  id uuid default gen_random_uuid() primary key,
+  post_id uuid references public.posts(id) on delete cascade not null,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  reaction_type text not null,  -- 'heart', 'like', 'dislike'
+  created_at timestamptz default now(),
+  unique (post_id, user_id)
+);
+
+alter table public.post_reactions enable row level security;
+
+drop policy if exists "Anyone can view reactions" on public.post_reactions;
+create policy "Anyone can view reactions"
+  on public.post_reactions for select
+  using (true);
+
+drop policy if exists "Users can add reactions" on public.post_reactions;
+create policy "Users can add reactions"
+  on public.post_reactions for insert
+  with check (auth.uid() = user_id);
+
+drop policy if exists "Users can update their reactions" on public.post_reactions;
+create policy "Users can update their reactions"
+  on public.post_reactions for update
+  using (auth.uid() = user_id);
+
+drop policy if exists "Users can remove their reactions" on public.post_reactions;
+create policy "Users can remove their reactions"
+  on public.post_reactions for delete
+  using (auth.uid() = user_id);
+
+-- ============================================================
+-- 8. COMMENTS — threaded comments on posts
+-- ============================================================
+create table if not exists public.comments (
+  id uuid default gen_random_uuid() primary key,
+  post_id uuid references public.posts(id) on delete cascade not null,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  parent_id uuid references public.comments(id) on delete cascade,  -- null = top-level
+  content text not null,
+  created_at timestamptz default now()
+);
+
+alter table public.comments enable row level security;
+
+drop policy if exists "Anyone can view comments" on public.comments;
+create policy "Anyone can view comments"
+  on public.comments for select
+  using (true);
+
+drop policy if exists "Users can create comments" on public.comments;
+create policy "Users can create comments"
+  on public.comments for insert
+  with check (auth.uid() = user_id);
+
+drop policy if exists "Users can delete their own comments" on public.comments;
+create policy "Users can delete their own comments"
+  on public.comments for delete
+  using (auth.uid() = user_id);
+
+-- ============================================================
+-- 9. INDEXES for performance
 -- ============================================================
 create index if not exists idx_posts_user_id on public.posts(user_id);
 create index if not exists idx_posts_created_at on public.posts(created_at desc);
 create index if not exists idx_messages_conversation_id on public.messages(conversation_id);
 create index if not exists idx_notifications_user_id on public.notifications(user_id);
 create index if not exists idx_vibe_pings_receiver on public.vibe_pings(receiver_id);
+create index if not exists idx_post_reactions_post on public.post_reactions(post_id);
+create index if not exists idx_comments_post on public.comments(post_id);
+create index if not exists idx_comments_parent on public.comments(parent_id);

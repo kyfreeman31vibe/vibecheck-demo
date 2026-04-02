@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Bell } from 'lucide-react';
-import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
 import { usePosts } from '../hooks/usePosts';
 import { useNotifications } from '../hooks/useNotifications';
-import { useAuth } from '../auth/AuthContext';
 
-const REACTION_EMOJIS = ['🔥', '💫', '🎧', '💜'];
+const POST_TYPE_ICONS = {
+  thought: '�',
+  song: '�',
+  playlist: '🎶',
+};
 
 function formatTimeAgo(dateStr) {
   const now = Date.now();
@@ -17,14 +20,35 @@ function formatTimeAgo(dateStr) {
   return Math.floor(diff / 86400) + 'd ago';
 }
 
+function isToday(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+}
+
+function isThisWeek(dateStr) {
+  const d = new Date(dateStr).getTime();
+  const now = Date.now();
+  return (now - d) < 7 * 86400 * 1000;
+}
+
+function postActivityLabel(item) {
+  var name = item.user?.name || 'Someone';
+  if (item.postType === 'song') return name + ' added a song';
+  if (item.postType === 'playlist') return name + ' added a playlist';
+  return name + ' added a Musical Thought';
+}
+
+function postDetailText(item) {
+  if (item.postType === 'song' && item.songTitle) return item.songTitle + (item.songArtist ? ' by ' + item.songArtist : '');
+  if (item.postType === 'playlist' && item.playlistName) return item.playlistName;
+  return item.content;
+}
+
 export function Dashboard() {
-  const { user } = useAuth();
-  const { profile } = useCurrentUserProfile();
-  const { posts, reactToPost } = usePosts();
+  const { posts } = usePosts();
   const { notifications, unreadCount, markAllRead, deleteNotification, clearAll } = useNotifications();
   const [search, setSearch] = useState('');
-  const [commentsByItem, setCommentsByItem] = useState({});
-  const [drafts, setDrafts] = useState({});
   const [showNotifs, setShowNotifs] = useState(false);
 
   const handleOpenNotifs = () => {
@@ -39,20 +63,6 @@ export function Dashboard() {
           item.content.toLowerCase().includes(search.toLowerCase())
       )
     : posts;
-
-  const handleReact = (postId, emoji) => {
-    reactToPost(postId, emoji);
-  };
-
-  const handleAddComment = (itemId) => {
-    const text = (drafts[itemId] || '').trim();
-    if (!text) return;
-    setCommentsByItem((prev) => ({
-      ...prev,
-      [itemId]: [...(prev[itemId] || []), { user: profile.name, text }],
-    }));
-    setDrafts((prev) => ({ ...prev, [itemId]: '' }));
-  };
 
   return (
     <div className="page">
@@ -155,75 +165,76 @@ export function Dashboard() {
         </div>
       )}
 
-      <div className="list">
-        {filteredPosts.map((item) => {
-          const comments = commentsByItem[item.id] || [];
-          const draft = drafts[item.id] || '';
-          const myReaction = user ? (item.reactions || {})[user.id] : null;
+      {/* Activity feed grouped by time — matching wireframe */}
+      {(() => {
+        const todayPosts = filteredPosts.filter((p) => isToday(p.createdAt));
+        const weekPosts = filteredPosts.filter((p) => !isToday(p.createdAt) && isThisWeek(p.createdAt));
+        const olderPosts = filteredPosts.filter((p) => !isToday(p.createdAt) && !isThisWeek(p.createdAt));
+
+        function renderGroup(label, items) {
+          if (items.length === 0) return null;
           return (
-            <div key={item.id} className="list-item glass">
-              <div className="list-title-row">
-                <span className="list-title">{item.user?.name || 'Unknown'}</span>
-                <span className="caption">@{item.user?.username || 'unknown'}</span>
-              </div>
-              <div style={{ marginTop: 4 }}>{item.content}</div>
-              <div className="caption" style={{ marginTop: 4 }}>{formatTimeAgo(item.createdAt)}</div>
+            <div key={label} style={{ marginBottom: 16 }}>
+              <h3 style={{ marginBottom: 8, fontSize: '1rem' }}>{label}</h3>
+              <div className="list">
+                {items.map((item) => {
+                  const icon = POST_TYPE_ICONS[item.postType] || '💬';
+                  const label = postActivityLabel(item);
+                  const detail = postDetailText(item);
+                  const isLong = item.postType === 'thought' && item.content && item.content.length > 120;
+                  const preview = isLong ? item.content.slice(0, 120) + '...' : detail;
 
-              <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
-                {REACTION_EMOJIS.map((emoji) => (
-                  <button
-                    key={emoji}
-                    type="button"
-                    className={`btn ghost small ${myReaction === emoji ? 'active' : ''}`}
-                    onClick={() => handleReact(item.id, emoji)}
-                  >
-                    {emoji}
-                  </button>
-                ))}
-                {myReaction && (
-                  <span className="caption" style={{ alignSelf: 'center' }}>
-                    You reacted {myReaction}
-                  </span>
-                )}
-              </div>
-
-              <div style={{ marginTop: 8 }}>
-                <div className="chat-input-row">
-                  <input
-                    className="input"
-                    placeholder="Add a comment..."
-                    value={draft}
-                    onChange={(e) =>
-                      setDrafts((prev) => ({ ...prev, [item.id]: e.target.value }))
-                    }
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        handleAddComment(item.id);
-                      }
-                    }}
-                  />
-                  <button
-                    className="btn primary small"
-                    onClick={() => handleAddComment(item.id)}
-                  >
-                    Reply
-                  </button>
-                </div>
-                {comments.length > 0 && (
-                  <ul className="simple-list" style={{ marginTop: 6 }}>
-                    {comments.map((c, idx) => (
-                      <li key={idx}>
-                        <strong>{c.user}</strong>: {c.text}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                  return (
+                    <div key={item.id} className="list-item glass">
+                      <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                        <span style={{ fontSize: 20, flexShrink: 0, marginTop: 2 }}>{icon}</span>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 14 }}>
+                            {label}
+                            {(item.postType === 'song' || item.postType === 'playlist') && (
+                              <Link to={'/app/post/' + item.id} style={{ color: 'var(--accent)', marginLeft: 4, textDecoration: 'underline' }}>
+                                {detail}
+                              </Link>
+                            )}
+                          </div>
+                          {item.postType === 'thought' && (
+                            <div className="caption" style={{ marginTop: 2 }}>{preview}</div>
+                          )}
+                          <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 4 }}>
+                            <span className="caption">{formatTimeAgo(item.createdAt)}</span>
+                            {(item.reactionCount > 0 || item.commentCount > 0) && (
+                              <span className="caption">
+                                {item.reactionCount > 0 && item.reactionCount + ' reaction' + (item.reactionCount !== 1 ? 's' : '')}
+                                {item.reactionCount > 0 && item.commentCount > 0 && ', '}
+                                {item.commentCount > 0 && item.commentCount + ' comment' + (item.commentCount !== 1 ? 's' : '')}
+                              </span>
+                            )}
+                            <Link
+                              to={'/app/post/' + item.id}
+                              className="btn ghost small"
+                              style={{ padding: '2px 8px', fontSize: '0.8rem', marginLeft: 'auto' }}
+                            >
+                              VIEW MORE
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           );
-        })}
-      </div>
+        }
+
+        return (
+          <>
+            {renderGroup('Today', todayPosts)}
+            {renderGroup('This Week', weekPosts)}
+            {renderGroup('Earlier', olderPosts)}
+          </>
+        );
+      })()}
     </div>
   );
 }

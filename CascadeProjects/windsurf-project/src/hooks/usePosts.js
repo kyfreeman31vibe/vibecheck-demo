@@ -2,6 +2,28 @@ import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../auth/AuthContext';
 
+function mapPost(p) {
+  return {
+    id: p.id,
+    userId: p.user_id,
+    content: p.content,
+    postType: p.post_type || 'thought',
+    songTitle: p.song_title,
+    songArtist: p.song_artist,
+    playlistName: p.playlist_name,
+    playlistSongs: p.playlist_songs || [],
+    reactions: p.reactions || {},
+    reactionCount: p.reaction_count || 0,
+    commentCount: p.comment_count || 0,
+    createdAt: p.created_at,
+    user: p.profiles ? {
+      name: p.profiles.name,
+      username: p.profiles.username,
+      avatar_url: p.profiles.avatar_url,
+    } : { name: 'Unknown', username: 'unknown' },
+  };
+}
+
 export function usePosts() {
   const { user } = useAuth();
   const [posts, setPosts] = useState([]);
@@ -16,18 +38,17 @@ export function usePosts() {
       .limit(50);
 
     if (!error && data) {
-      setPosts(data.map((p) => ({
-        id: p.id,
-        userId: p.user_id,
-        content: p.content,
-        reactions: p.reactions || {},
-        createdAt: p.created_at,
-        user: p.profiles ? {
-          name: p.profiles.name,
-          username: p.profiles.username,
-          avatar_url: p.profiles.avatar_url,
-        } : { name: 'Unknown', username: 'unknown' },
-      })));
+      // Fetch reaction + comment counts in parallel
+      const enriched = await Promise.all(
+        data.map(async (p) => {
+          const [{ count: rc }, { count: cc }] = await Promise.all([
+            supabase.from('post_reactions').select('*', { count: 'exact', head: true }).eq('post_id', p.id),
+            supabase.from('comments').select('*', { count: 'exact', head: true }).eq('post_id', p.id),
+          ]);
+          return { ...p, reaction_count: rc || 0, comment_count: cc || 0 };
+        })
+      );
+      setPosts(enriched.map(mapPost));
     }
     setLoading(false);
   }, []);
@@ -36,31 +57,34 @@ export function usePosts() {
     fetchPosts();
   }, [fetchPosts]);
 
-  const createPost = useCallback(async (content) => {
+  const createPost = useCallback(async ({ content, postType, songTitle, songArtist, playlistName, playlistSongs }) => {
     if (!user) return { error: { message: 'Not signed in' } };
+
+    const row = {
+      user_id: user.id,
+      content: content || '',
+      post_type: postType || 'thought',
+    };
+    if (postType === 'song') {
+      row.song_title = songTitle || '';
+      row.song_artist = songArtist || '';
+    }
+    if (postType === 'playlist') {
+      row.playlist_name = playlistName || '';
+      row.playlist_songs = playlistSongs || [];
+    }
 
     const { data, error } = await supabase
       .from('posts')
-      .insert({ user_id: user.id, content })
+      .insert(row)
       .select('*, profiles(name, username, avatar_url)')
       .single();
 
     if (!error && data) {
-      setPosts((prev) => [{
-        id: data.id,
-        userId: data.user_id,
-        content: data.content,
-        reactions: data.reactions || {},
-        createdAt: data.created_at,
-        user: data.profiles ? {
-          name: data.profiles.name,
-          username: data.profiles.username,
-          avatar_url: data.profiles.avatar_url,
-        } : { name: 'Unknown', username: 'unknown' },
-      }, ...prev]);
+      setPosts((prev) => [mapPost({ ...data, reaction_count: 0, comment_count: 0 }), ...prev]);
     }
 
-    return { error };
+    return { data, error };
   }, [user]);
 
   const deletePost = useCallback(async (postId) => {
