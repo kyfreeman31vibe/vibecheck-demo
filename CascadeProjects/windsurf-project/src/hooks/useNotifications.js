@@ -36,6 +36,9 @@ export function useNotifications() {
 
   useEffect(() => {
     fetchNotifications();
+    // Poll for new notifications every 15 seconds
+    const interval = setInterval(fetchNotifications, 15000);
+    return () => clearInterval(interval);
   }, [fetchNotifications]);
 
   const markAllRead = useCallback(async () => {

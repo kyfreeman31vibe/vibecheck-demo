@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useMatches, DEMO_USERS } from '../hooks/useMatches';
+import { useCircles } from '../hooks/useCircles';
 
 const EVENTS = [
   { id: 1, name: 'Golden Gate Sunset Sessions', date: 'Fri, Aug 8', location: 'Marina District · San Francisco', type: 'Concert', attendees: 42 },
@@ -16,13 +17,14 @@ const EVENTS = [
   { id: 13, name: 'U Street Groove Night', date: 'Sat, Aug 9', location: 'U Street Corridor · DC', type: 'Concert', attendees: 44 },
 ];
 
-function UsersTab({ matches, onPing }) {
+function UsersTab({ matches, onPing, isInCircle, onAddToCircle }) {
   return (
     <div className="list">
       {matches.map(function (m) {
         var u = m.user;
         var topArtists = (u.favoriteArtists || []).slice(0, 5).join(', ');
         var initials = u.name.charAt(0).toUpperCase();
+        var inCircle = isInCircle(m.id);
         return (
           <div key={m.id} className="list-item glass">
             <div className="profile-card-header" style={{ marginBottom: 6 }}>
@@ -41,9 +43,11 @@ function UsersTab({ matches, onPing }) {
               )}
             </div>
             <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-              <Link to={'/app/match/' + m.id} className="btn small ghost">View Profile</Link>
               <button type="button" className="btn small primary" onClick={function () { onPing(m.id); }} disabled={m.hasPinged}>
                 {m.hasPinged ? 'Vibe sent' : 'Send Vibe Ping'}
+              </button>
+              <button type="button" className={'btn small ' + (inCircle ? 'ghost' : 'primary')} onClick={function () { if (!inCircle) onAddToCircle(m.id); }} disabled={inCircle}>
+                {inCircle ? 'In your circle' : 'Add to Circle'}
               </button>
             </div>
           </div>
@@ -137,6 +141,7 @@ export function Discover() {
   var setTab = ref[1];
 
   var { matches, sendVibePing } = useMatches();
+  var { isInCircle, addToCircle } = useCircles();
 
   return (
     <div className="page">
@@ -185,7 +190,7 @@ export function Discover() {
       </div>
 
       {tab === 'users' ? (
-        <UsersTab matches={matches} onPing={sendVibePing} />
+        <UsersTab matches={matches} onPing={sendVibePing} isInCircle={isInCircle} onAddToCircle={addToCircle} />
       ) : (
         <EventsTab />
       )}

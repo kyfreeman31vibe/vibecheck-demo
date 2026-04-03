@@ -229,7 +229,35 @@ create policy "Users can send pings"
   with check (auth.uid() = sender_id);
 
 -- ============================================================
--- 7. POST REACTIONS — heart, like, dislike per user per post
+-- 7. CIRCLES — users added to your circle
+-- ============================================================
+create table if not exists public.circles (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  circle_user_id uuid references public.profiles(id) on delete cascade not null,
+  created_at timestamptz default now(),
+  unique (user_id, circle_user_id)
+);
+
+alter table public.circles enable row level security;
+
+drop policy if exists "Users can view their own circle" on public.circles;
+create policy "Users can view their own circle"
+  on public.circles for select
+  using (auth.uid() = user_id);
+
+drop policy if exists "Users can add to their circle" on public.circles;
+create policy "Users can add to their circle"
+  on public.circles for insert
+  with check (auth.uid() = user_id);
+
+drop policy if exists "Users can remove from their circle" on public.circles;
+create policy "Users can remove from their circle"
+  on public.circles for delete
+  using (auth.uid() = user_id);
+
+-- ============================================================
+-- 8. POST REACTIONS — heart, like, dislike per user per post
 -- ============================================================
 create table if not exists public.post_reactions (
   id uuid default gen_random_uuid() primary key,
@@ -302,3 +330,5 @@ create index if not exists idx_vibe_pings_receiver on public.vibe_pings(receiver
 create index if not exists idx_post_reactions_post on public.post_reactions(post_id);
 create index if not exists idx_comments_post on public.comments(post_id);
 create index if not exists idx_comments_parent on public.comments(parent_id);
+create index if not exists idx_circles_user on public.circles(user_id);
+create index if not exists idx_circles_circle_user on public.circles(circle_user_id);

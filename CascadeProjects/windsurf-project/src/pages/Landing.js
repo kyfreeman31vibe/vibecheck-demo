@@ -15,8 +15,8 @@ export function Landing() {
         <div className="hero-card glass">
           <h1>Meet people who share your soundtrack.</h1>
           <p>
-            VibeCheck connects you with friends, dating matches, and event buddies
-            based on your real music taste.
+            VibeCheck connects you with your community through your real music taste.
+            Discover people and events that match your vibe.
           </p>
           <div className="cta-row">
             <button className="btn primary" onClick={() => navigate('/auth/signup')}>

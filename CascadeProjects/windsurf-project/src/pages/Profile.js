@@ -1,10 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
+import { useCircles } from '../hooks/useCircles';
+import { useAuth } from '../auth/AuthContext';
+import { usePosts } from '../hooks/usePosts';
 
 export function Profile() {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
   const { profile } = useCurrentUserProfile();
+  const { circleCount } = useCircles();
+  const { posts } = usePosts();
 
   const initials = profile.name
     .split(' ')
@@ -13,67 +19,118 @@ export function Profile() {
     .map((part) => part[0].toUpperCase())
     .join('');
 
+  // Filter the current user's playlist posts
+  const myPlaylists = posts.filter((p) => p.userId === profile.id && p.postType === 'playlist');
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+
   return (
     <div className="page">
       <header className="page-header">
         <div>
           <h2>My profile</h2>
-          <p className="subtitle">Your current VibeCheck demo profile.</p>
+          <p className="subtitle">Your VibeCheck profile.</p>
         </div>
-        <button className="btn ghost" onClick={() => navigate('/app/setup')}>
-          Edit profile
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button className="btn ghost" onClick={() => navigate('/app/setup')}>
+            Edit profile
+          </button>
+          <button className="btn ghost" style={{ color: '#ef4444' }} onClick={handleSignOut}>
+            Sign Out
+          </button>
+        </div>
       </header>
+
       <section className="section glass profile-header">
         <div className="avatar-circle">{initials}</div>
-        <div>
+        <div style={{ flex: 1 }}>
           <h3>{profile.name}</h3>
           <p className="subtitle">@{profile.username}</p>
           <p className="caption">{profile.city}</p>
-        </div>
-      </section>
-      <section className="section glass">
-        <h3>About</h3>
-        <p>{profile.bio}</p>
-      </section>
-      <section className="section glass">
-        <h3>Music</h3>
-        <div className="tag-row">
-          {profile.genres.map((g) => (
-            <span key={g} className="tag">
-              {g}
-            </span>
-          ))}
-        </div>
-        <div className="two-column">
-          <div>
-            <h4>Favorite artists</h4>
-            <ul className="simple-list">
-              {profile.favoriteArtists.map((a) => (
-                <li key={a}>{a}</li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h4>Mood tags</h4>
-            <div className="tag-row">
-              {profile.moods.map((mood) => (
-                <span key={mood} className="tag">
-                  {mood}
-                </span>
-              ))}
+          <div style={{ display: 'flex', gap: 16, marginTop: 6 }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontWeight: 'bold', fontSize: 18 }}>{circleCount}</div>
+              <div className="caption">Circle</div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontWeight: 'bold', fontSize: 18 }}>{myPlaylists.length}</div>
+              <div className="caption">Playlists</div>
             </div>
           </div>
         </div>
       </section>
+
+      {profile.bio && (
+        <section className="section glass">
+          <h3>About</h3>
+          <p>{profile.bio}</p>
+        </section>
+      )}
+
+      {profile.genres.length > 0 && (
+        <section className="section glass">
+          <h3>Top Genres</h3>
+          <div className="tag-row">
+            {profile.genres.map((g) => (
+              <span key={g} className="tag">{g}</span>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {profile.favoriteArtists.length > 0 && (
+        <section className="section glass">
+          <h3>Top Artists</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {profile.favoriteArtists.map((a, i) => (
+              <div key={a} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontWeight: 'bold', fontSize: 14, opacity: 0.5, width: 20, textAlign: 'right' }}>{i + 1}</span>
+                <span>{a}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {profile.moods.length > 0 && (
+        <section className="section glass">
+          <h3>Mood Tags</h3>
+          <div className="tag-row">
+            {profile.moods.map((mood) => (
+              <span key={mood} className="tag">{mood}</span>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {myPlaylists.length > 0 && (
+        <section className="section glass">
+          <h3>My Playlists</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {myPlaylists.map((p) => (
+              <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontWeight: 'bold', fontSize: 14 }}>{p.playlistName}</div>
+                  <div className="caption">{(p.playlistSongs || []).length} songs</div>
+                </div>
+                <button className="btn small ghost" onClick={() => navigate('/app/post/' + p.id)}>View</button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <section className="section glass">
         <div className="list-title-row">
           <div>
-            <h3>Next step</h3>
+            <h3>Discover</h3>
             <p className="caption">Find people and events that match your vibe.</p>
           </div>
           <button className="btn primary" onClick={() => navigate('/app/discover')}>
-            Discover
+            Explore
           </button>
         </div>
       </section>
