@@ -22,6 +22,7 @@ function UsersTab({ matches, onPing, isInCircle, onAddToCircle }) {
     <div className="list">
       {matches.map(function (m) {
         var u = m.user;
+        var isDemo = String(m.id).startsWith('demo-');
         var topArtists = (u.favoriteArtists || []).slice(0, 5).join(', ');
         var initials = u.name.charAt(0).toUpperCase();
         var inCircle = isInCircle(m.id);
@@ -30,7 +31,10 @@ function UsersTab({ matches, onPing, isInCircle, onAddToCircle }) {
             <div className="profile-card-header" style={{ marginBottom: 6 }}>
               <div className="avatar-circle">{initials}</div>
               <div>
-                <div className="list-title">{u.name}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div className="list-title">{u.name}</div>
+                  {isDemo && <span style={{ fontSize: 10, fontWeight: 'bold', background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.5)', padding: '2px 6px', borderRadius: 4 }}>DEMO</span>}
+                </div>
                 <div className="caption">{u.bio || 'VibeCheck user'}</div>
               </div>
             </div>

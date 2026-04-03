@@ -120,7 +120,10 @@ export function Match() {
           >
             ← Back
           </button>
-          <h2>{user.name}</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <h2>{user.name}</h2>
+            {demoUser && <span style={{ fontSize: 10, fontWeight: 'bold', background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.5)', padding: '2px 6px', borderRadius: 4 }}>DEMO</span>}
+          </div>
           <p className="subtitle">{compat.score}% compatible</p>
         </div>
       </header>
