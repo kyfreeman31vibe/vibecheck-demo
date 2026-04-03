@@ -70,10 +70,10 @@ export function Profile() {
         <div className="list-title-row">
           <div>
             <h3>Next step</h3>
-            <p className="caption">See who you vibe with based on music and mood.</p>
+            <p className="caption">Find people and events that match your vibe.</p>
           </div>
-          <button className="btn primary" onClick={() => navigate('/app/matches')}>
-            View matches
+          <button className="btn primary" onClick={() => navigate('/app/discover')}>
+            Discover
           </button>
         </div>
       </section>

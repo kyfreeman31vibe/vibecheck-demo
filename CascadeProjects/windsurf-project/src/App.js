@@ -14,8 +14,6 @@ import { ProfileSetup } from './pages/ProfileSetup';
 import { Profile } from './pages/Profile';
 import { PublicProfile } from './pages/PublicProfile';
 import { Discover } from './pages/Discover';
-import { Match } from './pages/Match';
-import { Matches } from './pages/Matches';
 import { Chat } from './pages/Chat';
 import { Connections } from './pages/Connections';
 import { Feed } from './pages/Feed';
@@ -86,8 +84,6 @@ function App() {
                     <Route path="setup" element={<ProfileSetup />} />
                     <Route path="profile" element={<Profile />} />
                     <Route path="discover" element={<Discover />} />
-                    <Route path="match/:id" element={<Match />} />
-                    <Route path="matches" element={<Matches />} />
                     <Route path="chat/:id" element={<Chat />} />
                     <Route path="connections" element={<Connections />} />
                     <Route path="feed" element={<Feed />} />

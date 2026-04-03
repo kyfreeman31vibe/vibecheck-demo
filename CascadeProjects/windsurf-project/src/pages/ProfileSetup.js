@@ -1,31 +1,114 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
 
-const steps = [
-  'Basics',
-  'Genres',
-  'Top Artists',
-  'Top Songs',
-  'Photos',
-  'Connections',
-  'Review',
+const AVAILABLE_GENRES = [
+  'Alternative', 'Ambient', 'Blues', 'Classical', 'Country', 'Dance',
+  'Disco', 'Drum & Bass', 'EDM', 'Electronic', 'Emo', 'Folk',
+  'Funk', 'Gospel', 'Grunge', 'Hip-Hop', 'House', 'Indie',
+  'Jazz', 'K-Pop', 'Latin', 'Lo-Fi', 'Metal', 'Neo-Soul',
+  'Pop', 'Punk', 'R&B', 'Rap', 'Reggae', 'Reggaeton',
+  'Rock', 'Ska', 'Soul', 'Techno', 'Trap', 'World',
 ];
 
 const AVAILABLE_ARTISTS = [
-  'Tame Impala',
-  'Kaytranada',
-  'Phoebe Bridgers',
-  'SZA',
-  'Kendrick Lamar',
-  'Frank Ocean',
-  'Billie Eilish',
-  'Fred again..',
-  'Bad Bunny',
-  'Rosalía',
+  'Adele', 'Arctic Monkeys', 'Bad Bunny', 'Beyoncé', 'Billie Eilish',
+  'Bruno Mars', 'Childish Gambino', 'Daniel Caesar', 'Doja Cat', 'Drake',
+  'Dua Lipa', 'Ed Sheeran', 'Frank Ocean', 'Fred again..', 'Giveon',
+  'Gorillaz', 'H.E.R.', 'Harry Styles', 'J. Cole', 'Jhené Aiko',
+  'Kaytranada', 'Kendrick Lamar', 'Khalid', 'Lana Del Rey', 'Lizzo',
+  'Mac Miller', 'Megan Thee Stallion', 'Metro Boomin', 'Miguel', 'Olivia Rodrigo',
+  'Phoebe Bridgers', 'Post Malone', 'Radiohead', 'Rihanna', 'Rosalía',
+  'SZA', 'Steve Lacy', 'Summer Walker', 'SWV', 'Tame Impala',
+  'Taylor Swift', 'The Weeknd', 'Travis Scott', 'Tyler, The Creator', 'Usher',
 ];
 
 const AVAILABLE_MOODS = ['Happy', 'Chill', 'Energetic', 'Reflective', 'Romantic', 'Social'];
+
+function SearchableDropdown({ label, caption, options, selected, setSelected, maxSelections, placeholder }) {
+  const [search, setSearch] = useState('');
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    document.addEventListener('pointerdown', handleClickOutside);
+    return () => document.removeEventListener('pointerdown', handleClickOutside);
+  }, []);
+
+  const filtered = options.filter(
+    (o) => o.toLowerCase().includes(search.toLowerCase()) && !selected.includes(o)
+  );
+
+  function addItem(item) {
+    if (maxSelections && selected.length >= maxSelections) return;
+    setSelected([...selected, item]);
+    setSearch('');
+  }
+
+  function removeItem(item) {
+    setSelected(selected.filter((s) => s !== item));
+  }
+
+  return (
+    <div className="steps-item" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
+      <div style={{ flex: 1 }}>
+        <div className="steps-title">{label}</div>
+        {caption && <div className="steps-caption">{caption}</div>}
+        {selected.length > 0 && (
+          <div className="tag-row" style={{ marginTop: 6, marginBottom: 6 }}>
+            {selected.map((item) => (
+              <span key={item} className="tag" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                {item}
+                <span
+                  style={{ cursor: 'pointer', fontWeight: 'bold', marginLeft: 2 }}
+                  onPointerDown={() => removeItem(item)}
+                >✕</span>
+              </span>
+            ))}
+          </div>
+        )}
+        <div ref={ref} style={{ position: 'relative' }}>
+          <input
+            className="input"
+            placeholder={placeholder || 'Search...'}
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setOpen(true); }}
+            onFocus={() => setOpen(true)}
+          />
+          {open && search.trim() && filtered.length > 0 && (
+            <div style={{
+              position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50,
+              background: 'var(--surface, #1a1a2e)', border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: 8, maxHeight: 180, overflowY: 'auto', marginTop: 4,
+            }}>
+              {filtered.slice(0, 15).map((item) => (
+                <div
+                  key={item}
+                  style={{ padding: '8px 12px', cursor: 'pointer', fontSize: 14 }}
+                  onPointerDown={() => { addItem(item); setOpen(false); }}
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+          )}
+          {open && search.trim() && filtered.length === 0 && (
+            <div style={{
+              position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50,
+              background: 'var(--surface, #1a1a2e)', border: '1px solid rgba(255,255,255,0.12)',
+              borderRadius: 8, padding: '8px 12px', marginTop: 4,
+            }}>
+              <span className="caption">No results</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function ProfileSetup() {
   const { profile, saveProfile } = useCurrentUserProfile();
@@ -33,27 +116,13 @@ export function ProfileSetup() {
 
   const [name, setName] = useState(profile?.name || '');
   const [username, setUsername] = useState(profile?.username || '');
-  const [intent, setIntent] = useState(profile?.intent || 'Friends');
-  const [genres, setGenres] = useState(profile?.genres?.join(', ') || '');
+  const [genres, setGenres] = useState(profile?.genres || []);
   const [city, setCity] = useState(profile?.city || '');
   const [bio, setBio] = useState(profile?.bio || '');
-  const [artistSearch, setArtistSearch] = useState('');
   const [favoriteArtists, setFavoriteArtists] = useState(profile?.favoriteArtists || []);
   const [moods, setMoods] = useState(profile?.moods || []);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
-
-  const filteredArtists = AVAILABLE_ARTISTS.filter((artist) =>
-    artist.toLowerCase().includes(artistSearch.toLowerCase())
-  );
-
-  const toggleArtist = (artist) => {
-    if (favoriteArtists.includes(artist)) {
-      setFavoriteArtists(favoriteArtists.filter((a) => a !== artist));
-    } else if (favoriteArtists.length < 5) {
-      setFavoriteArtists([...favoriteArtists, artist]);
-    }
-  };
 
   const toggleMood = (mood) => {
     if (moods.includes(mood)) {
@@ -71,11 +140,7 @@ export function ProfileSetup() {
     const result = await saveProfile({
       name: name.trim() || 'New User',
       username: username.trim() || 'user',
-      intent,
-      genres: genres
-        .split(',')
-        .map((g) => g.trim())
-        .filter(Boolean),
+      genres,
       city,
       bio,
       favoriteArtists,
@@ -95,12 +160,11 @@ export function ProfileSetup() {
       <header className="page-header">
         <div>
           <h2>Profile setup</h2>
-          <p className="subtitle">Set up your profile so we can find your people.</p>
+          <p className="subtitle">Set up your profile so we can connect you with your community.</p>
         </div>
       </header>
       <section className="section glass" style={{ marginBottom: 12 }}>
-        <h3>Basics</h3>
-        <p className="caption" style={{ marginTop: 4 }}>Step 1 of 7 · Complete the basics to get started.</p>
+        <h3>Your Info</h3>
         <form className="steps-list" onSubmit={handleSubmit}>
           <label className="steps-item" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
             <div style={{ flex: 1 }}>
@@ -147,59 +211,27 @@ export function ProfileSetup() {
               />
             </div>
           </label>
-          <label className="steps-item" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
-            <div style={{ flex: 1 }}>
-              <div className="steps-title">Connection intent</div>
-              <select
-                className="input"
-                value={intent}
-                onChange={(e) => setIntent(e.target.value)}
-              >
-                <option value="Friends">Friends</option>
-                <option value="Dating">Dating</option>
-                <option value="Both">Both</option>
-              </select>
-            </div>
-          </label>
-          <label className="steps-item" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
-            <div style={{ flex: 1 }}>
-              <div className="steps-title">Top genres</div>
-              <input
-                className="input"
-                placeholder="e.g. Indie, Lo-fi, Alt R&B"
-                value={genres}
-                onChange={(e) => setGenres(e.target.value)}
-              />
-              <div className="steps-caption">Comma-separated; used to personalize your demo profile.</div>
-            </div>
-          </label>
-          <label className="steps-item" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
-            <div style={{ flex: 1 }}>
-              <div className="steps-title">Favorite artists</div>
-              <input
-                className="input"
-                placeholder="Search artists"
-                value={artistSearch}
-                onChange={(e) => setArtistSearch(e.target.value)}
-              />
-              <div className="steps-caption">Select up to 5 artists you vibe with most.</div>
-              <div className="tag-row" style={{ marginTop: 8 }}>
-                {filteredArtists.map((artist) => {
-                  const selected = favoriteArtists.includes(artist);
-                  return (
-                    <button
-                      key={artist}
-                      type="button"
-                      className={selected ? 'btn small primary' : 'btn small ghost'}
-                      onClick={() => toggleArtist(artist)}
-                    >
-                      {artist}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </label>
+
+          <SearchableDropdown
+            label="Top genres"
+            caption="Search and select your favorite genres."
+            options={AVAILABLE_GENRES}
+            selected={genres}
+            setSelected={setGenres}
+            maxSelections={10}
+            placeholder="Search genres..."
+          />
+
+          <SearchableDropdown
+            label="Favorite artists"
+            caption="Select up to 5 artists you vibe with most."
+            options={AVAILABLE_ARTISTS}
+            selected={favoriteArtists}
+            setSelected={setFavoriteArtists}
+            maxSelections={5}
+            placeholder="Search artists..."
+          />
+
           <label className="steps-item" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
             <div style={{ flex: 1 }}>
               <div className="steps-title">Mood tags</div>
@@ -227,17 +259,6 @@ export function ProfileSetup() {
           </button>
         </form>
       </section>
-      <ol className="steps-list">
-        {steps.map((step, idx) => (
-          <li key={step} className="steps-item glass">
-            <div className="steps-index">{idx + 1}</div>
-            <div>
-              <div className="steps-title">{step}</div>
-              <div className="steps-caption">Coming soon.</div>
-            </div>
-          </li>
-        ))}
-      </ol>
     </div>
   );
 }
