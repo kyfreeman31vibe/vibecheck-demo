@@ -13,7 +13,6 @@ export function SignUp() {
   const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const passwordValid =
     password.length >= 8 &&
