@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
 import { AVAILABLE_GENRES, AVAILABLE_ARTISTS, AVAILABLE_MOODS } from '../data/profileOptions';
@@ -92,15 +92,29 @@ export function ProfileSetup() {
   const { profile, saveProfile } = useCurrentUserProfile();
   const navigate = useNavigate();
 
-  const [name, setName] = useState(profile?.name || '');
-  const [username, setUsername] = useState(profile?.username || '');
-  const [genres, setGenres] = useState(profile?.genres || []);
-  const [city, setCity] = useState(profile?.city || '');
-  const [bio, setBio] = useState(profile?.bio || '');
-  const [favoriteArtists, setFavoriteArtists] = useState(profile?.favoriteArtists || []);
-  const [moods, setMoods] = useState(profile?.moods || []);
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [genres, setGenres] = useState([]);
+  const [city, setCity] = useState('');
+  const [bio, setBio] = useState('');
+  const [favoriteArtists, setFavoriteArtists] = useState([]);
+  const [moods, setMoods] = useState([]);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
+  const [synced, setSynced] = useState(null);
+
+  useEffect(() => {
+    if (profile?.id && profile.id !== synced) {
+      setName(profile.name || '');
+      setUsername(profile.username || '');
+      setGenres(profile.genres || []);
+      setCity(profile.city || '');
+      setBio(profile.bio || '');
+      setFavoriteArtists(profile.favoriteArtists || []);
+      setMoods(profile.moods || []);
+      setSynced(profile.id);
+    }
+  }, [profile, synced]);
 
   const toggleMood = (mood) => {
     if (moods.includes(mood)) {
