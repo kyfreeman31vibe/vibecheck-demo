@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { DEMO_USERS } from '../hooks/useMatches';
 import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
 import { useCircles } from '../hooks/useCircles';
@@ -172,7 +172,7 @@ export function Match() {
               onPointerDown={async () => {
                 if (startingChat) return;
                 setStartingChat(true);
-                const { data, error } = await getOrCreateConversation(id);
+                const { data } = await getOrCreateConversation(id);
                 setStartingChat(false);
                 if (data) navigate('/app/chat/' + data.id);
               }}
