@@ -5,18 +5,20 @@ import { useAuth } from '../auth/AuthContext';
 export function useCircles() {
   const { user } = useAuth();
   const [circleIds, setCircleIds] = useState([]);
+  const [circleMembers, setCircleMembers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchCircle = useCallback(async () => {
-    if (!user) { setCircleIds([]); setLoading(false); return; }
+    if (!user) { setCircleIds([]); setCircleMembers([]); setLoading(false); return; }
     setLoading(true);
     const { data, error } = await supabase
       .from('circles')
-      .select('circle_user_id')
+      .select('circle_user_id, profiles:circle_user_id(id, name, username, avatar_url, city)')
       .eq('user_id', user.id);
 
     if (!error && data) {
       setCircleIds(data.map((r) => r.circle_user_id));
+      setCircleMembers(data.map((r) => r.profiles).filter(Boolean));
     }
     setLoading(false);
   }, [user]);
@@ -62,5 +64,5 @@ export function useCircles() {
 
   const isInCircle = useCallback((userId) => circleIds.includes(userId), [circleIds]);
 
-  return { circleIds, circleCount: circleIds.length, loading, addToCircle, removeFromCircle, isInCircle, refetch: fetchCircle };
+  return { circleIds, circleMembers, circleCount: circleIds.length, loading, addToCircle, removeFromCircle, isInCircle, refetch: fetchCircle };
 }

@@ -9,7 +9,7 @@ export function Profile() {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const { profile } = useCurrentUserProfile();
-  const { circleCount } = useCircles();
+  const { circleCount, circleMembers } = useCircles();
   const { posts } = usePosts();
 
   const initials = profile.name
@@ -63,27 +63,27 @@ export function Profile() {
         </div>
       </section>
 
-      {profile.bio && (
-        <section className="section glass">
-          <h3>About</h3>
-          <p>{profile.bio}</p>
-        </section>
-      )}
+      <section className="section glass">
+        <h3>About</h3>
+        {profile.bio ? <p>{profile.bio}</p> : <p className="caption">No bio yet. <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => navigate('/app/setup')}>Edit profile</span> to add one.</p>}
+      </section>
 
-      {profile.genres.length > 0 && (
-        <section className="section glass">
-          <h3>Top Genres</h3>
+      <section className="section glass">
+        <h3>Top Genres</h3>
+        {profile.genres.length > 0 ? (
           <div className="tag-row">
             {profile.genres.map((g) => (
               <span key={g} className="tag">{g}</span>
             ))}
           </div>
-        </section>
-      )}
+        ) : (
+          <p className="caption">No genres selected. <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => navigate('/app/setup')}>Edit profile</span> to add your favorites.</p>
+        )}
+      </section>
 
-      {profile.favoriteArtists.length > 0 && (
-        <section className="section glass">
-          <h3>Top Artists</h3>
+      <section className="section glass">
+        <h3>Top Artists</h3>
+        {profile.favoriteArtists.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {profile.favoriteArtists.map((a, i) => (
               <div key={a} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -92,23 +92,48 @@ export function Profile() {
               </div>
             ))}
           </div>
-        </section>
-      )}
+        ) : (
+          <p className="caption">No artists selected. <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => navigate('/app/setup')}>Edit profile</span> to add your top 5.</p>
+        )}
+      </section>
 
-      {profile.moods.length > 0 && (
-        <section className="section glass">
-          <h3>Mood Tags</h3>
+      <section className="section glass">
+        <h3>Mood Tags</h3>
+        {profile.moods.length > 0 ? (
           <div className="tag-row">
             {profile.moods.map((mood) => (
               <span key={mood} className="tag">{mood}</span>
             ))}
           </div>
-        </section>
-      )}
+        ) : (
+          <p className="caption">No moods selected. <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => navigate('/app/setup')}>Edit profile</span> to set your vibe.</p>
+        )}
+      </section>
 
-      {myPlaylists.length > 0 && (
-        <section className="section glass">
-          <h3>My Playlists</h3>
+      <section className="section glass">
+        <h3>My Circle</h3>
+        {circleMembers.length > 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {circleMembers.map((m) => (
+              <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div className="avatar-circle" style={{ width: 32, height: 32, fontSize: 13, flexShrink: 0 }}>
+                  {(m.name || '?').charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <div style={{ fontWeight: 'bold', fontSize: 14 }}>{m.name}</div>
+                  <div className="caption">@{m.username}{m.city ? ' · ' + m.city : ''}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="caption">Your circle is empty. Go to <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => navigate('/app/discover')}>Discover</span> to add people.</p>
+        )}
+      </section>
+
+      <section className="section glass">
+        <h3>My Playlists</h3>
+        {myPlaylists.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {myPlaylists.map((p) => (
               <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -120,8 +145,10 @@ export function Profile() {
               </div>
             ))}
           </div>
-        </section>
-      )}
+        ) : (
+          <p className="caption">No playlists yet. <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => navigate('/app/post')}>Create one</span> to share with the community.</p>
+        )}
+      </section>
 
       <section className="section glass">
         <div className="list-title-row">
