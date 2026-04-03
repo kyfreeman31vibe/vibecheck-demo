@@ -42,14 +42,26 @@ function UsersTab({ matches, onPing, isInCircle, onAddToCircle }) {
                 <span className="caption">Shared: {m.sharedArtists.join(', ')}</span>
               )}
             </div>
-            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+            <div style={{ display: 'flex', gap: 8, marginTop: 8, position: 'relative', zIndex: 10 }}>
               <Link to={'/app/match/' + m.id} className="btn small ghost">View Profile</Link>
-              <button type="button" className="btn small primary" onClick={function () { onPing(m.id); }} disabled={m.hasPinged}>
+              <div
+                role="button"
+                tabIndex={0}
+                className="btn small primary"
+                style={{ opacity: m.hasPinged ? 0.5 : 1, pointerEvents: m.hasPinged ? 'none' : 'auto' }}
+                onPointerDown={function () { if (!m.hasPinged) onPing(m.id); }}
+              >
                 {m.hasPinged ? 'Vibe sent' : 'Send Vibe Ping'}
-              </button>
-              <button type="button" className={'btn small ' + (inCircle ? 'ghost' : 'primary')} onClick={function () { if (!inCircle) onAddToCircle(m.id); }} disabled={inCircle}>
+              </div>
+              <div
+                role="button"
+                tabIndex={0}
+                className={'btn small ' + (inCircle ? 'ghost' : 'primary')}
+                style={{ opacity: inCircle ? 0.5 : 1, pointerEvents: inCircle ? 'none' : 'auto' }}
+                onPointerDown={function () { if (!inCircle) onAddToCircle(m.id); }}
+              >
                 {inCircle ? 'In your circle' : 'Add to Circle'}
-              </button>
+              </div>
             </div>
           </div>
         );

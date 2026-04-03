@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { DEMO_USERS } from '../hooks/useMatches';
 import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
+import { useCircles } from '../hooks/useCircles';
+import { useConversations } from '../hooks/useConversations';
 import { supabase } from '../lib/supabaseClient';
 
 const EMOJIS = ['🔥', '💫', '🎧', '💜'];
@@ -24,11 +26,13 @@ export function Match() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { profile } = useCurrentUserProfile();
+  const { isInCircle, addToCircle } = useCircles();
+  const { getOrCreateConversation } = useConversations();
   const [selectedEmoji, setSelectedEmoji] = useState(null);
-  const [inCircle, setInCircle] = useState(false);
   const [pinged, setPinged] = useState(false);
   const [supaUser, setSupaUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(false);
+  const [startingChat, setStartingChat] = useState(false);
 
   // Check demo users first
   const demoUser = DEMO_USERS.find((u) => String(u.id) === String(id));
@@ -137,25 +141,47 @@ export function Match() {
 
       {/* Actions */}
       <section className="section glass">
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button
-            type="button"
-            className={inCircle ? 'btn ghost' : 'btn primary'}
-            onClick={() => setInCircle(!inCircle)}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', position: 'relative', zIndex: 10 }}>
+          <div
+            role="button"
+            tabIndex={0}
+            className={isInCircle(id) ? 'btn ghost' : 'btn primary'}
+            style={{ opacity: isInCircle(id) ? 0.6 : 1, pointerEvents: isInCircle(id) ? 'none' : 'auto' }}
+            onPointerDown={() => { if (!isInCircle(id)) addToCircle(id); }}
           >
-            {inCircle ? 'In your circle ✓' : 'Add to circle'}
-          </button>
-          <button
-            type="button"
+            {isInCircle(id) ? 'In your circle ✓' : 'Add to circle'}
+          </div>
+          <div
+            role="button"
+            tabIndex={0}
             className="btn ghost"
-            onClick={() => setPinged(true)}
-            disabled={pinged}
+            style={{ opacity: pinged ? 0.6 : 1, pointerEvents: pinged ? 'none' : 'auto' }}
+            onPointerDown={() => { if (!pinged) setPinged(true); }}
           >
             {pinged ? 'Vibe sent ✓' : 'Send Vibe Ping'}
-          </button>
-          <Link to={`/app/chat/${id}`} className="btn primary">
-            Message user
-          </Link>
+          </div>
+          {!demoUser && (
+            <div
+              role="button"
+              tabIndex={0}
+              className="btn primary"
+              style={{ opacity: startingChat ? 0.6 : 1 }}
+              onPointerDown={async () => {
+                if (startingChat) return;
+                setStartingChat(true);
+                const { data, error } = await getOrCreateConversation(id);
+                setStartingChat(false);
+                if (data) navigate('/app/chat/' + data.id);
+              }}
+            >
+              {startingChat ? 'Opening...' : 'Message user'}
+            </div>
+          )}
+          {demoUser && (
+            <div className="btn ghost" style={{ opacity: 0.5, cursor: 'default' }}>
+              Message (demo only)
+            </div>
+          )}
         </div>
       </section>
 
