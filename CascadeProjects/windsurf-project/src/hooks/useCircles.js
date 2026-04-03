@@ -29,6 +29,12 @@ export function useCircles() {
     if (!user) return { error: { message: 'Not signed in' } };
     if (circleIds.includes(circleUserId)) return { error: null };
 
+    // Demo users (non-UUID IDs) can't be stored in Supabase — track locally only
+    if (String(circleUserId).startsWith('demo-')) {
+      setCircleIds((prev) => [...prev, circleUserId]);
+      return { error: null };
+    }
+
     const { error } = await supabase
       .from('circles')
       .insert({ user_id: user.id, circle_user_id: circleUserId });

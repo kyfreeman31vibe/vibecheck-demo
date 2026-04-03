@@ -43,6 +43,7 @@ function UsersTab({ matches, onPing, isInCircle, onAddToCircle }) {
               )}
             </div>
             <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+              <Link to={'/app/match/' + m.id} className="btn small ghost">View Profile</Link>
               <button type="button" className="btn small primary" onClick={function () { onPing(m.id); }} disabled={m.hasPinged}>
                 {m.hasPinged ? 'Vibe sent' : 'Send Vibe Ping'}
               </button>
