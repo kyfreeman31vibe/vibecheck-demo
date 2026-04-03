@@ -98,7 +98,7 @@ export function Profile() {
       </section>
 
       <section className="section glass">
-        <h3>Mood Tags</h3>
+        <h3>Listening Titles</h3>
         {profile.moods.length > 0 ? (
           <div className="tag-row">
             {profile.moods.map((mood) => (
@@ -106,7 +106,7 @@ export function Profile() {
             ))}
           </div>
         ) : (
-          <p className="caption">No moods selected. <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => navigate('/app/setup')}>Edit profile</span> to set your vibe.</p>
+          <p className="caption">No titles selected. <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => navigate('/app/setup')}>Edit profile</span> to pick yours.</p>
         )}
       </section>
 

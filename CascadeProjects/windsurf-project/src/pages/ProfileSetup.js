@@ -1,29 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
-
-const AVAILABLE_GENRES = [
-  'Alternative', 'Ambient', 'Blues', 'Classical', 'Country', 'Dance',
-  'Disco', 'Drum & Bass', 'EDM', 'Electronic', 'Emo', 'Folk',
-  'Funk', 'Gospel', 'Grunge', 'Hip-Hop', 'House', 'Indie',
-  'Jazz', 'K-Pop', 'Latin', 'Lo-Fi', 'Metal', 'Neo-Soul',
-  'Pop', 'Punk', 'R&B', 'Rap', 'Reggae', 'Reggaeton',
-  'Rock', 'Ska', 'Soul', 'Techno', 'Trap', 'World',
-];
-
-const AVAILABLE_ARTISTS = [
-  'Adele', 'Arctic Monkeys', 'Bad Bunny', 'Beyoncé', 'Billie Eilish',
-  'Bruno Mars', 'Childish Gambino', 'Daniel Caesar', 'Doja Cat', 'Drake',
-  'Dua Lipa', 'Ed Sheeran', 'Frank Ocean', 'Fred again..', 'Giveon',
-  'Gorillaz', 'H.E.R.', 'Harry Styles', 'J. Cole', 'Jhené Aiko',
-  'Kaytranada', 'Kendrick Lamar', 'Khalid', 'Lana Del Rey', 'Lizzo',
-  'Mac Miller', 'Megan Thee Stallion', 'Metro Boomin', 'Miguel', 'Olivia Rodrigo',
-  'Phoebe Bridgers', 'Post Malone', 'Radiohead', 'Rihanna', 'Rosalía',
-  'SZA', 'Steve Lacy', 'Summer Walker', 'SWV', 'Tame Impala',
-  'Taylor Swift', 'The Weeknd', 'Travis Scott', 'Tyler, The Creator', 'Usher',
-];
-
-const AVAILABLE_MOODS = ['Happy', 'Chill', 'Energetic', 'Reflective', 'Romantic', 'Social'];
+import { AVAILABLE_GENRES, AVAILABLE_ARTISTS, AVAILABLE_MOODS } from '../data/profileOptions';
 
 function SearchableDropdown({ label, caption, options, selected, setSelected, maxSelections, placeholder }) {
   const [search, setSearch] = useState('');
@@ -234,8 +212,8 @@ export function ProfileSetup() {
 
           <label className="steps-item" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
             <div style={{ flex: 1 }}>
-              <div className="steps-title">Mood tags</div>
-              <div className="steps-caption">Pick a few that best match your usual vibe.</div>
+              <div className="steps-title">Listening titles</div>
+              <div className="steps-caption">Pick the titles that describe how you listen.</div>
               <div className="tag-row" style={{ marginTop: 8 }}>
                 {AVAILABLE_MOODS.map((mood) => {
                   const selected = moods.includes(mood);
