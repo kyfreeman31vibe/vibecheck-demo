@@ -31,19 +31,31 @@ export function AuthProvider({ children }) {
   }, []);
 
   const signUp = async (email, password, metadata = {}) => {
-    return supabase.auth.signUp({
+    const result = await supabase.auth.signUp({
       email,
       password,
       options: { data: metadata },
     });
+    // Set user immediately from the response to avoid race conditions
+    if (result.data?.session?.user) {
+      setUser(result.data.session.user);
+    }
+    return result;
   };
 
   const signIn = async (email, password) => {
-    return supabase.auth.signInWithPassword({ email, password });
+    const result = await supabase.auth.signInWithPassword({ email, password });
+    // Set user immediately from the response to avoid race conditions
+    if (result.data?.session?.user) {
+      setUser(result.data.session.user);
+    }
+    return result;
   };
 
   const signOut = async () => {
-    return supabase.auth.signOut();
+    const result = await supabase.auth.signOut();
+    setUser(null);
+    return result;
   };
 
   const resetPassword = async (email) => {

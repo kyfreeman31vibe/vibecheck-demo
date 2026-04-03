@@ -50,7 +50,7 @@ export function SignUp() {
 
       if (authError) {
         const msg = authError.message || '';
-        if (msg.toLowerCase().includes('already registered')) {
+        if (msg.toLowerCase().includes('already registered') || msg.toLowerCase().includes('already been registered')) {
           setError('An account with this email already exists. Try signing in instead.');
         } else if (msg.toLowerCase().includes('password')) {
           setError('Password is too weak. Use 8+ characters with an uppercase letter and a number.');
@@ -60,9 +60,16 @@ export function SignUp() {
         return;
       }
 
-      // Check if Supabase returned a user but no session (email confirmation still required)
+      // Supabase returns user but no session in two cases:
+      // 1. Email confirmation is required
+      // 2. The email already exists (Supabase hides this for security)
+      // Detect case 2: identities array is empty for existing accounts
       if (data?.user && !data?.session) {
-        setError('Account created but email confirmation is pending. Please check your inbox, or ask the admin to disable email confirmation.');
+        if (!data.user.identities || data.user.identities.length === 0) {
+          setError('An account with this email already exists. Try signing in instead.');
+        } else {
+          setError('Account created! Please check your email to confirm your account, then sign in.');
+        }
         return;
       }
 

@@ -21,15 +21,17 @@ export function SignIn() {
       setLoading(false);
 
       if (authError) {
-        const msg = authError.message || '';
-        if (msg.toLowerCase().includes('invalid login')) {
+        const msg = (authError.message || '').toLowerCase();
+        if (msg.includes('invalid login') || msg.includes('invalid email or password') || msg.includes('invalid credentials')) {
           setError('Incorrect email or password. Please try again.');
-        } else if (msg.toLowerCase().includes('email not confirmed')) {
-          setError('Your email is not confirmed. Please check your inbox or sign up again.');
-        } else if (msg.toLowerCase().includes('too many requests')) {
+        } else if (msg.includes('email not confirmed')) {
+          setError('Your email is not confirmed yet. Please check your inbox for the confirmation link.');
+        } else if (msg.includes('too many requests') || msg.includes('rate limit')) {
           setError('Too many attempts. Please wait a moment and try again.');
+        } else if (msg.includes('user not found') || msg.includes('no user')) {
+          setError('No account found with this email. Please sign up first.');
         } else {
-          setError(msg || 'Sign in failed. Please try again.');
+          setError(authError.message || 'Sign in failed. Please try again.');
         }
         return;
       }
