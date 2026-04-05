@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Bell } from 'lucide-react';
 import { usePosts } from '../hooks/usePosts';
 import { useNotifications } from '../hooks/useNotifications';
+import { useCircles } from '../hooks/useCircles';
 
 const POST_TYPE_ICONS = {
   thought: '�',
@@ -48,6 +49,7 @@ function postDetailText(item) {
 export function Dashboard() {
   const { posts } = usePosts();
   const { notifications, unreadCount, markAllRead, deleteNotification, clearAll } = useNotifications();
+  const { incomingRequests, acceptRequest, rejectRequest } = useCircles();
   const [search, setSearch] = useState('');
   const [showNotifs, setShowNotifs] = useState(false);
 
@@ -116,7 +118,49 @@ export function Dashboard() {
               </button>
             )}
           </div>
-          {notifications.length === 0 && (
+          {incomingRequests.length > 0 && (
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontSize: 13, fontWeight: 'bold', marginBottom: 6, opacity: 0.7 }}>Circle Requests</div>
+              {incomingRequests.map((req) => (
+                <div
+                  key={req.id}
+                  className="list-item"
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '8px 0',
+                    borderBottom: '1px solid var(--border, rgba(255,255,255,0.08))',
+                  }}
+                >
+                  <div>
+                    <div style={{ fontSize: 14 }}>{req.sender?.name || 'Someone'} wants to add you to their circle</div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 6, flexShrink: 0, marginLeft: 8 }}>
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      className="btn small primary"
+                      style={{ padding: '4px 10px', fontSize: 12 }}
+                      onPointerDown={() => acceptRequest(req.id, req.senderId)}
+                    >
+                      Accept
+                    </div>
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      className="btn small ghost"
+                      style={{ padding: '4px 10px', fontSize: 12 }}
+                      onPointerDown={() => rejectRequest(req.id)}
+                    >
+                      Decline
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {notifications.length === 0 && incomingRequests.length === 0 && (
             <p className="caption">No notifications.</p>
           )}
           <div style={{ maxHeight: 240, overflowY: 'auto' }}>

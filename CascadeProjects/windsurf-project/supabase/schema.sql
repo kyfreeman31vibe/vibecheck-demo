@@ -229,32 +229,39 @@ create policy "Users can send pings"
   with check (auth.uid() = sender_id);
 
 -- ============================================================
--- 7. CIRCLES — users added to your circle
+-- 7. CIRCLE REQUESTS — mutual add-to-circle with accept/reject
 -- ============================================================
-create table if not exists public.circles (
+create table if not exists public.circle_requests (
   id uuid default gen_random_uuid() primary key,
-  user_id uuid references public.profiles(id) on delete cascade not null,
-  circle_user_id uuid references public.profiles(id) on delete cascade not null,
+  sender_id uuid references public.profiles(id) on delete cascade not null,
+  receiver_id uuid references public.profiles(id) on delete cascade not null,
+  status text not null default 'pending',  -- 'pending', 'accepted', 'rejected'
   created_at timestamptz default now(),
-  unique (user_id, circle_user_id)
+  updated_at timestamptz default now(),
+  unique (sender_id, receiver_id)
 );
 
-alter table public.circles enable row level security;
+alter table public.circle_requests enable row level security;
 
-drop policy if exists "Users can view their own circle" on public.circles;
-create policy "Users can view their own circle"
-  on public.circles for select
-  using (auth.uid() = user_id);
+drop policy if exists "Users can view their own requests" on public.circle_requests;
+create policy "Users can view their own requests"
+  on public.circle_requests for select
+  using (auth.uid() = sender_id or auth.uid() = receiver_id);
 
-drop policy if exists "Users can add to their circle" on public.circles;
-create policy "Users can add to their circle"
-  on public.circles for insert
-  with check (auth.uid() = user_id);
+drop policy if exists "Users can send requests" on public.circle_requests;
+create policy "Users can send requests"
+  on public.circle_requests for insert
+  with check (auth.uid() = sender_id);
 
-drop policy if exists "Users can remove from their circle" on public.circles;
-create policy "Users can remove from their circle"
-  on public.circles for delete
-  using (auth.uid() = user_id);
+drop policy if exists "Users can update requests they received" on public.circle_requests;
+create policy "Users can update requests they received"
+  on public.circle_requests for update
+  using (auth.uid() = receiver_id);
+
+drop policy if exists "Users can delete their own requests" on public.circle_requests;
+create policy "Users can delete their own requests"
+  on public.circle_requests for delete
+  using (auth.uid() = sender_id or auth.uid() = receiver_id);
 
 -- ============================================================
 -- 8. POST REACTIONS — heart, like, dislike per user per post
@@ -330,5 +337,6 @@ create index if not exists idx_vibe_pings_receiver on public.vibe_pings(receiver
 create index if not exists idx_post_reactions_post on public.post_reactions(post_id);
 create index if not exists idx_comments_post on public.comments(post_id);
 create index if not exists idx_comments_parent on public.comments(parent_id);
-create index if not exists idx_circles_user on public.circles(user_id);
-create index if not exists idx_circles_circle_user on public.circles(circle_user_id);
+create index if not exists idx_circle_requests_sender on public.circle_requests(sender_id);
+create index if not exists idx_circle_requests_receiver on public.circle_requests(receiver_id);
+create index if not exists idx_circle_requests_status on public.circle_requests(status);

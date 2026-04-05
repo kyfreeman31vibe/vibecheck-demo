@@ -26,10 +26,9 @@ export function Match() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { profile } = useCurrentUserProfile();
-  const { isInCircle, addToCircle } = useCircles();
+  const { isInCircle, getRequestStatus, sendRequest } = useCircles();
   const { getOrCreateConversation } = useConversations();
   const [selectedEmoji, setSelectedEmoji] = useState(null);
-  const [pinged, setPinged] = useState(false);
   const [supaUser, setSupaUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(false);
   const [startingChat, setStartingChat] = useState(false);
@@ -144,48 +143,46 @@ export function Match() {
 
       {/* Actions */}
       <section className="section glass">
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', position: 'relative', zIndex: 10 }}>
-          <div
-            role="button"
-            tabIndex={0}
-            className={isInCircle(id) ? 'btn ghost' : 'btn primary'}
-            style={{ opacity: isInCircle(id) ? 0.6 : 1, pointerEvents: isInCircle(id) ? 'none' : 'auto' }}
-            onPointerDown={() => { if (!isInCircle(id)) addToCircle(id); }}
-          >
-            {isInCircle(id) ? 'In your circle ✓' : 'Add to circle'}
-          </div>
-          <div
-            role="button"
-            tabIndex={0}
-            className="btn ghost"
-            style={{ opacity: pinged ? 0.6 : 1, pointerEvents: pinged ? 'none' : 'auto' }}
-            onPointerDown={() => { if (!pinged) setPinged(true); }}
-          >
-            {pinged ? 'Vibe sent ✓' : 'Send Vibe Ping'}
-          </div>
-          {!demoUser && (
-            <div
-              role="button"
-              tabIndex={0}
-              className="btn primary"
-              style={{ opacity: startingChat ? 0.6 : 1 }}
-              onPointerDown={async () => {
-                if (startingChat) return;
-                setStartingChat(true);
-                const { data } = await getOrCreateConversation(id);
-                setStartingChat(false);
-                if (data) navigate('/app/chat/' + data.id);
-              }}
-            >
-              {startingChat ? 'Opening...' : 'Message user'}
+        {(() => {
+          const reqStatus = getRequestStatus(id);
+          const done = reqStatus === 'accepted' || reqStatus === 'pending';
+          const label = reqStatus === 'accepted' ? 'In your circle ✓' : reqStatus === 'pending' ? 'Request sent' : 'Add to circle';
+          return (
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', position: 'relative', zIndex: 10 }}>
+              <div
+                role="button"
+                tabIndex={0}
+                className={done ? 'btn ghost' : 'btn primary'}
+                style={{ opacity: done ? 0.6 : 1, pointerEvents: done ? 'none' : 'auto' }}
+                onPointerDown={() => { if (!done) sendRequest(id); }}
+              >
+                {label}
+              </div>
+              {!demoUser && (
+                <div
+                  role="button"
+                  tabIndex={0}
+                  className="btn primary"
+                  style={{ opacity: startingChat ? 0.6 : 1 }}
+                  onPointerDown={async () => {
+                    if (startingChat) return;
+                    setStartingChat(true);
+                    const { data } = await getOrCreateConversation(id);
+                    setStartingChat(false);
+                    if (data) navigate('/app/chat/' + data.id);
+                  }}
+                >
+                  {startingChat ? 'Opening...' : 'Message user'}
+                </div>
+              )}
+              {demoUser && (
+                <div className="btn ghost" style={{ opacity: 0.5, cursor: 'default' }}>
+                  Message (demo only)
+                </div>
+              )}
             </div>
-          )}
-          {demoUser && (
-            <div className="btn ghost" style={{ opacity: 0.5, cursor: 'default' }}>
-              Message (demo only)
-            </div>
-          )}
-        </div>
+          );
+        })()}
       </section>
 
       {/* Shared music highlights */}

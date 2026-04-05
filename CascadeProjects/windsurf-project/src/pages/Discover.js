@@ -17,7 +17,13 @@ const EVENTS = [
   { id: 13, name: 'U Street Groove Night', date: 'Sat, Aug 9', location: 'U Street Corridor · DC', type: 'Concert', attendees: 44 },
 ];
 
-function UsersTab({ matches, onPing, isInCircle, onAddToCircle }) {
+function circleButtonLabel(status) {
+  if (status === 'accepted') return 'In your circle ✓';
+  if (status === 'pending') return 'Request sent';
+  return 'Add to Circle';
+}
+
+function UsersTab({ matches, getRequestStatus, isInCircle, onSendRequest }) {
   return (
     <div className="list">
       {matches.map(function (m) {
@@ -25,7 +31,8 @@ function UsersTab({ matches, onPing, isInCircle, onAddToCircle }) {
         var isDemo = String(m.id).startsWith('demo-');
         var topArtists = (u.favoriteArtists || []).slice(0, 5).join(', ');
         var initials = u.name.charAt(0).toUpperCase();
-        var inCircle = isInCircle(m.id);
+        var status = getRequestStatus(m.id);
+        var done = status === 'accepted' || status === 'pending';
         return (
           <div key={m.id} className="list-item glass">
             <div className="profile-card-header" style={{ marginBottom: 6 }}>
@@ -51,20 +58,11 @@ function UsersTab({ matches, onPing, isInCircle, onAddToCircle }) {
               <div
                 role="button"
                 tabIndex={0}
-                className="btn small primary"
-                style={{ opacity: m.hasPinged ? 0.5 : 1, pointerEvents: m.hasPinged ? 'none' : 'auto' }}
-                onPointerDown={function () { if (!m.hasPinged) onPing(m.id); }}
+                className={'btn small ' + (done ? 'ghost' : 'primary')}
+                style={{ opacity: done ? 0.5 : 1, pointerEvents: done ? 'none' : 'auto' }}
+                onPointerDown={function () { if (!done) onSendRequest(m.id); }}
               >
-                {m.hasPinged ? 'Vibe sent' : 'Send Vibe Ping'}
-              </div>
-              <div
-                role="button"
-                tabIndex={0}
-                className={'btn small ' + (inCircle ? 'ghost' : 'primary')}
-                style={{ opacity: inCircle ? 0.5 : 1, pointerEvents: inCircle ? 'none' : 'auto' }}
-                onPointerDown={function () { if (!inCircle) onAddToCircle(m.id); }}
-              >
-                {inCircle ? 'In your circle' : 'Add to Circle'}
+                {circleButtonLabel(status)}
               </div>
             </div>
           </div>
@@ -157,8 +155,8 @@ export function Discover() {
   var tab = ref[0];
   var setTab = ref[1];
 
-  var { matches, sendVibePing } = useMatches();
-  var { isInCircle, addToCircle } = useCircles();
+  var { matches } = useMatches();
+  var { getRequestStatus, isInCircle, sendRequest } = useCircles();
 
   return (
     <div className="page">
@@ -207,7 +205,7 @@ export function Discover() {
       </div>
 
       {tab === 'users' ? (
-        <UsersTab matches={matches} onPing={sendVibePing} isInCircle={isInCircle} onAddToCircle={addToCircle} />
+        <UsersTab matches={matches} getRequestStatus={getRequestStatus} isInCircle={isInCircle} onSendRequest={sendRequest} />
       ) : (
         <EventsTab />
       )}

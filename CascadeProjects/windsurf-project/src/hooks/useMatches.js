@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../auth/AuthContext';
 import { useCurrentUserProfile } from './useCurrentUserProfile';
@@ -129,7 +129,6 @@ function profileRowToUser(row) {
 export function useMatches() {
   const { user } = useAuth();
   const { profile } = useCurrentUserProfile();
-  const [sentPings, setSentPings] = useState({});
   const [realUsers, setRealUsers] = useState([]);
 
   // Fetch real profiles from Supabase
@@ -144,26 +143,6 @@ export function useMatches() {
       .then(({ data }) => {
         if (!ignore && data) {
           setRealUsers(data.map(profileRowToUser));
-        }
-      });
-
-    return () => { ignore = true; };
-  }, [user]);
-
-  // Fetch existing vibe pings from Supabase
-  useEffect(() => {
-    if (!user) return;
-    let ignore = false;
-
-    supabase
-      .from('vibe_pings')
-      .select('receiver_id')
-      .eq('sender_id', user.id)
-      .then(({ data }) => {
-        if (!ignore && data) {
-          const pings = {};
-          data.forEach((p) => { pings[p.receiver_id] = true; });
-          setSentPings(pings);
         }
       });
 
@@ -188,32 +167,10 @@ export function useMatches() {
           compatibilityScore,
           sharedArtists,
           sharedMoods,
-          hasPinged: !!sentPings[u.id],
         };
       })
       .sort((a, b) => b.compatibilityScore - a.compatibilityScore);
-  }, [allUsers, profile, sentPings]);
+  }, [allUsers, profile]);
 
-  const sendVibePing = useCallback(async (userId) => {
-    setSentPings((prev) => ({ ...prev, [userId]: true }));
-
-    if (user && !String(userId).startsWith('demo-')) {
-      await supabase.from('vibe_pings').insert({
-        sender_id: user.id,
-        receiver_id: userId,
-      });
-
-      // Create a notification for the receiver
-      const senderName = profile.name || 'Someone';
-      await supabase.from('notifications').insert({
-        user_id: userId,
-        type: 'vibe_ping',
-        title: `${senderName} sent you a Vibe Ping!`,
-        body: null,
-        data: { sender_id: user.id },
-      });
-    }
-  }, [user, profile]);
-
-  return { matches, sendVibePing };
+  return { matches };
 }
