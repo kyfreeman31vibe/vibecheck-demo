@@ -327,7 +327,71 @@ create policy "Users can delete their own comments"
   using (auth.uid() = user_id);
 
 -- ============================================================
--- 9. INDEXES for performance
+-- 10. LISTENING PROFILES — per-user Spotify listening data
+-- ============================================================
+create table if not exists public.listening_profiles (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users(id) on delete cascade not null unique,
+  spotify_id text,
+  display_name text,
+  top_artists jsonb default '[]',        -- array of artist objects from Spotify
+  top_tracks jsonb default '[]',         -- array of track objects from Spotify
+  recently_played jsonb default '[]',    -- array of recently played track objects
+  last_synced_at timestamptz,
+  created_at timestamptz default now()
+);
+
+alter table public.listening_profiles enable row level security;
+
+drop policy if exists "Users can view their own listening profile" on public.listening_profiles;
+create policy "Users can view their own listening profile"
+  on public.listening_profiles for select
+  using (auth.uid() = user_id);
+
+drop policy if exists "Users can insert their own listening profile" on public.listening_profiles;
+create policy "Users can insert their own listening profile"
+  on public.listening_profiles for insert
+  with check (auth.uid() = user_id);
+
+drop policy if exists "Users can update their own listening profile" on public.listening_profiles;
+create policy "Users can update their own listening profile"
+  on public.listening_profiles for update
+  using (auth.uid() = user_id);
+
+-- ============================================================
+-- 11. MATCHES — computed compatibility results between users
+-- ============================================================
+create table if not exists public.matches (
+  id uuid default gen_random_uuid() primary key,
+  user_a_id uuid references auth.users(id) on delete cascade not null,
+  user_b_id uuid references auth.users(id) on delete cascade not null,
+  compatibility_score float not null default 0 check (compatibility_score >= 0 and compatibility_score <= 1),
+  shared_artists jsonb default '[]',     -- array of shared artist objects
+  shared_tracks jsonb default '[]',      -- array of shared track objects
+  match_summary text,                    -- AI-generated summary of compatibility
+  generated_at timestamptz default now(),
+  unique (user_a_id, user_b_id)
+);
+
+alter table public.matches enable row level security;
+
+drop policy if exists "Users can view their own matches" on public.matches;
+create policy "Users can view their own matches"
+  on public.matches for select
+  using (auth.uid() = user_a_id or auth.uid() = user_b_id);
+
+drop policy if exists "Service role can insert matches" on public.matches;
+create policy "Service role can insert matches"
+  on public.matches for insert
+  with check (true);
+
+drop policy if exists "Service role can update matches" on public.matches;
+create policy "Service role can update matches"
+  on public.matches for update
+  using (true);
+
+-- ============================================================
+-- 12. INDEXES for performance
 -- ============================================================
 create index if not exists idx_posts_user_id on public.posts(user_id);
 create index if not exists idx_posts_created_at on public.posts(created_at desc);
@@ -340,3 +404,8 @@ create index if not exists idx_comments_parent on public.comments(parent_id);
 create index if not exists idx_circle_requests_sender on public.circle_requests(sender_id);
 create index if not exists idx_circle_requests_receiver on public.circle_requests(receiver_id);
 create index if not exists idx_circle_requests_status on public.circle_requests(status);
+create index if not exists idx_listening_profiles_user on public.listening_profiles(user_id);
+create index if not exists idx_listening_profiles_spotify on public.listening_profiles(spotify_id);
+create index if not exists idx_matches_user_a on public.matches(user_a_id);
+create index if not exists idx_matches_user_b on public.matches(user_b_id);
+create index if not exists idx_matches_score on public.matches(compatibility_score desc);
