@@ -628,3 +628,38 @@ textarea.input {
   align-items: center;
   gap: 4px;
 }
+
+/* ===== POST TYPE CARD STYLES ===== */
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+.post-card-icon-pulse {
+  animation: iconPulse 1.5s ease-in-out 0.3s 2;
+}
+
+.post-card {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.post-card:active {
+  transform: scale(0.97);
+}
+
+.post-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), rgba(255,255,255,0.15) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.post-card.ripple::after {
+  opacity: 1;
+}

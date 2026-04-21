@@ -1,12 +1,19 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
 import { usePosts } from '../hooks/usePosts';
 
 const POST_TYPES = [
-  { key: 'thought', label: 'Post a Musical Thought', icon: '💬' },
-  { key: 'song', label: 'Add a Song', icon: '🎵' },
-  { key: 'playlist', label: 'Add a Playlist', icon: '🎶' },
+  { key: 'thought', label: 'Post a Musical Thought', icon: '💬', accent: 'var(--vc-whiskey-amber)' },
+  { key: 'song', label: 'Add a Song', icon: '🎵', accent: null },
+  { key: 'playlist', label: 'Add a Playlist', icon: '🎶', accent: 'var(--vc-velvet-purple)' },
+];
+
+var MICRO_PROMPTS = [
+  'What song is stuck in your head?',
+  'Drop a hot take about an artist.',
+  'What are you vibing with right now?',
+  'Share a track someone needs to hear.',
 ];
 
 var THOUGHT_MAX = 240;
@@ -212,6 +219,20 @@ export function Post() {
     setTimeout(() => navigate('/app/dashboard'), 1200);
   };
 
+  var prompt = useMemo(function () {
+    return MICRO_PROMPTS[Math.floor(Math.random() * MICRO_PROMPTS.length)];
+  }, []);
+
+  function handleCardTap(e, key) {
+    var rect = e.currentTarget.getBoundingClientRect();
+    var x = ((e.clientX - rect.left) / rect.width * 100).toFixed(0) + '%';
+    var y = ((e.clientY - rect.top) / rect.height * 100).toFixed(0) + '%';
+    e.currentTarget.style.setProperty('--ripple-x', x);
+    e.currentTarget.style.setProperty('--ripple-y', y);
+    e.currentTarget.classList.add('ripple');
+    setTimeout(function () { setPostType(key); }, 150);
+  }
+
   // Type selector screen (matches wireframe 1)
   if (!postType) {
     return (
@@ -219,18 +240,24 @@ export function Post() {
         <header className="page-header">
           <div>
             <h2>Create Post</h2>
-            <p className="subtitle">What do you want to share?</p>
+            <p className="subtitle">{prompt}</p>
           </div>
         </header>
         <div className="list">
           {POST_TYPES.map((t) => (
             <div
               key={t.key}
-              className="list-item glass"
-              style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12 }}
-              onPointerDown={() => setPostType(t.key)}
+              className="list-item glass post-card"
+              style={{
+                display: 'flex', alignItems: 'center', gap: 12,
+                borderLeft: t.accent ? ('3px solid ' + t.accent) : 'none',
+              }}
+              onPointerDown={(e) => handleCardTap(e, t.key)}
             >
-              <span style={{ fontSize: 22 }}>{t.icon}</span>
+              <span
+                style={{ fontSize: 22 }}
+                className={t.key === 'song' ? 'post-card-icon-pulse' : ''}
+              >{t.icon}</span>
               <span className="list-title">{t.label}</span>
             </div>
           ))}
