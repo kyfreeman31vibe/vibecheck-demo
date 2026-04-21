@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useConversations } from '../hooks/useConversations';
 
 function formatTimeAgo(dateStr) {
@@ -40,8 +40,11 @@ export function Messages() {
       </header>
       <div className="list">
         {!loading && conversations.length === 0 && (
-          <div className="list-item glass">
-            <p className="caption">No messages yet. Send a Vibe Ping to start chatting!</p>
+          <div className="section glass" style={{ textAlign: 'center', padding: '28px 16px' }}>
+            <div style={{ fontSize: 32, marginBottom: 8 }}>💬</div>
+            <p style={{ marginBottom: 4 }}>No messages yet</p>
+            <p className="caption" style={{ marginBottom: 12 }}>Connect with someone on Discover to start a conversation</p>
+            <Link to="/app/discover" className="btn primary" style={{ textDecoration: 'none' }}>Find People</Link>
           </div>
         )}
         {loading && (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
 import { useCircles } from '../hooks/useCircles';
 import { useAuth } from '../auth/AuthContext';
@@ -64,11 +64,14 @@ export function Profile() {
       </section>
 
       <section className="section glass">
+        {/* About */}
         <h3>About</h3>
         {profile.bio ? <p>{profile.bio}</p> : <p className="caption">No bio yet. <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => navigate('/app/setup')}>Edit profile</span> to add one.</p>}
-      </section>
 
-      <section className="section glass">
+        {/* Divider */}
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', margin: '14px 0' }} />
+
+        {/* Top Genres */}
         <h3>Top Genres</h3>
         {profile.genres.length > 0 ? (
           <div className="tag-row">
@@ -79,9 +82,11 @@ export function Profile() {
         ) : (
           <p className="caption">No genres selected. <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => navigate('/app/setup')}>Edit profile</span> to add your favorites.</p>
         )}
-      </section>
 
-      <section className="section glass">
+        {/* Divider */}
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', margin: '14px 0' }} />
+
+        {/* Top Artists */}
         <h3>Top Artists</h3>
         {profile.favoriteArtists.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -102,7 +107,7 @@ export function Profile() {
         {profile.moods.length > 0 ? (
           <div className="tag-row">
             {profile.moods.map((mood) => (
-              <span key={mood} className="tag">{mood}</span>
+              <span key={mood} className="btn small primary" style={{ pointerEvents: 'none' }}>{mood}</span>
             ))}
           </div>
         ) : (
@@ -117,7 +122,7 @@ export function Profile() {
             {circleMembers.map((m) => (
               <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <div className="avatar-circle" style={{ width: 32, height: 32, fontSize: 13, flexShrink: 0 }}>
-                  {(m.name || '?').charAt(0).toUpperCase()}
+                  {(m.name || 'U').charAt(0).toUpperCase()}
                 </div>
                 <div>
                   <div style={{ fontWeight: 'bold', fontSize: 14 }}>{m.name}</div>
@@ -127,7 +132,12 @@ export function Profile() {
             ))}
           </div>
         ) : (
-          <p className="caption">Your circle is empty. Go to <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => navigate('/app/discover')}>Discover</span> to add people.</p>
+          <div style={{ textAlign: 'center', padding: '20px 0' }}>
+            <div style={{ fontSize: 32, marginBottom: 8 }}>👥</div>
+            <p style={{ marginBottom: 4 }}>Your Circle is empty</p>
+            <p className="caption" style={{ marginBottom: 12 }}>Find your people on Discover</p>
+            <Link to="/app/discover" className="btn primary" style={{ textDecoration: 'none' }}>Discover Users</Link>
+          </div>
         )}
       </section>
 
