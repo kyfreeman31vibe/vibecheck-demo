@@ -20,6 +20,7 @@ import { Connections } from './pages/Connections';
 import { Feed } from './pages/Feed';
 import { Events } from './pages/Events';
 import { SpotifySync } from './pages/SpotifySync';
+import { SpotifyMatch } from './pages/SpotifyMatch';
 import { Integrations } from './pages/Integrations';
 import { Settings } from './pages/Settings';
 import { Messages } from './pages/Messages';
@@ -91,6 +92,7 @@ function App() {
                     <Route path="feed" element={<Feed />} />
                     <Route path="events" element={<Events />} />
                     <Route path="spotify" element={<SpotifySync />} />
+                    <Route path="spotify-match" element={<SpotifyMatch />} />
                     <Route path="integrations" element={<Integrations />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path="messages" element={<Messages />} />
