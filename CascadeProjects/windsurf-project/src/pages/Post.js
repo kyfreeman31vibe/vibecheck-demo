@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
 import { usePosts } from '../hooks/usePosts';
@@ -9,23 +9,100 @@ const POST_TYPES = [
   { key: 'playlist', label: 'Add a Playlist', icon: '🎶' },
 ];
 
+var THOUGHT_MAX = 240;
+
 function ThoughtForm({ onSubmit, posting, posted }) {
   const [text, setText] = useState('');
+  const [showSong, setShowSong] = useState(false);
+  const [songTitle, setSongTitle] = useState('');
+  const [songArtist, setSongArtist] = useState('');
+  const textareaRef = useRef(null);
+
+  var autoResize = useCallback(function () {
+    var el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = Math.max(el.scrollHeight, 96) + 'px';
+  }, []);
+
+  var handleChange = function (e) {
+    var val = e.target.value;
+    if (val.length <= THOUGHT_MAX) {
+      setText(val);
+      autoResize();
+    }
+  };
+
+  var remaining = THOUGHT_MAX - text.length;
+
+  var handleSubmit = function () {
+    var payload = { content: text.trim(), postType: 'thought' };
+    if (showSong && songTitle.trim() && songArtist.trim()) {
+      payload.postType = 'song';
+      payload.songTitle = songTitle.trim();
+      payload.songArtist = songArtist.trim();
+    }
+    onSubmit(payload);
+  };
+
   return (
     <>
-      <textarea
-        className="input"
-        rows={4}
-        placeholder="What's on your mind? Share a musical thought..."
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        disabled={posted || posting}
-      />
+      <div style={{ position: 'relative' }}>
+        <textarea
+          ref={textareaRef}
+          className="input"
+          rows={4}
+          placeholder="What's on your mind? Share a musical thought..."
+          value={text}
+          onChange={handleChange}
+          disabled={posted || posting}
+          style={{ width: '100%', resize: 'none', minHeight: 96, overflow: 'hidden' }}
+        />
+        <span
+          className="caption"
+          style={{
+            position: 'absolute',
+            bottom: 8,
+            right: 10,
+            fontSize: '0.75rem',
+            color: remaining <= 20 ? 'var(--danger)' : 'var(--text-muted)',
+          }}
+        >
+          {remaining}/{THOUGHT_MAX}
+        </span>
+      </div>
+
+      {!showSong && !posted && (
+        <button
+          type="button"
+          className="btn ghost small"
+          style={{ padding: '4px 0', marginTop: 6, fontSize: '0.85rem' }}
+          onPointerDown={() => setShowSong(true)}
+        >
+          ＋ Add a song to this thought
+        </button>
+      )}
+
+      {showSong && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
+          <input className="input" type="text" placeholder="Song title" value={songTitle} onChange={(e) => setSongTitle(e.target.value)} disabled={posted || posting} />
+          <input className="input" type="text" placeholder="Artist" value={songArtist} onChange={(e) => setSongArtist(e.target.value)} disabled={posted || posting} />
+          <button
+            type="button"
+            className="btn ghost small"
+            style={{ padding: '4px 0', fontSize: '0.8rem', alignSelf: 'flex-start' }}
+            onPointerDown={() => { setShowSong(false); setSongTitle(''); setSongArtist(''); }}
+          >
+            ✕ Remove song
+          </button>
+        </div>
+      )}
+
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
         <button
           type="button"
           className="btn primary"
-          onClick={() => onSubmit({ content: text.trim(), postType: 'thought' })}
+          onClick={handleSubmit}
           disabled={!text.trim() || posted || posting}
         >
           {posted ? 'Posted!' : posting ? 'Posting...' : 'Post'}
@@ -43,7 +120,7 @@ function SongForm({ onSubmit, posting, posted }) {
     <>
       <input className="input" type="text" placeholder="Song title" value={title} onChange={(e) => setTitle(e.target.value)} disabled={posted || posting} />
       <input className="input" type="text" placeholder="Artist" value={artist} onChange={(e) => setArtist(e.target.value)} disabled={posted || posting} style={{ marginTop: 8 }} />
-      <textarea className="input" rows={2} placeholder="Add a note (optional)" value={note} onChange={(e) => setNote(e.target.value)} disabled={posted || posting} style={{ marginTop: 8 }} />
+      <input className="input" type="text" placeholder="Add a note (optional)" value={note} onChange={(e) => setNote(e.target.value)} disabled={posted || posting} style={{ marginTop: 8, width: '100%' }} />
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
         <button
           type="button"
