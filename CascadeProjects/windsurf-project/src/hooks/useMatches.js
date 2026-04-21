@@ -12,11 +12,13 @@ const DEMO_USERS = [
     locationPublic: true,
     bio: 'Weekend festivals and deep cuts only.',
     favoriteArtists: ['Tame Impala', 'Kaytranada', 'SZA'],
+    genres: ['Psychedelic Rock', 'Electronic', 'R&B', 'Neo-Soul'],
     moods: ['Chill', 'Energetic'],
     eventsAttending: [5, 6],
     recentListening: ['Currents – Tame Impala', 'BUBBA – Kaytranada', 'SOS – SZA'],
     playlists: ['Festival Pregame', 'Deep Cuts Only', 'Sunset Drive'],
     mostListened: ['Let It Happen', 'GLOWED UP', 'Kill Bill'],
+    _demoScore: 83,
   },
   {
     id: 'demo-2',
@@ -25,11 +27,13 @@ const DEMO_USERS = [
     locationPublic: true,
     bio: 'Late-night lo-fi and jazz bars.',
     favoriteArtists: ['Phoebe Bridgers', 'Frank Ocean'],
+    genres: ['Indie Folk', 'R&B', 'Lo-Fi'],
     moods: ['Reflective', 'Romantic'],
     eventsAttending: [5],
     recentListening: ['Punisher – Phoebe Bridgers', 'Blonde – Frank Ocean'],
     playlists: ['Late Night Lo-Fi', 'Rainy Day Vibes'],
     mostListened: ['Kyoto', 'Nights', 'Moon Song'],
+    _demoScore: 67,
   },
   {
     id: 'demo-3',
@@ -38,11 +42,13 @@ const DEMO_USERS = [
     locationPublic: true,
     bio: 'House music lover, sunset chaser.',
     favoriteArtists: ['Kaytranada', 'Fred again..'],
+    genres: ['House', 'Electronic', 'Dance'],
     moods: ['Social', 'Energetic'],
     eventsAttending: [1, 2],
     recentListening: ['99.9% – Kaytranada', 'Actual Life 3 – Fred again..'],
     playlists: ['House Sessions', 'Golden Hour Mix'],
     mostListened: ['GLOWED UP', 'Delilah (pull me out of this)', 'Bleu'],
+    _demoScore: 54,
   },
   {
     id: 'demo-4',
@@ -51,11 +57,13 @@ const DEMO_USERS = [
     locationPublic: false,
     bio: 'Indie head. Always at the smaller shows.',
     favoriteArtists: ['Phoebe Bridgers', 'Tame Impala', 'Billie Eilish'],
+    genres: ['Indie Rock', 'Alternative', 'Dream Pop'],
     moods: ['Reflective', 'Chill'],
     eventsAttending: [1],
     recentListening: ['Punisher – Phoebe Bridgers', 'Currents – Tame Impala', 'Happier Than Ever – Billie Eilish'],
     playlists: ['Indie Essentials', 'Chill Acoustic', 'Study Mode'],
     mostListened: ['Kyoto', 'The Less I Know the Better', 'Happier Than Ever'],
+    _demoScore: 72,
   },
   {
     id: 'demo-5',
@@ -64,11 +72,13 @@ const DEMO_USERS = [
     locationPublic: true,
     bio: 'R&B is therapy. Also into vinyl collecting.',
     favoriteArtists: ['SZA', 'Frank Ocean', 'Kendrick Lamar'],
+    genres: ['R&B', 'Hip-Hop', 'Neo-Soul', 'Jazz'],
     moods: ['Romantic', 'Chill'],
     eventsAttending: [7, 8],
     recentListening: ['SOS – SZA', 'Blonde – Frank Ocean', 'Mr. Morale – Kendrick Lamar'],
     playlists: ['R&B Therapy', 'Vinyl Picks', 'Sunday Morning'],
     mostListened: ['Shirt', 'Self Control', 'United in Grief'],
+    _demoScore: 41,
   },
   {
     id: 'demo-6',
@@ -77,11 +87,13 @@ const DEMO_USERS = [
     locationPublic: true,
     bio: 'House music roots. Catch me at the lakefront.',
     favoriteArtists: ['Kaytranada', 'Fred again..', 'Bad Bunny'],
+    genres: ['House', 'Reggaeton', 'Electronic'],
     moods: ['Energetic', 'Social'],
     eventsAttending: [9],
     recentListening: ['BUBBA – Kaytranada', 'Actual Life 3 – Fred again..', 'Un Verano Sin Ti – Bad Bunny'],
     playlists: ['Chicago House', 'Lakefront Workout', 'Party Starter'],
     mostListened: ['10%', 'Turn On The Lights again..', 'Tití Me Preguntó'],
+    _demoScore: 59,
   },
   {
     id: 'demo-7',
@@ -90,11 +102,13 @@ const DEMO_USERS = [
     locationPublic: false,
     bio: 'Brooklyn loft parties and lo-fi coffee shops.',
     favoriteArtists: ['Frank Ocean', 'Billie Eilish', 'Rosalía'],
+    genres: ['Pop', 'R&B', 'Flamenco', 'Lo-Fi'],
     moods: ['Reflective', 'Romantic'],
     eventsAttending: [11, 12],
     recentListening: ['Blonde – Frank Ocean', 'Happier Than Ever – Billie Eilish', 'Motomami – Rosalía'],
     playlists: ['Brooklyn After Dark', 'Lo-Fi Coffee', 'Art Gallery Vibes'],
     mostListened: ['Nights', 'Therefore I Am', 'SAOKO'],
+    _demoScore: 46,
   },
 ];
 
@@ -105,7 +119,16 @@ function computeCompatibility(current, other) {
     (current.favoriteArtists || []).includes(a)
   );
   const sharedMoods = (other.moods || []).filter((m) => (current.moods || []).includes(m));
-  const score = Math.min(100, sharedArtists.length * 20 + sharedMoods.length * 15 + 40);
+  const sharedGenres = (other.genres || []).filter((g) => (current.genres || []).includes(g));
+  const cityMatch = current.city && other.city && current.city.toLowerCase() === other.city.toLowerCase() ? 1 : 0;
+
+  // If the current user has no profile data yet, use the demo seed score if available
+  const hasProfileData = (current.favoriteArtists || []).length > 0 || (current.moods || []).length > 0 || (current.genres || []).length > 0;
+  if (!hasProfileData && other._demoScore) {
+    return { compatibilityScore: other._demoScore, sharedArtists: [], sharedMoods: [] };
+  }
+
+  const score = Math.min(100, sharedArtists.length * 18 + sharedMoods.length * 12 + sharedGenres.length * 8 + cityMatch * 5 + 20);
   return { compatibilityScore: score, sharedArtists, sharedMoods };
 }
 

@@ -32,7 +32,7 @@ function CommentThread({ comment, replies, onReply, onDelete, currentUserId }) {
     <div style={{ marginTop: 12 }}>
       <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
         <div className="avatar-circle" style={{ width: 36, height: 36, fontSize: 14, flexShrink: 0 }}>
-          {(comment.user?.name || '?').charAt(0).toUpperCase()}
+          {(comment.user?.name || 'U').charAt(0).toUpperCase()}
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>

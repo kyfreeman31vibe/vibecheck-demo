@@ -17,10 +17,10 @@ function mapPost(p) {
     commentCount: p.comment_count || 0,
     createdAt: p.created_at,
     user: p.profiles ? {
-      name: p.profiles.name,
+      name: (p.profiles.name && p.profiles.name !== 'New User') ? p.profiles.name : (p.profiles.username || 'Someone'),
       username: p.profiles.username,
       avatar_url: p.profiles.avatar_url,
-    } : { name: 'Unknown', username: 'unknown' },
+    } : { name: 'Someone', username: 'unknown' },
   };
 }
 

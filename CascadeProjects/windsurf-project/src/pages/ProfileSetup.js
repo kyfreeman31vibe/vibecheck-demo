@@ -242,7 +242,7 @@ export function ProfileSetup() {
     setSaveError('');
 
     const result = await saveProfile({
-      name: name.trim() || 'New User',
+      name: name.trim(),
       username: username.trim() || 'user',
       genres,
       city,

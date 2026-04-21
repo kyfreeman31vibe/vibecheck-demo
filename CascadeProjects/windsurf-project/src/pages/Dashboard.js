@@ -228,10 +228,13 @@ export function Dashboard() {
                   const isLong = item.postType === 'thought' && item.content && item.content.length > 120;
                   const preview = isLong ? item.content.slice(0, 120) + '...' : detail;
 
+                  var userName = item.user?.name || 'Someone';
+                  var initial = userName.charAt(0).toUpperCase();
+
                   return (
                     <div key={item.id} className="list-item glass">
                       <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                        <span style={{ fontSize: 20, flexShrink: 0, marginTop: 2 }}>{icon}</span>
+                        <div className="avatar-circle" style={{ width: 36, height: 36, fontSize: 14, flexShrink: 0 }}>{initial}</div>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 14 }}>
                             {label}

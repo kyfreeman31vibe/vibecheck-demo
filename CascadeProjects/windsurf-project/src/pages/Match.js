@@ -15,8 +15,16 @@ function computeCompat(current, other) {
   const sharedMoods = (other.moods || []).filter((m) =>
     (current.moods || []).includes(m)
   );
+  const sharedGenres = (other.genres || []).filter((g) => (current.genres || []).includes(g));
+  const cityMatch = current.city && other.city && current.city.toLowerCase() === other.city.toLowerCase() ? 1 : 0;
+
+  const hasProfileData = (current.favoriteArtists || []).length > 0 || (current.moods || []).length > 0 || (current.genres || []).length > 0;
+  if (!hasProfileData && other._demoScore) {
+    return { score: other._demoScore, sharedArtists: [], sharedMoods: [] };
+  }
+
   return {
-    score: Math.min(100, sharedArtists.length * 20 + sharedMoods.length * 15 + 40),
+    score: Math.min(100, sharedArtists.length * 18 + sharedMoods.length * 12 + sharedGenres.length * 8 + cityMatch * 5 + 20),
     sharedArtists,
     sharedMoods,
   };

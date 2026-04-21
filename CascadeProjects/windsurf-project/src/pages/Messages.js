@@ -49,17 +49,23 @@ export function Messages() {
             <p className="caption">Loading conversations...</p>
           </div>
         )}
-        {conversations.map((c) => (
+        {conversations.map((c) => {
+          var otherName = c.otherUser.name || c.otherUser.username || 'User';
+          var initial = otherName.charAt(0).toUpperCase();
+          return (
           <div key={c.id} className="list-item glass">
             <div
-              style={{ flex: 1, cursor: 'pointer' }}
+              style={{ display: 'flex', gap: 10, alignItems: 'center', flex: 1, cursor: 'pointer' }}
               onClick={() => handleOpenThread(c.id)}
             >
-              <div className="list-title-row">
-                <span className="list-title">{c.otherUser.name}</span>
-                <span className="caption">{formatTimeAgo(c.lastMessageAt)}</span>
+              <div className="avatar-circle" style={{ width: 36, height: 36, fontSize: 14, flexShrink: 0 }}>{initial}</div>
+              <div style={{ flex: 1 }}>
+                <div className="list-title-row">
+                  <span className="list-title">{otherName}</span>
+                  <span className="caption">{formatTimeAgo(c.lastMessageAt)}</span>
+                </div>
+                <div className="caption" style={{ marginTop: 2 }}>@{c.otherUser.username}</div>
               </div>
-              <div className="caption" style={{ marginTop: 2 }}>@{c.otherUser.username}</div>
             </div>
             <div style={{ position: 'relative' }}>
               <button
@@ -102,7 +108,8 @@ export function Messages() {
               )}
             </div>
           </div>
-        ))}
+        );
+        })}
       </div>
     </div>
   );
