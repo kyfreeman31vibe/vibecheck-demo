@@ -209,6 +209,8 @@ export function Dashboard() {
         const weekPosts = filteredPosts.filter((p) => !isToday(p.createdAt) && isThisWeek(p.createdAt));
         const olderPosts = filteredPosts.filter((p) => !isToday(p.createdAt) && !isThisWeek(p.createdAt));
 
+        var cardIndex = 0;
+
         function renderGroup(label, items) {
           if (items.length === 0) return null;
           return (
@@ -216,6 +218,8 @@ export function Dashboard() {
               <h3 style={{ marginBottom: 8, fontSize: '1rem' }}>{label}</h3>
               <div className="list">
                 {items.map((item) => {
+                  var idx = cardIndex++;
+
                   const label = postActivityLabel(item);
                   const detail = postDetailText(item);
                   const isLong = item.postType === 'thought' && item.content && item.content.length > 120;
@@ -225,7 +229,7 @@ export function Dashboard() {
                   var initial = userName.charAt(0).toUpperCase();
 
                   return (
-                    <div key={item.id} className="list-item glass">
+                    <div key={item.id} className="list-item glass feed-card-animate" style={{ animationDelay: (idx * 60) + 'ms' }}>
                       <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                         <div className="avatar-circle" style={{ width: 36, height: 36, fontSize: 14, flexShrink: 0 }}>{initial}</div>
                         <div style={{ flex: 1 }}>

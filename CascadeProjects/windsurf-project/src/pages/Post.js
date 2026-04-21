@@ -105,7 +105,7 @@ function ThoughtForm({ onSubmit, posting, posted }) {
           onClick={handleSubmit}
           disabled={!text.trim() || posted || posting}
         >
-          {posted ? 'Posted!' : posting ? 'Posting...' : 'Post'}
+          {posted ? <span className="btn-success-icon">✓ Posted!</span> : posting ? <span className="btn-spinner" /> : 'Post'}
         </button>
       </div>
     </>
@@ -128,7 +128,7 @@ function SongForm({ onSubmit, posting, posted }) {
           onClick={() => onSubmit({ content: note.trim() || (title.trim() + ' by ' + artist.trim()), postType: 'song', songTitle: title.trim(), songArtist: artist.trim() })}
           disabled={!title.trim() || !artist.trim() || posted || posting}
         >
-          {posted ? 'Posted!' : posting ? 'Posting...' : 'Share Song'}
+          {posted ? <span className="btn-success-icon">✓ Posted!</span> : posting ? <span className="btn-spinner" /> : 'Share Song'}
         </button>
       </div>
     </>
@@ -183,7 +183,7 @@ function PlaylistForm({ onSubmit, posting, posted }) {
           onClick={() => onSubmit({ content: note.trim() || name.trim(), postType: 'playlist', playlistName: name.trim(), playlistSongs: songs })}
           disabled={!name.trim() || songs.length === 0 || posted || posting}
         >
-          {posted ? 'Posted!' : posting ? 'Posting...' : 'Share Playlist'}
+          {posted ? <span className="btn-success-icon">✓ Posted!</span> : posting ? <span className="btn-spinner" /> : 'Share Playlist'}
         </button>
       </div>
     </>

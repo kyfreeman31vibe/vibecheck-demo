@@ -237,6 +237,8 @@ export function ProfileSetup() {
     }
   };
 
+  const [saved, setSaved] = useState(false);
+
   const handleSave = async () => {
     setSaving(true);
     setSaveError('');
@@ -256,7 +258,8 @@ export function ProfileSetup() {
       setSaveError(result.error.message || 'Failed to save profile.');
       return;
     }
-    navigate('/app/dashboard');
+    setSaved(true);
+    setTimeout(() => navigate('/app/dashboard'), 1000);
   };
 
   var canAdvance = true;
@@ -309,10 +312,10 @@ export function ProfileSetup() {
               type="button"
               className="btn primary"
               style={{ flex: 1 }}
-              disabled={saving}
+              disabled={saving || saved}
               onClick={handleSave}
             >
-              {saving ? 'Saving...' : 'Finish setup'}
+              {saved ? <span className="btn-success-icon">✓ Saved!</span> : saving ? <span className="btn-spinner" /> : 'Finish setup'}
             </button>
           )}
         </div>

@@ -28,6 +28,15 @@ import { Post } from './pages/Post';
 import { PostDetail } from './pages/PostDetail';
 import { NotFound } from './pages/NotFound';
 
+function PageFade({ children }) {
+  const location = useLocation();
+  return (
+    <div className="page-transition" key={location.pathname}>
+      {children}
+    </div>
+  );
+}
+
 function AppLayout({ children }) {
   const location = useLocation();
   const hideNavOnSetup = location.pathname.startsWith('/app/setup');
@@ -35,7 +44,7 @@ function AppLayout({ children }) {
   return (
     <div className="app-root">
       <div className="app-shell">
-        <main className="app-main">{children}</main>
+        <main className="app-main"><PageFade>{children}</PageFade></main>
         {!hideNavOnSetup && <BottomNav />}
       </div>
     </div>
