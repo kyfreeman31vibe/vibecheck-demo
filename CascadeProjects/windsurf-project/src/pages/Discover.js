@@ -54,16 +54,16 @@ function UsersTab({ matches, getRequestStatus, isInCircle, onSendRequest }) {
               )}
             </div>
             <div style={{ display: 'flex', gap: 8, marginTop: 8, position: 'relative', zIndex: 10 }}>
-              <Link to={'/app/match/' + m.id} className="btn small ghost">View Profile</Link>
               <div
                 role="button"
                 tabIndex={0}
-                className={'btn small ' + (done ? 'ghost' : 'primary')}
-                style={{ opacity: done ? 0.5 : 1, pointerEvents: done ? 'none' : 'auto' }}
+                className={'btn ' + (done ? 'ghost' : 'primary')}
+                style={{ flex: 1, opacity: done ? 0.6 : 1, pointerEvents: done ? 'none' : 'auto' }}
                 onPointerDown={function () { if (!done) onSendRequest(m.id); }}
               >
                 {circleButtonLabel(status)}
               </div>
+              <Link to={'/app/match/' + m.id} className="btn small ghost">View Profile</Link>
             </div>
           </div>
         );

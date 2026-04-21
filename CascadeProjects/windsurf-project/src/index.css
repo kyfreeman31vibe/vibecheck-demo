@@ -174,8 +174,13 @@ body {
   cursor: not-allowed;
 }
 
+.btn.primary:disabled {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+}
+
 .btn {
-  transition: filter 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+  transition: filter 0.15s ease, transform 0.15s ease, opacity 0.25s ease, background 0.3s ease, color 0.3s ease;
 }
 
 .pill-row,
