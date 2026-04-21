@@ -222,7 +222,6 @@ export function Dashboard() {
               <h3 style={{ marginBottom: 8, fontSize: '1rem' }}>{label}</h3>
               <div className="list">
                 {items.map((item) => {
-                  const icon = POST_TYPE_ICONS[item.postType] || '💬';
                   const label = postActivityLabel(item);
                   const detail = postDetailText(item);
                   const isLong = item.postType === 'thought' && item.content && item.content.length > 120;

@@ -34,7 +34,7 @@ export function Match() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { profile } = useCurrentUserProfile();
-  const { isInCircle, getRequestStatus, sendRequest } = useCircles();
+  const { getRequestStatus, sendRequest } = useCircles();
   const { getOrCreateConversation } = useConversations();
   const [selectedEmoji, setSelectedEmoji] = useState(null);
   const [supaUser, setSupaUser] = useState(null);
