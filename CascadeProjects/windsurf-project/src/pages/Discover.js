@@ -48,7 +48,18 @@ function UsersTab({ matches, getRequestStatus, isInCircle, onSendRequest }) {
             <div className="caption">Top artists: {topArtists}</div>
             <div className="caption" style={{ marginTop: 2 }}>{u.city}</div>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6 }}>
-              <div className="pill small">{m.compatibilityScore}% compatible</div>
+              <div className="pill small" style={{
+                background: m.compatibilityScore >= 80
+                  ? 'rgba(76, 175, 80, 0.25)'
+                  : m.compatibilityScore >= 60
+                    ? 'rgba(227, 126, 47, 0.25)'
+                    : 'rgba(255, 255, 255, 0.08)',
+                color: m.compatibilityScore >= 80
+                  ? '#81c784'
+                  : m.compatibilityScore >= 60
+                    ? 'var(--vc-whiskey-amber)'
+                    : 'var(--text-muted)',
+              }}>{m.compatibilityScore}% compatible</div>
               {m.sharedArtists.length > 0 && (
                 <span className="caption">Shared: {m.sharedArtists.join(', ')}</span>
               )}
@@ -92,8 +103,34 @@ function EventsTab() {
             <div className="list-title">{event.name}</div>
             <div className="caption">{event.date} &middot; {event.location}</div>
             <div className="list-title-row" style={{ marginTop: 6 }}>
-              <div className="caption">{event.attendees} VibeCheckers going</div>
-              <div className="pill small">{event.type}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ display: 'flex', marginRight: 2 }}>
+                  {['A', 'K', 'J'].map(function (init, i) {
+                    return (
+                      <div key={i} className="avatar-circle" style={{
+                        width: 22, height: 22, fontSize: 9,
+                        marginLeft: i === 0 ? 0 : -8,
+                        border: '2px solid var(--vc-charcoal-night)',
+                        zIndex: 3 - i,
+                        position: 'relative',
+                      }}>{init}</div>
+                    );
+                  })}
+                </div>
+                <div className="caption">{event.attendees} VibeCheckers going</div>
+              </div>
+              <div className="pill small" style={{
+                background: event.type === 'Concert'
+                  ? 'linear-gradient(135deg, var(--vc-whiskey-amber), var(--vc-antique-gold))'
+                  : event.type === 'Casual'
+                    ? 'rgba(155, 79, 150, 0.35)'
+                    : 'rgba(227, 126, 47, 0.2)',
+                color: event.type === 'Concert'
+                  ? '#fff'
+                  : event.type === 'Casual'
+                    ? '#d4a0d0'
+                    : 'var(--vc-whiskey-amber)',
+              }}>{event.type}</div>
             </div>
             {matched.length > 0 && (
               <div className="caption" style={{ marginTop: 4 }}>
