@@ -5,8 +5,6 @@ import { useAuth } from '../auth/AuthContext';
 export function SignUp() {
   const navigate = useNavigate();
   const { signUp } = useAuth();
-  const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -23,10 +21,6 @@ export function SignUp() {
     e.preventDefault();
     setError('');
 
-    if (!name.trim() || !username.trim()) {
-      setError('Name and username are required.');
-      return;
-    }
     if (!passwordValid) {
       setError('Password must be 8+ characters with an uppercase letter and a number.');
       return;
@@ -42,10 +36,7 @@ export function SignUp() {
 
     setLoading(true);
     try {
-      const { data, error: authError } = await signUp(email, password, {
-        name: name.trim(),
-        username: username.trim(),
-      });
+      const { data, error: authError } = await signUp(email, password);
       setLoading(false);
 
       if (authError) {
@@ -93,22 +84,6 @@ export function SignUp() {
           </header>
 
           <form onSubmit={handleSubmit} className="section glass" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <input
-              className="input"
-              type="text"
-              placeholder="Full name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-            <input
-              className="input"
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
             <input
               className="input"
               type="email"
