@@ -5,12 +5,6 @@ import { usePosts } from '../hooks/usePosts';
 import { useNotifications } from '../hooks/useNotifications';
 import { useCircles } from '../hooks/useCircles';
 
-const POST_TYPE_ICONS = {
-  thought: '�',
-  song: '�',
-  playlist: '🎶',
-};
-
 function formatTimeAgo(dateStr) {
   const now = Date.now();
   const then = new Date(dateStr).getTime();
