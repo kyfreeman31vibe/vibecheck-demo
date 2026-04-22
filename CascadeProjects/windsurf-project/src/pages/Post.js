@@ -271,16 +271,23 @@ export function Post() {
   return (
     <div className="page">
       <header className="page-header">
-        <div>
-          <button type="button" className="btn ghost small" onPointerDown={() => { setPostType(null); setPosted(false); setError(''); }} style={{ marginBottom: 4 }}>← Back</button>
-          <h2>{titles[postType]}</h2>
-          <p className="subtitle">Share what you're vibing with right now.</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button type="button" className="btn ghost small" style={{ padding: '6px 8px' }} onPointerDown={() => { setPostType(null); setPosted(false); setError(''); }}>
+            ←
+          </button>
+          <div>
+            <h2 style={{ fontSize: '1.1rem' }}>{titles[postType]}</h2>
+            <p className="subtitle" style={{ fontSize: '0.75rem' }}>Share what you're vibing with right now.</p>
+          </div>
         </div>
       </header>
-      <section className="section glass">
-        <div style={{ marginBottom: 8 }}>
-          <strong>{profile.name}</strong>
-          <span className="caption" style={{ marginLeft: 8 }}>@{profile.username}</span>
+      <section className="section glass-elevated">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <div className="avatar-circle" style={{ width: 32, height: 32, fontSize: 13, flexShrink: 0 }}>{(profile.name || 'U').charAt(0).toUpperCase()}</div>
+          <div>
+            <strong style={{ fontSize: '0.9rem' }}>{profile.name}</strong>
+            <span className="caption" style={{ marginLeft: 6 }}>@{profile.username}</span>
+          </div>
         </div>
         {postType === 'thought' && <ThoughtForm onSubmit={handleSubmit} posting={posting} posted={posted} />}
         {postType === 'song' && <SongForm onSubmit={handleSubmit} posting={posting} posted={posted} />}

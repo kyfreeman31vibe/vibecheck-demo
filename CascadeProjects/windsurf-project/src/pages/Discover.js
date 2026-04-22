@@ -207,41 +207,33 @@ export function Discover() {
         </div>
       </header>
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 12, position: 'relative', zIndex: 10 }}>
-        <div
-          role="button"
-          tabIndex={0}
-          style={{
-            padding: '10px 18px',
-            borderRadius: 999,
-            cursor: 'pointer',
-            fontWeight: tab === 'users' ? 'bold' : 'normal',
-            background: tab === 'users' ? 'linear-gradient(135deg, #e37e2f, #9b4f96)' : 'transparent',
-            color: '#fff',
-            border: tab === 'users' ? 'none' : '1px solid rgba(232,228,222,0.16)',
-            fontSize: '0.9rem',
-          }}
-          onPointerDown={function () { setTab('users'); }}
-        >
-          Users
-        </div>
-        <div
-          role="button"
-          tabIndex={0}
-          style={{
-            padding: '10px 18px',
-            borderRadius: 999,
-            cursor: 'pointer',
-            fontWeight: tab === 'events' ? 'bold' : 'normal',
-            background: tab === 'events' ? 'linear-gradient(135deg, #e37e2f, #9b4f96)' : 'transparent',
-            color: '#fff',
-            border: tab === 'events' ? 'none' : '1px solid rgba(232,228,222,0.16)',
-            fontSize: '0.9rem',
-          }}
-          onPointerDown={function () { setTab('events'); }}
-        >
-          Events
-        </div>
+      <div style={{ display: 'flex', gap: 0, marginBottom: 12, position: 'relative', zIndex: 10, background: 'rgba(255,255,255,0.04)', borderRadius: 999, padding: 3, border: '1px solid var(--border-glass)' }}>
+        {['users', 'events'].map(function (t) {
+          var isActive = tab === t;
+          return (
+            <div
+              key={t}
+              role="button"
+              tabIndex={0}
+              style={{
+                flex: 1,
+                padding: '9px 0',
+                borderRadius: 999,
+                cursor: 'pointer',
+                fontWeight: isActive ? '600' : '400',
+                background: isActive ? 'linear-gradient(135deg, var(--vc-whiskey-amber), var(--vc-velvet-purple))' : 'transparent',
+                color: isActive ? '#fff' : 'var(--text-muted)',
+                fontSize: '0.85rem',
+                textAlign: 'center',
+                transition: 'all 0.25s ease',
+                letterSpacing: '0.02em',
+              }}
+              onPointerDown={function () { setTab(t); }}
+            >
+              {t === 'users' ? 'Users' : 'Events'}
+            </div>
+          );
+        })}
       </div>
 
       {tab === 'users' ? (

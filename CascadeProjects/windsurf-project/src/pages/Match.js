@@ -91,6 +91,20 @@ export function Match() {
         <header className="page-header">
           <div><h2>Loading...</h2></div>
         </header>
+        <div className="skeleton-card skeleton">
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            <div className="skeleton skeleton-circle" style={{ width: 64, height: 64 }} />
+            <div style={{ flex: 1 }}>
+              <div className="skeleton skeleton-line" style={{ width: '60%' }} />
+              <div className="skeleton skeleton-line short" />
+            </div>
+          </div>
+        </div>
+        <div className="skeleton-card skeleton" style={{ marginTop: 12 }}>
+          <div className="skeleton skeleton-line" style={{ width: '40%' }} />
+          <div className="skeleton skeleton-line" />
+          <div className="skeleton skeleton-line short" />
+        </div>
       </div>
     );
   }
@@ -118,27 +132,26 @@ export function Match() {
   return (
     <div className="page">
       <header className="page-header">
-        <div>
-          <button
-            type="button"
-            className="btn ghost small"
-            onClick={() => navigate(-1)}
-            style={{ marginBottom: 4 }}
-          >
-            ← Back
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button type="button" className="btn ghost small" style={{ padding: '6px 8px' }} onClick={() => navigate(-1)}>
+            ←
           </button>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <h2>{user.name}</h2>
-            {demoUser && <span style={{ fontSize: 10, fontWeight: 'bold', background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.5)', padding: '2px 6px', borderRadius: 4 }}>DEMO</span>}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <h2 style={{ fontSize: '1.1rem' }}>{user.name}</h2>
+              {demoUser && <span style={{ fontSize: 10, fontWeight: 'bold', background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.5)', padding: '2px 6px', borderRadius: 4 }}>DEMO</span>}
+            </div>
+            <p className="subtitle" style={{ fontSize: '0.75rem' }}>{compat.score}% compatible</p>
           </div>
-          <p className="subtitle">{compat.score}% compatible</p>
         </div>
       </header>
 
       {/* Profile header */}
-      <section className="section glass profile-header">
-        <div className="avatar-circle" style={{ width: 64, height: 64, fontSize: 24 }}>
-          {initials}
+      <section className="section glass-elevated profile-header">
+        <div className="avatar-ring">
+          <div className="avatar-circle" style={{ width: 60, height: 60, fontSize: 22 }}>
+            {initials}
+          </div>
         </div>
         <div>
           <h3>{user.name}</h3>
@@ -193,14 +206,18 @@ export function Match() {
         })()}
       </section>
 
-      {/* Shared music highlights */}
+      {/* Music highlights + mood alignment merged */}
       <section className="section glass">
         <h3>Music Highlights</h3>
-        <div className="pill small" style={{ marginBottom: 8 }}>
+        <div className="pill small" style={{
+          marginBottom: 10,
+          background: compat.score >= 80 ? 'rgba(76, 175, 80, 0.25)' : compat.score >= 60 ? 'rgba(227, 126, 47, 0.25)' : 'rgba(255, 255, 255, 0.08)',
+          color: compat.score >= 80 ? '#81c784' : compat.score >= 60 ? 'var(--vc-whiskey-amber)' : 'var(--text-muted)',
+        }}>
           {compat.score}% compatibility
         </div>
         <div>
-          <h4>Top 5 Artists</h4>
+          <h4 style={{ fontSize: '0.85rem', marginBottom: 4 }}>Top 5 Artists</h4>
           <div className="tag-row" style={{ marginTop: 4 }}>
             {(user.favoriteArtists || []).slice(0, 5).map((a) => (
               <span key={a} className="tag">{a}</span>
@@ -209,19 +226,18 @@ export function Match() {
         </div>
         {compat.sharedArtists.length > 0 && (
           <div style={{ marginTop: 8 }}>
-            <h4>Shared Artists</h4>
+            <h4 style={{ fontSize: '0.85rem', marginBottom: 4 }}>Shared Artists</h4>
             <div className="tag-row" style={{ marginTop: 4 }}>
               {compat.sharedArtists.map((a) => (
-                <span key={a} className="tag" style={{ fontWeight: 'bold' }}>{a}</span>
+                <span key={a} className="tag" style={{ fontWeight: 'bold', background: 'var(--accent-soft)', border: '1px solid var(--accent)' }}>{a}</span>
               ))}
             </div>
           </div>
         )}
-      </section>
 
-      {/* Mood alignment */}
-      <section className="section glass">
-        <h3>Mood Alignment</h3>
+        <hr className="divider" />
+
+        <h4 style={{ fontSize: '0.85rem', marginBottom: 6 }}>Mood Alignment</h4>
         <div className="tag-row">
           {(user.moods || []).map((mood) => {
             const isShared = compat.sharedMoods.includes(mood);
@@ -229,7 +245,7 @@ export function Match() {
               <span
                 key={mood}
                 className="tag"
-                style={isShared ? { fontWeight: 'bold', border: '1px solid var(--accent)' } : {}}
+                style={isShared ? { fontWeight: 'bold', background: 'var(--accent-soft)', border: '1px solid var(--accent)' } : {}}
               >
                 {mood} {isShared ? '✓' : ''}
               </span>
@@ -276,20 +292,30 @@ export function Match() {
       {/* React to their vibe */}
       <section className="section glass">
         <h3>React to their vibe</h3>
-        <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-          {EMOJIS.map((emoji) => (
-            <button
-              key={emoji}
-              type="button"
-              className={`btn ghost small ${selectedEmoji === emoji ? 'active' : ''}`}
-              onClick={() => setSelectedEmoji(emoji)}
-            >
-              {emoji}
-            </button>
-          ))}
+        <div style={{ display: 'flex', gap: 10, marginBottom: 8 }}>
+          {EMOJIS.map((emoji) => {
+            var isActive = selectedEmoji === emoji;
+            return (
+              <button
+                key={emoji}
+                type="button"
+                style={{
+                  width: 44, height: 44, borderRadius: 12, fontSize: 20, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: isActive ? 'var(--accent-soft)' : 'rgba(255,255,255,0.04)',
+                  border: isActive ? '1.5px solid var(--accent)' : '1px solid var(--border-glass)',
+                  transition: 'all 0.2s ease',
+                  transform: isActive ? 'scale(1.15)' : 'scale(1)',
+                }}
+                onClick={() => setSelectedEmoji(emoji)}
+              >
+                {emoji}
+              </button>
+            );
+          })}
         </div>
         {selectedEmoji && (
-          <p className="caption">You reacted with {selectedEmoji} (demo only).</p>
+          <p className="caption">You reacted with {selectedEmoji}</p>
         )}
       </section>
     </div>

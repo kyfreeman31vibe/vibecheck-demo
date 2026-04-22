@@ -13,7 +13,7 @@ function ProgressBar({ step, total }) {
         <span className="caption">Step {step} of {total}</span>
         <span className="caption">{pct}%</span>
       </div>
-      <div style={{ height: 4, borderRadius: 4, background: 'rgba(255,255,255,0.08)' }}>
+      <div style={{ height: 5, borderRadius: 5, background: 'rgba(255,255,255,0.08)' }}>
         <div
           style={{
             height: '100%',
@@ -65,7 +65,7 @@ function SearchableDropdown({ label, caption, options, selected, setSelected, ma
             <span key={item} className="tag" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
               {item}
               <span
-                style={{ cursor: 'pointer', fontWeight: 'bold', marginLeft: 2 }}
+                style={{ cursor: 'pointer', fontWeight: 'bold', marginLeft: 2, opacity: 0.6, fontSize: 11, lineHeight: 1 }}
                 onPointerDown={() => removeItem(item)}
               >✕</span>
             </span>
@@ -83,14 +83,19 @@ function SearchableDropdown({ label, caption, options, selected, setSelected, ma
         {open && search.trim() && filtered.length > 0 && (
           <div style={{
             position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50,
-            background: 'var(--surface, #1a1a2e)', border: '1px solid rgba(255,255,255,0.12)',
-            borderRadius: 8, maxHeight: 180, overflowY: 'auto', marginTop: 4,
+            background: 'linear-gradient(135deg, rgba(50, 30, 80, 0.95), rgba(38, 49, 74, 0.98))',
+            border: '1px solid rgba(232, 228, 222, 0.12)',
+            borderRadius: 10, maxHeight: 180, overflowY: 'auto', marginTop: 4,
+            backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+            boxShadow: '0 12px 30px rgba(0,0,0,0.4)',
           }}>
             {filtered.slice(0, 15).map((item) => (
               <div
                 key={item}
-                style={{ padding: '8px 12px', cursor: 'pointer', fontSize: 14 }}
+                style={{ padding: '9px 14px', cursor: 'pointer', fontSize: 13, transition: 'background 0.15s ease' }}
                 onPointerDown={() => { addItem(item); setOpen(false); }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
               >
                 {item}
               </div>
@@ -100,8 +105,10 @@ function SearchableDropdown({ label, caption, options, selected, setSelected, ma
         {open && search.trim() && filtered.length === 0 && (
           <div style={{
             position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50,
-            background: 'var(--surface, #1a1a2e)', border: '1px solid rgba(255,255,255,0.12)',
-            borderRadius: 8, padding: '8px 12px', marginTop: 4,
+            background: 'linear-gradient(135deg, rgba(50, 30, 80, 0.95), rgba(38, 49, 74, 0.98))',
+            border: '1px solid rgba(232, 228, 222, 0.12)',
+            borderRadius: 10, padding: '9px 14px', marginTop: 4,
+            backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
           }}>
             <span className="caption">No results</span>
           </div>
@@ -269,16 +276,15 @@ export function ProfileSetup() {
 
   return (
     <div className="page">
-      <header className="page-header">
-        <div>
-          <h2>Profile setup</h2>
-          <p className="subtitle">{stepTitles[step - 1]}</p>
-        </div>
+      <header className="page-header" style={{ flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 4 }}>
+        <div className="logo-wordmark" style={{ fontSize: '1.1rem', marginBottom: 6 }}>VibeCheck</div>
+        <h2 style={{ fontSize: '1.15rem' }}>Profile setup</h2>
+        <p className="subtitle">{stepTitles[step - 1]}</p>
       </header>
 
       <ProgressBar step={step} total={TOTAL_STEPS} />
 
-      <section className="section glass" style={{ marginBottom: 12 }}>
+      <section className="section glass-elevated" style={{ marginBottom: 12 }}>
         {step === 1 && (
           <StepBasics name={name} setName={setName} username={username} setUsername={setUsername} city={city} setCity={setCity} />
         )}
