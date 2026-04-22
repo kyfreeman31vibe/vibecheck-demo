@@ -44,20 +44,22 @@ export function Profile() {
         </div>
       </header>
 
-      <section className="section glass profile-header">
-        <div className="avatar-circle">{initials}</div>
+      <section className="section glass-elevated profile-header">
+        <div className="avatar-ring">
+          <div className="avatar-circle">{initials}</div>
+        </div>
         <div style={{ flex: 1 }}>
           <h3>{profile.name}</h3>
           <p className="subtitle">@{profile.username}</p>
           <p className="caption">{profile.city}</p>
-          <div style={{ display: 'flex', gap: 16, marginTop: 6 }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: 18 }}>{circleCount}</div>
-              <div className="caption">Circle</div>
+          <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
+            <div style={{ textAlign: 'center', padding: '6px 14px', borderRadius: 'var(--radius-lg)', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-glass)' }}>
+              <div style={{ fontWeight: 'bold', fontSize: 17 }}>{circleCount}</div>
+              <div className="caption" style={{ fontSize: '0.7rem' }}>Circle</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: 18 }}>{myPlaylists.length}</div>
-              <div className="caption">Playlists</div>
+            <div style={{ textAlign: 'center', padding: '6px 14px', borderRadius: 'var(--radius-lg)', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-glass)' }}>
+              <div style={{ fontWeight: 'bold', fontSize: 17 }}>{myPlaylists.length}</div>
+              <div className="caption" style={{ fontSize: '0.7rem' }}>Playlists</div>
             </div>
           </div>
         </div>

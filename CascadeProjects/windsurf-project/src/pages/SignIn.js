@@ -47,11 +47,10 @@ export function SignIn() {
     <div className="app-root">
       <div className="app-shell">
         <div className="page">
-          <header className="page-header">
-            <div>
-              <h2>Sign In</h2>
-              <p className="subtitle">Welcome back to VibeCheck.</p>
-            </div>
+          <header className="page-header" style={{ flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 4 }}>
+            <div className="logo-wordmark" style={{ fontSize: '1.1rem', marginBottom: 8 }}>VibeCheck</div>
+            <h2>Welcome back</h2>
+            <p className="subtitle">Sign in to continue your vibe.</p>
           </header>
 
           <form onSubmit={handleSubmit} className="section glass" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -83,16 +82,17 @@ export function SignIn() {
                   style={{
                     width: 20,
                     height: 20,
-                    borderRadius: 4,
-                    border: '1px solid var(--border-glass)',
-                    background: remember ? 'var(--accent)' : 'transparent',
+                    borderRadius: 6,
+                    border: remember ? 'none' : '1.5px solid var(--border-glass)',
+                    background: remember ? 'linear-gradient(135deg, var(--vc-whiskey-amber), var(--vc-velvet-purple))' : 'rgba(255,255,255,0.04)',
                     cursor: 'pointer',
                     flexShrink: 0,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: '#fff',
-                    fontSize: 14,
+                    fontSize: 13,
+                    transition: 'background 0.2s ease, border 0.2s ease',
                   }}
                 >
                   {remember ? '✓' : ''}
@@ -107,7 +107,7 @@ export function SignIn() {
             {error && <p style={{ color: 'var(--danger)', fontSize: '0.85rem', margin: 0 }}>{error}</p>}
 
             <button type="submit" className="btn primary full-width" disabled={loading}>
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? <span className="btn-spinner" /> : 'Sign In'}
             </button>
           </form>
 

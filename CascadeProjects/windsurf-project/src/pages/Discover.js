@@ -34,7 +34,7 @@ function UsersTab({ matches, getRequestStatus, isInCircle, onSendRequest }) {
         var status = getRequestStatus(m.id);
         var done = status === 'accepted' || status === 'pending';
         return (
-          <div key={m.id} className="list-item glass">
+          <div key={m.id} className="list-item glass glass-interactive">
             <div className="profile-card-header" style={{ marginBottom: 6 }}>
               <div className="avatar-circle">{initials}</div>
               <div>
@@ -99,9 +99,12 @@ function EventsTab() {
           return (u.eventsAttending || []).indexOf(event.id) !== -1;
         });
         return (
-          <div key={event.id} className="list-item glass">
-            <div className="list-title">{event.name}</div>
-            <div className="caption">{event.date} &middot; {event.location}</div>
+          <div key={event.id} className="list-item glass glass-interactive">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div className="list-title" style={{ flex: 1 }}>{event.name}</div>
+              <div style={{ fontSize: '0.7rem', fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: 'rgba(227, 126, 47, 0.15)', color: 'var(--vc-antique-gold)', whiteSpace: 'nowrap', marginLeft: 8 }}>{event.date}</div>
+            </div>
+            <div className="caption">{event.location}</div>
             <div className="list-title-row" style={{ marginTop: 6 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <div style={{ display: 'flex', marginRight: 2 }}>

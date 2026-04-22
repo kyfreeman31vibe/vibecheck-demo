@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Bell } from 'lucide-react';
+import { Bell, Search } from 'lucide-react';
 import { usePosts } from '../hooks/usePosts';
 import { useNotifications } from '../hooks/useNotifications';
 import { useCircles } from '../hooks/useCircles';
@@ -99,13 +99,14 @@ export function Dashboard() {
       </header>
 
       {showNotifs && (
-        <section className="section glass" style={{ marginBottom: 12 }}>
-          <div className="list-title-row" style={{ marginBottom: 8 }}>
+        <section className="section glass-elevated" style={{ marginBottom: 12 }}>
+          <div className="list-title-row" style={{ marginBottom: 10 }}>
             <h3>Notifications</h3>
             {notifications.length > 0 && (
               <button
                 type="button"
                 className="btn ghost small"
+                style={{ fontSize: '0.75rem' }}
                 onClick={clearAll}
               >
                 Clear All
@@ -113,29 +114,29 @@ export function Dashboard() {
             )}
           </div>
           {incomingRequests.length > 0 && (
-            <div style={{ marginBottom: 10 }}>
-              <div style={{ fontSize: 13, fontWeight: 'bold', marginBottom: 6, opacity: 0.7 }}>Circle Requests</div>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 12, fontWeight: '600', marginBottom: 8, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Circle Requests</div>
               {incomingRequests.map((req) => (
                 <div
                   key={req.id}
-                  className="list-item"
                   style={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    padding: '8px 0',
-                    borderBottom: '1px solid var(--border, rgba(255,255,255,0.08))',
+                    padding: '10px 0',
+                    borderBottom: '1px solid rgba(255,255,255,0.06)',
                   }}
                 >
-                  <div>
-                    <div style={{ fontSize: 14 }}>{req.sender?.name || 'Someone'} wants to add you to their circle</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 16 }}>👥</span>
+                    <div style={{ fontSize: 13 }}><strong>{req.sender?.name || 'Someone'}</strong> wants to join your circle</div>
                   </div>
                   <div style={{ display: 'flex', gap: 6, flexShrink: 0, marginLeft: 8 }}>
                     <div
                       role="button"
                       tabIndex={0}
                       className="btn small primary"
-                      style={{ padding: '4px 10px', fontSize: 12 }}
+                      style={{ padding: '4px 10px', fontSize: 11 }}
                       onPointerDown={() => acceptRequest(req.id, req.senderId)}
                     >
                       Accept
@@ -144,7 +145,7 @@ export function Dashboard() {
                       role="button"
                       tabIndex={0}
                       className="btn small ghost"
-                      style={{ padding: '4px 10px', fontSize: 12 }}
+                      style={{ padding: '4px 10px', fontSize: 11 }}
                       onPointerDown={() => rejectRequest(req.id)}
                     >
                       Decline
@@ -155,30 +156,34 @@ export function Dashboard() {
             </div>
           )}
           {notifications.length === 0 && incomingRequests.length === 0 && (
-            <p className="caption">No notifications.</p>
+            <div style={{ textAlign: 'center', padding: '12px 0' }}>
+              <div style={{ fontSize: 24, marginBottom: 4 }}>🔔</div>
+              <p className="caption">You're all caught up!</p>
+            </div>
           )}
           <div style={{ maxHeight: 240, overflowY: 'auto' }}>
             {notifications.map((n) => (
               <div
                 key={n.id}
-                className="list-item"
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  padding: '8px 0',
-                  borderBottom: '1px solid var(--border, rgba(255,255,255,0.08))',
+                  padding: '10px 0',
+                  borderBottom: '1px solid rgba(255,255,255,0.06)',
                 }}
               >
-                <div>
-                  <div style={{ fontSize: 14 }}>{n.text}</div>
-                  <div className="caption">{n.time}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 16 }}>{n.type === 'circle_accepted' ? '✅' : n.type === 'circle_request' ? '👥' : '💬'}</span>
+                  <div>
+                    <div style={{ fontSize: 13 }}>{n.text}</div>
+                    <div className="caption" style={{ fontSize: '0.7rem' }}>{n.time}</div>
+                  </div>
                 </div>
                 <button
                   type="button"
-                  className="btn ghost small"
+                  style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px', fontSize: 14, lineHeight: 1, flexShrink: 0 }}
                   onClick={() => deleteNotification(n.id)}
-                  style={{ flexShrink: 0, marginLeft: 8 }}
                 >
                   ✕
                 </button>
@@ -188,18 +193,23 @@ export function Dashboard() {
         </section>
       )}
 
-      <section className="section glass" style={{ marginBottom: 12 }}>
+      <div style={{ position: 'relative', marginBottom: 12 }}>
+        <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
         <input
           className="input"
+          style={{ paddingLeft: 38, width: '100%' }}
           placeholder="Search activity feed..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-      </section>
+      </div>
 
       {filteredPosts.length === 0 && (
-        <div className="section glass">
-          <p className="caption">No posts yet. Share a Musical Thought to get the feed started!</p>
+        <div className="section glass" style={{ textAlign: 'center', padding: '28px 16px' }}>
+          <div style={{ fontSize: 32, marginBottom: 8 }}>🎵</div>
+          <p style={{ marginBottom: 4 }}>Your feed is quiet</p>
+          <p className="caption" style={{ marginBottom: 12 }}>Share a Musical Thought to get things started</p>
+          <Link to="/app/post" className="btn primary" style={{ textDecoration: 'none' }}>Create Post</Link>
         </div>
       )}
 
@@ -229,7 +239,7 @@ export function Dashboard() {
                   var initial = userName.charAt(0).toUpperCase();
 
                   return (
-                    <div key={item.id} className="list-item glass feed-card-animate" style={{ animationDelay: (idx * 60) + 'ms' }}>
+                    <div key={item.id} className="list-item glass glass-interactive feed-card-animate" style={{ animationDelay: (idx * 60) + 'ms' }}>
                       <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                         <div className="avatar-circle" style={{ width: 36, height: 36, fontSize: 14, flexShrink: 0 }}>{initial}</div>
                         <div style={{ flex: 1 }}>
@@ -255,10 +265,9 @@ export function Dashboard() {
                             )}
                             <Link
                               to={'/app/post/' + item.id}
-                              className="btn ghost small"
-                              style={{ padding: '2px 8px', fontSize: '0.8rem', marginLeft: 'auto' }}
+                              style={{ fontSize: '0.8rem', marginLeft: 'auto', color: 'var(--accent)', textDecoration: 'none' }}
                             >
-                              VIEW MORE
+                              View more →
                             </Link>
                           </div>
                         </div>

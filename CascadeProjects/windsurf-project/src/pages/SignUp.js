@@ -76,11 +76,10 @@ export function SignUp() {
     <div className="app-root">
       <div className="app-shell">
         <div className="page">
-          <header className="page-header">
-            <div>
-              <h2>Create Account</h2>
-              <p className="subtitle">Join VibeCheck and find your people.</p>
-            </div>
+          <header className="page-header" style={{ flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 4 }}>
+            <div className="logo-wordmark" style={{ fontSize: '1.1rem', marginBottom: 8 }}>VibeCheck</div>
+            <h2>Create Account</h2>
+            <p className="subtitle">Join VibeCheck and find your people.</p>
           </header>
 
           <form onSubmit={handleSubmit} className="section glass" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -119,16 +118,17 @@ export function SignUp() {
                 style={{
                   width: 20,
                   height: 20,
-                  borderRadius: 4,
-                  border: '1px solid var(--border-glass)',
-                  background: agreed ? 'var(--accent)' : 'transparent',
+                  borderRadius: 6,
+                  border: agreed ? 'none' : '1.5px solid var(--border-glass)',
+                  background: agreed ? 'linear-gradient(135deg, var(--vc-whiskey-amber), var(--vc-velvet-purple))' : 'rgba(255,255,255,0.04)',
                   cursor: 'pointer',
                   flexShrink: 0,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#fff',
-                  fontSize: 14,
+                  fontSize: 13,
+                  transition: 'background 0.2s ease, border 0.2s ease',
                 }}
               >
                 {agreed ? '✓' : ''}
@@ -141,7 +141,7 @@ export function SignUp() {
             {error && <p style={{ color: 'var(--danger)', fontSize: '0.85rem', margin: 0 }}>{error}</p>}
 
             <button type="submit" className="btn primary full-width" disabled={loading}>
-              {loading ? 'Creating account...' : 'Sign Up'}
+              {loading ? <span className="btn-spinner" /> : 'Sign Up'}
             </button>
           </form>
 
