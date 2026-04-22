@@ -73,9 +73,11 @@ export function useCircles() {
     if (!user) return { error: { message: 'Not signed in' } };
     if (sentRequests[receiverId]) return { error: null }; // already sent or connected
 
+    // Optimistic update — show "Request sent" immediately
+    setSentRequests((prev) => ({ ...prev, [receiverId]: 'pending' }));
+
     // Demo users — track locally only
     if (String(receiverId).startsWith('demo-')) {
-      setSentRequests((prev) => ({ ...prev, [receiverId]: 'pending' }));
       return { error: null };
     }
 
@@ -83,9 +85,15 @@ export function useCircles() {
       .from('circle_requests')
       .insert({ sender_id: user.id, receiver_id: receiverId });
 
-    if (!error) {
-      setSentRequests((prev) => ({ ...prev, [receiverId]: 'pending' }));
-
+    if (error) {
+      console.error('Circle request failed:', error.message, error);
+      // Roll back optimistic update
+      setSentRequests((prev) => {
+        const next = { ...prev };
+        delete next[receiverId];
+        return next;
+      });
+    } else {
       // Notify the receiver
       const senderName = profile.name || 'Someone';
       await supabase.from('notifications').insert({
