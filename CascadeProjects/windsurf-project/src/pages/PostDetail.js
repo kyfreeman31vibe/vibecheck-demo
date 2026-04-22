@@ -188,11 +188,14 @@ export function PostDetail() {
   return (
     <div className="page">
       <header className="page-header">
-        <div>
-          <Link to="/app/dashboard" style={{ color: 'var(--accent)', fontSize: '0.85rem', textDecoration: 'none' }}>
-            ← Back to Home
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Link to="/app/dashboard" className="btn ghost small" style={{ padding: '6px 8px', textDecoration: 'none' }}>
+            ←
           </Link>
-          <h2 style={{ marginTop: 4 }}>{post.user?.name}'s {typeLabels[post.postType] || 'Post'}</h2>
+          <div>
+            <h2 style={{ fontSize: '1.1rem' }}>{post.user?.name}'s {typeLabels[post.postType] || 'Post'}</h2>
+            <p className="caption" style={{ fontSize: '0.75rem' }}>{formatTimeAgo(post.createdAt)}</p>
+          </div>
         </div>
       </header>
 
@@ -208,32 +211,32 @@ export function PostDetail() {
         </span>
       </div>
 
-      {/* Reaction buttons matching wireframe 2 */}
-      <div style={{ display: 'flex', gap: 16, padding: '8px 0', borderTop: '1px solid rgba(255,255,255,0.08)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-        <button
-          type="button"
-          className="btn ghost"
-          style={{ display: 'flex', alignItems: 'center', gap: 6, opacity: myReaction === 'heart' ? 1 : 0.6 }}
-          onPointerDown={() => toggleReaction('heart')}
-        >
-          {myReaction === 'heart' ? '❤️' : '🤍'} {counts.heart > 0 && counts.heart}
-        </button>
-        <button
-          type="button"
-          className="btn ghost"
-          style={{ display: 'flex', alignItems: 'center', gap: 6, opacity: myReaction === 'like' ? 1 : 0.6 }}
-          onPointerDown={() => toggleReaction('like')}
-        >
-          👍 {counts.like > 0 && counts.like}
-        </button>
-        <button
-          type="button"
-          className="btn ghost"
-          style={{ display: 'flex', alignItems: 'center', gap: 6, opacity: myReaction === 'dislike' ? 1 : 0.6 }}
-          onPointerDown={() => toggleReaction('dislike')}
-        >
-          👎 {counts.dislike > 0 && counts.dislike}
-        </button>
+      {/* Reaction buttons */}
+      <div style={{ display: 'flex', gap: 8, padding: '10px 0', borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        {[{ key: 'heart', icon: '❤️', offIcon: '🤍' }, { key: 'like', icon: '👍', offIcon: '👍' }, { key: 'dislike', icon: '👎', offIcon: '👎' }].map(function (r) {
+          var isActive = myReaction === r.key;
+          var count = counts[r.key] || 0;
+          return (
+            <button
+              key={r.key}
+              type="button"
+              style={{
+                display: 'flex', alignItems: 'center', gap: 5,
+                padding: '6px 12px', borderRadius: 999,
+                fontSize: '0.85rem', cursor: 'pointer',
+                border: isActive ? 'none' : '1px solid var(--border-glass)',
+                background: isActive ? 'var(--accent-soft)' : 'transparent',
+                color: 'var(--text)',
+                transition: 'all 0.2s ease',
+                transform: isActive ? 'scale(1.05)' : 'scale(1)',
+              }}
+              onPointerDown={() => toggleReaction(r.key)}
+            >
+              <span style={{ fontSize: 16 }}>{isActive ? r.icon : r.offIcon}</span>
+              {count > 0 && <span style={{ fontSize: 13, fontWeight: 600 }}>{count}</span>}
+            </button>
+          );
+        })}
       </div>
 
       {/* Add comment */}
@@ -247,13 +250,25 @@ export function PostDetail() {
           style={{ flex: 1 }}
         />
         <button type="button" className="btn primary small" onPointerDown={handleAddComment} disabled={submitting || !newComment.trim()}>
-          {submitting ? '...' : 'Post'}
+          {submitting ? <span className="btn-spinner" /> : 'Post'}
         </button>
       </div>
 
       {/* Comments */}
       {commentsLoading ? (
-        <p className="caption" style={{ marginTop: 12 }}>Loading comments...</p>
+        <div className="list" style={{ marginTop: 12 }}>
+          {[0, 1].map((i) => (
+            <div key={i} className="skeleton-card skeleton" style={{ animationDelay: (i * 100) + 'ms' }}>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <div className="skeleton skeleton-circle" style={{ width: 36, height: 36 }} />
+                <div style={{ flex: 1 }}>
+                  <div className="skeleton skeleton-line" style={{ width: '40%' }} />
+                  <div className="skeleton skeleton-line" style={{ width: '80%' }} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
         <div style={{ marginTop: 8 }}>
           {topLevel.length === 0 && (

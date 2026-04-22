@@ -48,15 +48,25 @@ export function Messages() {
           </div>
         )}
         {loading && (
-          <div className="list-item glass">
-            <p className="caption">Loading conversations...</p>
+          <div className="list" style={{ gap: 10 }}>
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="skeleton-card skeleton" style={{ animationDelay: (i * 100) + 'ms' }}>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                  <div className="skeleton skeleton-circle" style={{ width: 40, height: 40 }} />
+                  <div style={{ flex: 1 }}>
+                    <div className="skeleton skeleton-line" style={{ width: '50%' }} />
+                    <div className="skeleton skeleton-line short" style={{ marginBottom: 0 }} />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
         {conversations.map((c) => {
           var otherName = c.otherUser.name || c.otherUser.username || 'User';
           var initial = otherName.charAt(0).toUpperCase();
           return (
-          <div key={c.id} className="list-item glass">
+          <div key={c.id} className="list-item glass glass-interactive">
             <div
               style={{ display: 'flex', gap: 10, alignItems: 'center', flex: 1, cursor: 'pointer' }}
               onClick={() => handleOpenThread(c.id)}

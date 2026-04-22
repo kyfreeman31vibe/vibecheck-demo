@@ -41,7 +41,7 @@ function postDetailText(item) {
 }
 
 export function Dashboard() {
-  const { posts } = usePosts();
+  const { posts, loading: postsLoading } = usePosts();
   const { notifications, unreadCount, markAllRead, deleteNotification, clearAll } = useNotifications();
   const { incomingRequests, acceptRequest, rejectRequest } = useCircles();
   const [search, setSearch] = useState('');
@@ -204,7 +204,24 @@ export function Dashboard() {
         />
       </div>
 
-      {filteredPosts.length === 0 && (
+      {postsLoading && (
+        <div className="list">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="skeleton-card skeleton" style={{ animationDelay: (i * 100) + 'ms' }}>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                <div className="skeleton skeleton-circle" />
+                <div style={{ flex: 1 }}>
+                  <div className="skeleton skeleton-line" style={{ width: '70%' }} />
+                  <div className="skeleton skeleton-line short" />
+                  <div className="skeleton skeleton-line" style={{ width: '40%' }} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!postsLoading && filteredPosts.length === 0 && (
         <div className="section glass" style={{ textAlign: 'center', padding: '28px 16px' }}>
           <div style={{ fontSize: 32, marginBottom: 8 }}>🎵</div>
           <p style={{ marginBottom: 4 }}>Your feed is quiet</p>
