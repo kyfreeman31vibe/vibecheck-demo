@@ -158,7 +158,7 @@ export function Profile() {
             ))}
           </div>
         ) : (
-          <p className="caption">No playlists yet. <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => navigate('/app/post')}>Create one</span> to share with the community.</p>
+          <p className="caption">No playlists yet. <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => navigate('/app/post?type=playlist')}>Create one</span> to share with the community.</p>
         )}
       </section>
 

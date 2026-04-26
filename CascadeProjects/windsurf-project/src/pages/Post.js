@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
 import { usePosts } from '../hooks/usePosts';
 
@@ -197,11 +197,15 @@ function PlaylistForm({ onSubmit, posting, posted }) {
   );
 }
 
+const VALID_TYPES = new Set(POST_TYPES.map((t) => t.key));
+
 export function Post() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { profile } = useCurrentUserProfile();
   const { createPost } = usePosts();
-  const [postType, setPostType] = useState(null);
+  const initialType = searchParams.get('type');
+  const [postType, setPostType] = useState(VALID_TYPES.has(initialType) ? initialType : null);
   const [posting, setPosting] = useState(false);
   const [posted, setPosted] = useState(false);
   const [error, setError] = useState('');
