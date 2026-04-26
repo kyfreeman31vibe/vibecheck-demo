@@ -122,15 +122,16 @@ export function Profile() {
         {circleMembers.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {circleMembers.map((m) => (
-              <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Link key={m.id} to={'/app/match/' + m.id} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: 'inherit', borderRadius: 8, padding: '6px 4px', margin: '-6px -4px', cursor: 'pointer' }} className="glass-interactive">
                 <div className="avatar-circle" style={{ width: 32, height: 32, fontSize: 13, flexShrink: 0 }}>
                   {(m.name || 'U').charAt(0).toUpperCase()}
                 </div>
-                <div>
+                <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 'bold', fontSize: 14 }}>{m.name}</div>
                   <div className="caption">@{m.username}{m.city ? ' · ' + m.city : ''}</div>
                 </div>
-              </div>
+                <span style={{ fontSize: 14, color: 'var(--text-muted)' }}>›</span>
+              </Link>
             ))}
           </div>
         ) : (
