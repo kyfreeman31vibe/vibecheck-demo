@@ -84,7 +84,7 @@ function ThoughtForm({ onSubmit, posting, posted }) {
           type="button"
           className="btn ghost small"
           style={{ padding: '4px 0', marginTop: 6, fontSize: '0.85rem' }}
-          onPointerDown={() => setShowSong(true)}
+          onClick={() => setShowSong(true)}
         >
           ＋ Add a song to this thought
         </button>
@@ -98,7 +98,7 @@ function ThoughtForm({ onSubmit, posting, posted }) {
             type="button"
             className="btn ghost small"
             style={{ padding: '4px 0', fontSize: '0.8rem', alignSelf: 'flex-start' }}
-            onPointerDown={() => { setShowSong(false); setSongTitle(''); setSongArtist(''); }}
+            onClick={() => { setShowSong(false); setSongTitle(''); setSongArtist(''); }}
           >
             ✕ Remove song
           </button>
@@ -171,14 +171,14 @@ function PlaylistForm({ onSubmit, posting, posted }) {
           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addSong(); } }}
           disabled={posted || posting}
         />
-        <button type="button" className="btn small primary" onPointerDown={addSong} disabled={posted || posting}>+</button>
+        <button type="button" className="btn small primary" onClick={addSong} disabled={posted || posting}>+</button>
       </div>
       {songs.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 8 }}>
           {songs.map((s, i) => (
             <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', background: 'rgba(255,255,255,0.05)', borderRadius: 6 }}>
               <span className="caption">{i + 1}. {s.title} — {s.artist}</span>
-              <button type="button" className="btn small ghost" onPointerDown={() => setSongs((prev) => prev.filter((_, idx) => idx !== i))} style={{ padding: '2px 8px', minWidth: 'auto' }}>✕</button>
+              <button type="button" className="btn small ghost" onClick={() => setSongs((prev) => prev.filter((_, idx) => idx !== i))} style={{ padding: '2px 8px', minWidth: 'auto' }}>✕</button>
             </div>
           ))}
         </div>
@@ -256,7 +256,7 @@ export function Post() {
                 display: 'flex', alignItems: 'center', gap: 12,
                 borderLeft: t.accent ? ('3px solid ' + t.accent) : 'none',
               }}
-              onPointerDown={(e) => handleCardTap(e, t.key)}
+              onClick={(e) => handleCardTap(e, t.key)}
             >
               <span
                 style={{ fontSize: 22 }}
@@ -276,7 +276,7 @@ export function Post() {
     <div className="page">
       <header className="page-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button type="button" className="btn ghost small" style={{ padding: '6px 8px' }} onPointerDown={() => { setPostType(null); setPosted(false); setError(''); }}>
+          <button type="button" className="btn ghost small" style={{ padding: '6px 8px' }} onClick={() => { setPostType(null); setPosted(false); setError(''); }}>
             ←
           </button>
           <div>
