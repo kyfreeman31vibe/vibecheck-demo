@@ -66,6 +66,9 @@ export function useCircles() {
 
   useEffect(() => {
     fetchRequests();
+    // Poll for incoming circle requests every 15 seconds
+    const interval = setInterval(fetchRequests, 15000);
+    return () => clearInterval(interval);
   }, [fetchRequests]);
 
   // Send a circle request
@@ -99,13 +102,16 @@ export function useCircles() {
     } else {
       // Notify the receiver
       const senderName = profile.name || 'Someone';
-      await supabase.from('notifications').insert({
+      const { error: notifErr } = await supabase.from('notifications').insert({
         user_id: receiverId,
         type: 'circle_request',
         title: `${senderName} wants to add you to their circle`,
         body: 'Accept or decline this request from your notifications.',
         data: { sender_id: user.id },
       });
+      if (notifErr) {
+        console.error('Circle notification failed:', notifErr.message, notifErr.code, notifErr.details);
+      }
     }
     return { error };
   }, [user, sentRequests, profile]);

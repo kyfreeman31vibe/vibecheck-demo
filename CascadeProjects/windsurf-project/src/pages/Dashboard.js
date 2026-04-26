@@ -132,24 +132,22 @@ export function Dashboard() {
                     <div style={{ fontSize: 13 }}><strong>{req.sender?.name || 'Someone'}</strong> wants to join your circle</div>
                   </div>
                   <div style={{ display: 'flex', gap: 6, flexShrink: 0, marginLeft: 8 }}>
-                    <div
-                      role="button"
-                      tabIndex={0}
+                    <button
+                      type="button"
                       className="btn small primary"
                       style={{ padding: '4px 10px', fontSize: 11 }}
-                      onPointerDown={() => acceptRequest(req.id, req.senderId)}
+                      onClick={() => acceptRequest(req.id, req.senderId)}
                     >
                       Accept
-                    </div>
-                    <div
-                      role="button"
-                      tabIndex={0}
+                    </button>
+                    <button
+                      type="button"
                       className="btn small ghost"
                       style={{ padding: '4px 10px', fontSize: 11 }}
-                      onPointerDown={() => rejectRequest(req.id)}
+                      onClick={() => rejectRequest(req.id)}
                     >
                       Decline
-                    </div>
+                    </button>
                   </div>
                 </div>
               ))}
