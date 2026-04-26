@@ -83,10 +83,13 @@ export function useCircles() {
 
     const { error } = await supabase
       .from('circle_requests')
-      .insert({ sender_id: user.id, receiver_id: receiverId });
+      .upsert(
+        { sender_id: user.id, receiver_id: receiverId, status: 'pending' },
+        { onConflict: 'sender_id,receiver_id' }
+      );
 
     if (error) {
-      console.error('Circle request failed:', error.message, error);
+      console.error('Circle request failed:', error.message, error.code, error.details, error.hint);
       // Roll back optimistic update
       setSentRequests((prev) => {
         const next = { ...prev };

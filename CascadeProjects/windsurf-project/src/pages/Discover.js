@@ -33,8 +33,9 @@ function UsersTab({ matches, getRequestStatus, isInCircle, onSendRequest }) {
     var result = await onSendRequest(id);
     setSending(function (p) { var n = Object.assign({}, p); delete n[id]; return n; });
     if (result && result.error) {
-      setErrors(function (p) { var n = Object.assign({}, p); n[id] = true; return n; });
-      setTimeout(function () { setErrors(function (p) { var n = Object.assign({}, p); delete n[id]; return n; }); }, 3000);
+      var msg = (result.error && result.error.message) || 'Request failed';
+      setErrors(function (p) { var n = Object.assign({}, p); n[id] = msg; return n; });
+      setTimeout(function () { setErrors(function (p) { var n = Object.assign({}, p); delete n[id]; return n; }); }, 6000);
     }
   }
 
@@ -49,6 +50,7 @@ function UsersTab({ matches, getRequestStatus, isInCircle, onSendRequest }) {
         var done = status === 'accepted' || status === 'pending';
         var isSending = !!sending[m.id];
         var hasError = !!errors[m.id];
+        var errorMsg = errors[m.id] || null;
         var disabled = done || isSending;
 
         var btnLabel = hasError ? 'Tap to retry'
@@ -103,6 +105,7 @@ function UsersTab({ matches, getRequestStatus, isInCircle, onSendRequest }) {
               </button>
               <Link to={'/app/match/' + m.id} className="btn small ghost">View Profile</Link>
             </div>
+            {errorMsg && <div className="caption" style={{ color: 'var(--danger)', fontSize: '0.7rem', marginTop: 4 }}>{errorMsg}</div>}
           </div>
         );
       })}
