@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMatches, DEMO_USERS } from '../hooks/useMatches';
 import { useCircles } from '../hooks/useCircles';
@@ -24,6 +24,20 @@ function circleButtonLabel(status) {
 }
 
 function UsersTab({ matches, getRequestStatus, isInCircle, onSendRequest }) {
+  var sendingRef = useState({}); var sending = sendingRef[0]; var setSending = sendingRef[1];
+  var errorRef = useState({}); var errors = errorRef[0]; var setErrors = errorRef[1];
+
+  async function handleSend(id) {
+    setSending(function (p) { var n = Object.assign({}, p); n[id] = true; return n; });
+    setErrors(function (p) { var n = Object.assign({}, p); delete n[id]; return n; });
+    var result = await onSendRequest(id);
+    setSending(function (p) { var n = Object.assign({}, p); delete n[id]; return n; });
+    if (result && result.error) {
+      setErrors(function (p) { var n = Object.assign({}, p); n[id] = true; return n; });
+      setTimeout(function () { setErrors(function (p) { var n = Object.assign({}, p); delete n[id]; return n; }); }, 3000);
+    }
+  }
+
   return (
     <div className="list">
       {matches.map(function (m) {
@@ -33,6 +47,14 @@ function UsersTab({ matches, getRequestStatus, isInCircle, onSendRequest }) {
         var initials = u.name.charAt(0).toUpperCase();
         var status = getRequestStatus(m.id);
         var done = status === 'accepted' || status === 'pending';
+        var isSending = !!sending[m.id];
+        var hasError = !!errors[m.id];
+        var disabled = done || isSending;
+
+        var btnLabel = hasError ? 'Tap to retry'
+          : isSending ? ''
+          : circleButtonLabel(status);
+
         return (
           <div key={m.id} className="list-item glass glass-interactive">
             <div className="profile-card-header" style={{ marginBottom: 6 }}>
@@ -65,15 +87,20 @@ function UsersTab({ matches, getRequestStatus, isInCircle, onSendRequest }) {
               )}
             </div>
             <div style={{ display: 'flex', gap: 8, marginTop: 8, position: 'relative', zIndex: 10 }}>
-              <div
-                role="button"
-                tabIndex={0}
-                className={'btn ' + (done ? 'ghost' : 'primary')}
-                style={{ flex: 1, opacity: done ? 0.6 : 1, pointerEvents: done ? 'none' : 'auto' }}
-                onPointerDown={function () { if (!done) onSendRequest(m.id); }}
+              <button
+                type="button"
+                className={'btn ' + (hasError ? 'ghost' : done ? 'ghost' : 'primary')}
+                style={{
+                  flex: 1,
+                  opacity: disabled ? 0.6 : 1,
+                  color: hasError ? 'var(--danger)' : undefined,
+                  borderColor: hasError ? 'var(--danger)' : undefined,
+                }}
+                disabled={disabled}
+                onClick={function () { if (!disabled) handleSend(m.id); }}
               >
-                {circleButtonLabel(status)}
-              </div>
+                {isSending ? <span className="btn-spinner" /> : btnLabel}
+              </button>
               <Link to={'/app/match/' + m.id} className="btn small ghost">View Profile</Link>
             </div>
           </div>
