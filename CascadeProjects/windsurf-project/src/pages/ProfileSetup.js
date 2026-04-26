@@ -66,7 +66,7 @@ function SearchableDropdown({ label, caption, options, selected, setSelected, ma
               {item}
               <span
                 style={{ cursor: 'pointer', fontWeight: 'bold', marginLeft: 2, opacity: 0.6, fontSize: 11, lineHeight: 1 }}
-                onPointerDown={() => removeItem(item)}
+                onClick={(e) => { e.stopPropagation(); removeItem(item); }}
               >✕</span>
             </span>
           ))}
@@ -93,7 +93,7 @@ function SearchableDropdown({ label, caption, options, selected, setSelected, ma
               <div
                 key={item}
                 style={{ padding: '9px 14px', cursor: 'pointer', fontSize: 13, transition: 'background 0.15s ease' }}
-                onPointerDown={() => { addItem(item); setOpen(false); }}
+                onClick={(e) => { e.stopPropagation(); addItem(item); setOpen(false); }}
                 onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
                 onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
               >
