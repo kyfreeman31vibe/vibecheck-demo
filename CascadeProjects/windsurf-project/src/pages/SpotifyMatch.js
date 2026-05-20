@@ -5,7 +5,7 @@ import { useAuth } from '../auth/AuthContext';
 function SpotifyConnectCard({ onConnect, connecting }) {
   return (
     <section className="section glass" style={{ textAlign: 'center', padding: 32 }}>
-      <div style={{ fontSize: 48, marginBottom: 12 }}>🎧</div>
+      <div style={{ fontSize: 48, marginBottom: 16 }}>🎧</div>
       <h3>Connect your Spotify</h3>
       <p className="caption" style={{ marginBottom: 16 }}>
         Link your Spotify account so we can analyze your listening data and find your most compatible music matches.
@@ -14,7 +14,7 @@ function SpotifyConnectCard({ onConnect, connecting }) {
         className="btn primary"
         onClick={onConnect}
         disabled={connecting}
-        style={{ fontSize: '1rem', padding: '12px 28px' }}
+        style={{ fontSize: '1rem', padding: '12px 24px' }}
       >
         {connecting ? 'Redirecting...' : 'Connect Spotify'}
       </button>
@@ -31,7 +31,7 @@ function ListeningProfileCard({ profile }) {
 
   return (
     <section className="section glass">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <h3>Your Spotify Data</h3>
         <span className="caption">Synced: {synced}</span>
       </div>
@@ -41,9 +41,9 @@ function ListeningProfileCard({ profile }) {
         </p>
       )}
       {artists.length > 0 && (
-        <div style={{ marginBottom: 12 }}>
-          <h4 style={{ marginBottom: 6 }}>Top Artists</h4>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+        <div style={{ marginBottom: 16 }}>
+          <h4 style={{ marginBottom: 8 }}>Top Artists</h4>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {artists.map(function (a) {
               return (
                 <span key={a.id || a.name} className="tag">
@@ -56,8 +56,8 @@ function ListeningProfileCard({ profile }) {
       )}
       {tracks.length > 0 && (
         <div>
-          <h4 style={{ marginBottom: 6 }}>Top Tracks</h4>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <h4 style={{ marginBottom: 8 }}>Top Tracks</h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {tracks.map(function (t) {
               return (
                 <div key={t.id || t.name} className="caption">
@@ -75,24 +75,24 @@ function ListeningProfileCard({ profile }) {
 function MatchResultCard({ match }) {
   var pct = Math.round((match.compatibility_score || 0) * 100);
   return (
-    <div className="list-item glass" style={{ marginBottom: 12 }}>
+    <div className="list-item glass" style={{ marginBottom: 16 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <strong>{match.other_name || 'User'}</strong>
         <div className="pill small">{pct}% compatible</div>
       </div>
       {match.match_summary && (
-        <p style={{ fontSize: 14, marginBottom: 8, lineHeight: 1.5 }}>{match.match_summary}</p>
+        <p style={{ fontSize: '0.875rem', marginBottom: 8, lineHeight: 1.5 }}>{match.match_summary}</p>
       )}
       {match.shared_artists && match.shared_artists.length > 0 && (
-        <div style={{ marginBottom: 4 }}>
+        <div style={{ marginBottom: 8 }}>
           <span className="caption">Shared artists: </span>
-          <span style={{ fontSize: 13 }}>{match.shared_artists.join(', ')}</span>
+          <span style={{ fontSize: '0.875rem' }}>{match.shared_artists.join(', ')}</span>
         </div>
       )}
       {match.shared_tracks && match.shared_tracks.length > 0 && (
         <div>
           <span className="caption">Shared tracks: </span>
-          <span style={{ fontSize: 13 }}>{match.shared_tracks.join(', ')}</span>
+          <span style={{ fontSize: '0.875rem' }}>{match.shared_tracks.join(', ')}</span>
         </div>
       )}
     </div>
@@ -291,7 +291,7 @@ export function SpotifyMatch() {
             background: 'rgba(239,68,68,0.15)',
             border: '1px solid rgba(239,68,68,0.3)',
             color: '#fca5a5',
-            marginBottom: 12,
+            marginBottom: 16,
           }}
         >
           {error}
@@ -307,7 +307,7 @@ export function SpotifyMatch() {
           {/* Existing AI matches */}
           {matches.length > 0 && (
             <section style={{ marginTop: 16 }}>
-              <h3 style={{ marginBottom: 10 }}>Your Matches</h3>
+              <h3 style={{ marginBottom: 8 }}>Your Matches</h3>
               {matches.map(function (m) {
                 return <MatchResultCard key={m.id} match={m} />;
               })}
@@ -317,8 +317,8 @@ export function SpotifyMatch() {
           {/* Other Spotify users to match with */}
           {unmatchedProfiles.length > 0 && (
             <section style={{ marginTop: 16 }}>
-              <h3 style={{ marginBottom: 10 }}>Discover New Matches</h3>
-              <p className="caption" style={{ marginBottom: 10 }}>
+              <h3 style={{ marginBottom: 8 }}>Discover New Matches</h3>
+              <p className="caption" style={{ marginBottom: 8 }}>
                 These users have connected Spotify. Click to compute AI compatibility.
               </p>
               {unmatchedProfiles.map(function (o) {
@@ -343,7 +343,7 @@ export function SpotifyMatch() {
           )}
 
           {/* Re-sync button */}
-          <section style={{ marginTop: 20, textAlign: 'center' }}>
+          <section style={{ marginTop: 24, textAlign: 'center' }}>
             <button className="btn ghost" onClick={handleConnect}>
               Re-sync Spotify Data
             </button>

@@ -117,7 +117,7 @@ export function Settings() {
       </header>
 
       {actionMsg && (
-        <div className="section glass" style={{ background: 'rgba(34,197,94,0.15)', marginBottom: 12 }}>
+        <div className="section glass" style={{ background: 'rgba(34,197,94,0.15)', marginBottom: 16 }}>
           <p>{actionMsg}</p>
         </div>
       )}
@@ -127,7 +127,7 @@ export function Settings() {
         <h3>Account Settings</h3>
 
         <div style={{ marginTop: 8 }}>
-          <div className="caption" style={{ marginBottom: 4 }}>Name</div>
+          <div className="caption" style={{ marginBottom: 8 }}>Name</div>
           {editingName ? (
             <div style={{ display: 'flex', gap: 8 }}>
               <input className="input" value={name} onChange={(e) => setName(e.target.value)} style={{ flex: 1 }} />
@@ -144,18 +144,18 @@ export function Settings() {
           )}
         </div>
 
-        <div style={{ marginTop: 12 }}>
-          <div className="caption" style={{ marginBottom: 4 }}>Email</div>
+        <div style={{ marginTop: 16 }}>
+          <div className="caption" style={{ marginBottom: 8 }}>Email</div>
           <span>{user?.email || '—'}</span>
         </div>
 
-        <div style={{ marginTop: 12 }}>
-          <div className="caption" style={{ marginBottom: 4 }}>Password</div>
+        <div style={{ marginTop: 16 }}>
+          <div className="caption" style={{ marginBottom: 8 }}>Password</div>
           {showPwForm ? (
             <form onSubmit={handleChangePassword} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <input className="input" type="password" placeholder="New password" value={newPw} onChange={(e) => setNewPw(e.target.value)} />
               <input className="input" type="password" placeholder="Confirm new password" value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} />
-              {pwMsg && <p style={{ color: pwMsg.includes('success') ? 'var(--accent)' : 'var(--danger)', fontSize: '0.85rem', margin: 0 }}>{pwMsg}</p>}
+              {pwMsg && <p style={{ color: pwMsg.includes('success') ? 'var(--accent)' : 'var(--danger)', fontSize: '0.875rem', margin: 0 }}>{pwMsg}</p>}
               <div style={{ display: 'flex', gap: 8 }}>
                 <button type="submit" className="btn primary small" disabled={savingPw}>{savingPw ? 'Updating...' : 'Update Password'}</button>
                 <button type="button" className="btn ghost small" onClick={() => { setShowPwForm(false); setPwMsg(''); }}>Cancel</button>
@@ -170,7 +170,7 @@ export function Settings() {
       {/* ——— Notification Settings ——— */}
       <section className="section glass">
         <h3>Notification Settings</h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
           <ToggleRow label="Push notifications" checked={notifPush} onChange={setNotifPush} />
           <ToggleRow label="Email notifications" checked={notifEmail} onChange={setNotifEmail} />
           <ToggleRow label="Vibe Ping alerts" checked={notifVibePing} onChange={setNotifVibePing} />
@@ -186,7 +186,7 @@ export function Settings() {
         </div>
 
         {showDeactivate && (
-          <div className="glass" style={{ marginTop: 12, padding: 12, borderRadius: 8 }}>
+          <div className="glass" style={{ marginTop: 16, padding: 16 }}>
             <p>Are you sure you want to deactivate your account? You can sign back in anytime to reactivate.</p>
             <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
               <button className="btn primary small" onClick={handleDeactivate}>Yes, deactivate</button>
@@ -196,10 +196,10 @@ export function Settings() {
         )}
 
         {showDelete && (
-          <div className="glass" style={{ marginTop: 12, padding: 12, borderRadius: 8 }}>
+          <div className="glass" style={{ marginTop: 16, padding: 16 }}>
             <p style={{ color: '#ef4444' }}>This will permanently delete your account and all data. This cannot be undone.</p>
             <p className="caption" style={{ marginTop: 8 }}>Type <strong>DELETE</strong> to confirm:</p>
-            <input className="input" value={deleteConfirm} onChange={(e) => setDeleteConfirm(e.target.value)} style={{ marginTop: 4 }} />
+            <input className="input" value={deleteConfirm} onChange={(e) => setDeleteConfirm(e.target.value)} style={{ marginTop: 8 }} />
             <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
               <button className="btn primary small" style={{ background: '#ef4444' }} onClick={handleDeleteAccount} disabled={deleteConfirm !== 'DELETE'}>
                 Delete my account

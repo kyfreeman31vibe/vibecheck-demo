@@ -57,7 +57,7 @@ export function ForgotPassword() {
             </div>
           </header>
 
-          <form onSubmit={handleSubmit} className="section glass" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <form onSubmit={handleSubmit} className="section glass" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <input
               className="input"
               type="email"
@@ -67,7 +67,7 @@ export function ForgotPassword() {
               required
             />
 
-            {error && <p style={{ color: 'var(--danger)', fontSize: '0.85rem', margin: 0 }}>{error}</p>}
+            {error && <p style={{ color: 'var(--danger)', fontSize: '0.875rem', margin: 0 }}>{error}</p>}
 
             <button type="submit" className="btn primary full-width" disabled={loading}>
               {loading ? 'Sending...' : 'Send Reset Link'}

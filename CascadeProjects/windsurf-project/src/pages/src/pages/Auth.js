@@ -33,7 +33,7 @@ export function Auth() {
       </header>
       <section className="section glass">
         {user && (
-          <p className="caption" style={{ marginBottom: 12 }}>
+          <p className="caption" style={{ marginBottom: 16 }}>
             You are already signed in as {user.email}.
           </p>
         )}
@@ -59,12 +59,12 @@ export function Auth() {
           </button>
         </form>
         {status === 'sent' && (
-          <p className="caption" style={{ marginTop: 12 }}>
+          <p className="caption" style={{ marginTop: 16 }}>
             Check your email for a link to sign in.
           </p>
         )}
         {status === 'error' && (
-          <p className="caption" style={{ marginTop: 12, color: '#ff4b81' }}>
+          <p className="caption" style={{ marginTop: 16, color: '#ff4b81' }}>
             Something went wrong sending the link. Please try again.
           </p>
         )}

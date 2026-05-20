@@ -59,19 +59,19 @@ function UsersTab({ matches, getRequestStatus, isInCircle, onSendRequest }) {
 
         return (
           <div key={m.id} className="list-item glass glass-interactive">
-            <div className="profile-card-header" style={{ marginBottom: 6 }}>
+            <div className="profile-card-header" style={{ marginBottom: 8 }}>
               <div className="avatar-circle">{initials}</div>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <div className="list-title">{u.name}</div>
-                  {isDemo && <span style={{ fontSize: 10, fontWeight: 'bold', background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.5)', padding: '2px 6px', borderRadius: 4 }}>DEMO</span>}
+                  {isDemo && <span style={{ fontSize: '0.625rem', fontWeight: 700, background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.5)', padding: '4px 8px', borderRadius: 4, letterSpacing: '0.04em' }}>DEMO</span>}
                 </div>
                 <div className="caption">{u.bio || 'VibeCheck user'}</div>
               </div>
             </div>
             <div className="caption">Top artists: {topArtists}</div>
-            <div className="caption" style={{ marginTop: 2 }}>{u.city}</div>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6 }}>
+            <div className="caption" style={{ marginTop: 8 }}>{u.city}</div>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 8 }}>
               <div className="pill small" style={{
                 background: m.compatibilityScore >= 80
                   ? 'rgba(76, 175, 80, 0.25)'
@@ -105,7 +105,7 @@ function UsersTab({ matches, getRequestStatus, isInCircle, onSendRequest }) {
               </button>
               <Link to={'/app/match/' + m.id} className="btn small ghost">View Profile</Link>
             </div>
-            {errorMsg && <div className="caption" style={{ color: 'var(--danger)', fontSize: '0.7rem', marginTop: 4 }}>{errorMsg}</div>}
+            {errorMsg && <div className="caption" style={{ color: 'var(--danger)', marginTop: 8 }}>{errorMsg}</div>}
           </div>
         );
       })}
@@ -132,16 +132,16 @@ function EventsTab() {
           <div key={event.id} className="list-item glass glass-interactive">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div className="list-title" style={{ flex: 1 }}>{event.name}</div>
-              <div style={{ fontSize: '0.7rem', fontWeight: 600, padding: '3px 8px', borderRadius: 6, background: 'rgba(227, 126, 47, 0.15)', color: 'var(--vc-antique-gold)', whiteSpace: 'nowrap', marginLeft: 8 }}>{event.date}</div>
+              <div style={{ fontSize: '0.75rem', fontWeight: 600, padding: '4px 8px', borderRadius: 8, background: 'rgba(227, 126, 47, 0.15)', color: 'var(--vc-antique-gold)', whiteSpace: 'nowrap', marginLeft: 8, marginRight: 8 }}>{event.date}</div>
             </div>
-            <div className="caption">{event.location}</div>
-            <div className="list-title-row" style={{ marginTop: 6 }}>
+            <div className="caption" style={{ marginTop: 8 }}>{event.location}</div>
+            <div className="list-title-row" style={{ marginTop: 8 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ display: 'flex', marginRight: 2 }}>
+                <div style={{ display: 'flex', gap: 8 }}>
                   {['A', 'K', 'J'].map(function (init, i) {
                     return (
                       <div key={i} className="avatar-circle" style={{
-                        width: 22, height: 22, fontSize: 9,
+                        width: 22, height: 22, fontSize: '0.5rem',
                         marginLeft: i === 0 ? 0 : -8,
                         border: '2px solid var(--vc-charcoal-night)',
                         zIndex: 3 - i,
@@ -166,7 +166,7 @@ function EventsTab() {
               }}>{event.type}</div>
             </div>
             {matched.length > 0 && (
-              <div className="caption" style={{ marginTop: 4 }}>
+              <div className="caption" style={{ marginTop: 8 }}>
                 {matched.length} VibeCheckers you know are going
               </div>
             )}
@@ -180,27 +180,27 @@ function EventsTab() {
               </button>
             </div>
             {isExpanded && (
-              <div className="glass" style={{ marginTop: 10, padding: 12, borderRadius: 8 }}>
-                <div style={{ marginBottom: 6 }}>
+              <div className="glass" style={{ marginTop: 8, padding: 16 }}>
+                <div style={{ marginBottom: 8 }}>
                   <strong>Venue</strong>
                   <div className="caption">{event.location}</div>
                 </div>
-                <div style={{ marginBottom: 6 }}>
+                <div style={{ marginBottom: 8 }}>
                   <strong>Date</strong>
                   <div className="caption">{event.date}</div>
                 </div>
-                <div style={{ marginBottom: 6 }}>
+                <div style={{ marginBottom: 8 }}>
                   <strong>Type</strong>
                   <div className="caption">{event.type}</div>
                 </div>
-                <div style={{ marginBottom: 6 }}>
+                <div style={{ marginBottom: 8 }}>
                   <strong>Ticketmaster</strong>
                   <div className="caption" style={{ fontStyle: 'italic' }}>Ticket link placeholder (demo)</div>
                 </div>
                 {matched.length > 0 && (
                   <div>
                     <strong>VibeCheckers attending</strong>
-                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 6 }}>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
                       {matched.map(function (u) {
                         return (
                           <Link key={u.id} to={'/app/match/' + u.id} className="pill small" style={{ textDecoration: 'none' }}>
@@ -237,7 +237,7 @@ export function Discover() {
         </div>
       </header>
 
-      <div style={{ display: 'flex', gap: 0, marginBottom: 12, position: 'relative', zIndex: 10, background: 'rgba(255,255,255,0.04)', borderRadius: 999, padding: 3, border: '1px solid var(--border-glass)' }}>
+      <div style={{ display: 'flex', gap: 0, marginBottom: 16, position: 'relative', zIndex: 10, background: 'rgba(255,255,255,0.04)', borderRadius: 999, padding: 4, border: '1px solid var(--border-glass)' }}>
         {['users', 'events'].map(function (t) {
           var isActive = tab === t;
           return (
@@ -247,13 +247,13 @@ export function Discover() {
               tabIndex={0}
               style={{
                 flex: 1,
-                padding: '9px 0',
+                padding: '8px 0',
                 borderRadius: 999,
                 cursor: 'pointer',
                 fontWeight: isActive ? '600' : '400',
                 background: isActive ? 'linear-gradient(135deg, var(--vc-whiskey-amber), var(--vc-velvet-purple))' : 'transparent',
                 color: isActive ? '#fff' : 'var(--text-muted)',
-                fontSize: '0.85rem',
+                fontSize: '0.875rem',
                 textAlign: 'center',
                 transition: 'all 0.25s ease',
                 letterSpacing: '0.02em',

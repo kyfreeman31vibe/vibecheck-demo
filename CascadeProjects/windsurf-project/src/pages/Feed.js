@@ -75,7 +75,7 @@ export function Feed() {
               <div className="list-text">{item.text}</div>
               <div className="caption">{item.meta}</div>
 
-              <div className="chat-input-row" style={{ marginTop: 10 }}>
+              <div className="chat-input-row" style={{ marginTop: 8 }}>
                 <input
                   className="input"
                   placeholder="Add a comment (demo only)"

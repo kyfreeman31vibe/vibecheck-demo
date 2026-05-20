@@ -70,8 +70,9 @@ function ThoughtForm({ onSubmit, posting, posted }) {
           style={{
             position: 'absolute',
             bottom: 8,
-            right: 10,
+            right: 8,
             fontSize: '0.75rem',
+            fontWeight: 400,
             color: remaining <= 20 ? 'var(--danger)' : 'var(--text-muted)',
           }}
         >
@@ -83,7 +84,7 @@ function ThoughtForm({ onSubmit, posting, posted }) {
         <button
           type="button"
           className="btn ghost small"
-          style={{ padding: '4px 0', marginTop: 6, fontSize: '0.85rem' }}
+          style={{ marginTop: 8, fontSize: '0.875rem' }}
           onClick={() => setShowSong(true)}
         >
           ＋ Add a song to this thought
@@ -97,7 +98,7 @@ function ThoughtForm({ onSubmit, posting, posted }) {
           <button
             type="button"
             className="btn ghost small"
-            style={{ padding: '4px 0', fontSize: '0.8rem', alignSelf: 'flex-start' }}
+            style={{ alignSelf: 'flex-start' }}
             onClick={() => { setShowSong(false); setSongTitle(''); setSongArtist(''); }}
           >
             ✕ Remove song
@@ -105,7 +106,7 @@ function ThoughtForm({ onSubmit, posting, posted }) {
         </div>
       )}
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
         <button
           type="button"
           className="btn primary"
@@ -127,8 +128,8 @@ function SongForm({ onSubmit, posting, posted }) {
     <>
       <input className="input" type="text" placeholder="Song title" value={title} onChange={(e) => setTitle(e.target.value)} disabled={posted || posting} />
       <input className="input" type="text" placeholder="Artist" value={artist} onChange={(e) => setArtist(e.target.value)} disabled={posted || posting} style={{ marginTop: 8 }} />
-      <input className="input" type="text" placeholder="Add a note (optional)" value={note} onChange={(e) => setNote(e.target.value)} disabled={posted || posting} style={{ marginTop: 8, width: '100%' }} />
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
+      <input className="input" type="text" placeholder="Add a note (optional)" value={note} onChange={(e) => setNote(e.target.value)} disabled={posted || posting} style={{ marginTop: 8 }} />
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
         <button
           type="button"
           className="btn primary"
@@ -160,7 +161,7 @@ function PlaylistForm({ onSubmit, posting, posted }) {
     <>
       <input className="input" type="text" placeholder="Playlist name" value={name} onChange={(e) => setName(e.target.value)} disabled={posted || posting} />
       <textarea className="input" rows={2} placeholder="Add a note (optional)" value={note} onChange={(e) => setNote(e.target.value)} disabled={posted || posting} style={{ marginTop: 8 }} />
-      <div style={{ display: 'flex', gap: 6, marginTop: 8, alignItems: 'flex-end' }}>
+      <div style={{ display: 'flex', gap: 8, marginTop: 8, alignItems: 'flex-end' }}>
         <input className="input" style={{ flex: 1 }} type="text" placeholder="Song title" value={songTitle}
           onChange={(e) => setSongTitle(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addSong(); } }}
@@ -174,16 +175,16 @@ function PlaylistForm({ onSubmit, posting, posted }) {
         <button type="button" className="btn small primary" onClick={addSong} disabled={posted || posting}>+</button>
       </div>
       {songs.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
           {songs.map((s, i) => (
-            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', background: 'rgba(255,255,255,0.05)', borderRadius: 6 }}>
+            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: 12 }}>
               <span className="caption">{i + 1}. {s.title} — {s.artist}</span>
-              <button type="button" className="btn small ghost" onClick={() => setSongs((prev) => prev.filter((_, idx) => idx !== i))} style={{ padding: '2px 8px', minWidth: 'auto' }}>✕</button>
+              <button type="button" className="btn small ghost" onClick={() => setSongs((prev) => prev.filter((_, idx) => idx !== i))} style={{ minWidth: 'auto' }}>✕</button>
             </div>
           ))}
         </div>
       )}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
         <button
           type="button"
           className="btn primary"
@@ -253,7 +254,7 @@ export function Post() {
               key={t.key}
               className="list-item glass post-card"
               style={{
-                display: 'flex', alignItems: 'center', gap: 12,
+                display: 'flex', alignItems: 'center', gap: 16,
                 borderLeft: t.accent ? ('3px solid ' + t.accent) : 'none',
               }}
               onClick={(e) => handleCardTap(e, t.key)}
@@ -275,28 +276,28 @@ export function Post() {
   return (
     <div className="page">
       <header className="page-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button type="button" className="btn ghost small" style={{ padding: '6px 8px' }} onClick={() => { setPostType(null); setPosted(false); setError(''); }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button type="button" className="btn ghost small" onClick={() => { setPostType(null); setPosted(false); setError(''); }}>
             ←
           </button>
           <div>
-            <h2 style={{ fontSize: '1.1rem' }}>{titles[postType]}</h2>
-            <p className="subtitle" style={{ fontSize: '0.75rem' }}>Share what you're vibing with right now.</p>
+            <h2 style={{ fontSize: '1rem' }}>{titles[postType]}</h2>
+            <p className="caption">Share what you're vibing with right now.</p>
           </div>
         </div>
       </header>
       <section className="section glass-elevated">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-          <div className="avatar-circle" style={{ width: 32, height: 32, fontSize: 13, flexShrink: 0 }}>{(profile.name || 'U').charAt(0).toUpperCase()}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+          <div className="avatar-circle avatar-sm">{(profile.name || 'U').charAt(0).toUpperCase()}</div>
           <div>
-            <strong style={{ fontSize: '0.9rem' }}>{profile.name}</strong>
-            <span className="caption" style={{ marginLeft: 6 }}>@{profile.username}</span>
+            <strong style={{ fontSize: '0.875rem' }}>{profile.name}</strong>
+            <span className="caption" style={{ marginLeft: 8 }}>@{profile.username}</span>
           </div>
         </div>
         {postType === 'thought' && <ThoughtForm onSubmit={handleSubmit} posting={posting} posted={posted} />}
         {postType === 'song' && <SongForm onSubmit={handleSubmit} posting={posting} posted={posted} />}
         {postType === 'playlist' && <PlaylistForm onSubmit={handleSubmit} posting={posting} posted={posted} />}
-        {error && <p style={{ color: 'var(--danger)', fontSize: '0.85rem', margin: '4px 0 0' }}>{error}</p>}
+        {error && <p style={{ color: 'var(--danger)', fontSize: '0.875rem', margin: '8px 0 0' }}>{error}</p>}
         {posted && <p className="caption" style={{ marginTop: 8 }}>Your post has been shared. Redirecting to Home...</p>}
       </section>
     </div>

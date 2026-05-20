@@ -29,22 +29,21 @@ function CommentThread({ comment, replies, onReply, onDelete, currentUserId }) {
   }
 
   return (
-    <div style={{ marginTop: 12 }}>
-      <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-        <div className="avatar-circle" style={{ width: 36, height: 36, fontSize: 14, flexShrink: 0 }}>
+    <div style={{ marginTop: 16 }}>
+      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+        <div className="avatar-circle">
           {(comment.user?.name || 'U').charAt(0).toUpperCase()}
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
-            <strong style={{ fontSize: 14 }}>{comment.user?.name || 'Unknown'}</strong>
+            <strong style={{ fontSize: '0.875rem' }}>{comment.user?.name || 'Unknown'}</strong>
             <span className="caption">{formatTimeAgo(comment.createdAt)}</span>
           </div>
-          <div style={{ fontSize: 14, marginTop: 2 }}>{comment.content}</div>
-          <div style={{ display: 'flex', gap: 12, marginTop: 4 }}>
+          <div style={{ fontSize: '0.875rem', marginTop: 8 }}>{comment.content}</div>
+          <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
             <button
               type="button"
               className="btn ghost small"
-              style={{ padding: '2px 0', fontSize: '0.8rem' }}
               onPointerDown={() => setReplying((prev) => !prev)}
             >
               Reply
@@ -53,7 +52,7 @@ function CommentThread({ comment, replies, onReply, onDelete, currentUserId }) {
               <button
                 type="button"
                 className="btn ghost small"
-                style={{ padding: '2px 0', fontSize: '0.8rem', color: 'var(--danger)' }}
+                style={{ color: 'var(--danger)' }}
                 onPointerDown={() => onDelete(comment.id)}
               >
                 Delete
@@ -62,31 +61,30 @@ function CommentThread({ comment, replies, onReply, onDelete, currentUserId }) {
           </div>
 
           {replying && (
-            <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
               <input
                 className="input"
                 placeholder="Write a reply..."
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleReply(); } }}
-                style={{ flex: 1, fontSize: 13 }}
+                style={{ flex: 1 }}
               />
               <button type="button" className="btn small primary" onPointerDown={handleReply}>Send</button>
             </div>
           )}
 
           {replies && replies.length > 0 && (
-            <div style={{ marginTop: 4 }}>
+            <div style={{ marginTop: 8 }}>
               <button
                 type="button"
                 className="btn ghost small"
-                style={{ padding: '2px 0', fontSize: '0.8rem' }}
                 onPointerDown={() => setShowReplies((prev) => !prev)}
               >
                 {showReplies ? 'Hide replies' : 'Show ' + replies.length + ' replies'}
               </button>
               {showReplies && (
-                <div style={{ borderLeft: '2px solid rgba(255,255,255,0.1)', paddingLeft: 12, marginTop: 4 }}>
+                <div style={{ borderLeft: '2px solid rgba(255,255,255,0.1)', paddingLeft: 16, marginTop: 8 }}>
                   {replies.map((reply) => (
                     <CommentThread
                       key={reply.id}
@@ -111,14 +109,16 @@ function PostContent({ post }) {
   if (post.postType === 'song') {
     return (
       <div className="section glass" style={{ padding: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-          <span style={{ fontSize: 20 }}>🎵</span>
-          <strong>{post.songTitle}</strong>
-          <span className="caption">by {post.songArtist}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div className="album-art">🎵</div>
+          <div style={{ flex: 1 }}>
+            <strong style={{ fontSize: '0.875rem' }}>{post.songTitle}</strong>
+            <div className="caption" style={{ marginTop: 4 }}>by {post.songArtist}</div>
+            {post.content && post.content !== (post.songTitle + ' by ' + post.songArtist) && (
+              <div style={{ fontSize: '0.875rem', marginTop: 8 }}>{post.content}</div>
+            )}
+          </div>
         </div>
-        {post.content && post.content !== (post.songTitle + ' by ' + post.songArtist) && (
-          <div style={{ fontSize: 14 }}>{post.content}</div>
-        )}
       </div>
     );
   }
@@ -127,12 +127,15 @@ function PostContent({ post }) {
     const songs = post.playlistSongs || [];
     return (
       <div className="section glass" style={{ padding: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-          <span style={{ fontSize: 20 }}>🎶</span>
-          <strong>{post.playlistName}</strong>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
+          <div className="playlist-cover">🎶</div>
+          <div style={{ flex: 1 }}>
+            <strong>{post.playlistName}</strong>
+            <div className="caption" style={{ marginTop: 4 }}>{songs.length} track{songs.length !== 1 ? 's' : ''}</div>
+          </div>
         </div>
         {post.content && post.content !== post.playlistName && (
-          <div style={{ fontSize: 14, marginBottom: 8 }}>{post.content}</div>
+          <div style={{ fontSize: '0.875rem', marginBottom: 8 }}>{post.content}</div>
         )}
         {songs.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -148,7 +151,7 @@ function PostContent({ post }) {
   // Musical thought (default)
   return (
     <div className="section glass" style={{ padding: 16 }}>
-      <div style={{ fontSize: 15, lineHeight: 1.6 }}>{post.content}</div>
+      <div style={{ fontSize: '0.875rem', lineHeight: 1.6 }}>{post.content}</div>
     </div>
   );
 }
@@ -188,13 +191,13 @@ export function PostDetail() {
   return (
     <div className="page">
       <header className="page-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Link to="/app/dashboard" className="btn ghost small" style={{ padding: '6px 8px', textDecoration: 'none' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Link to="/app/dashboard" className="btn ghost small" style={{ textDecoration: 'none' }}>
             ←
           </Link>
           <div>
-            <h2 style={{ fontSize: '1.1rem' }}>{post.user?.name}'s {typeLabels[post.postType] || 'Post'}</h2>
-            <p className="caption" style={{ fontSize: '0.75rem' }}>{formatTimeAgo(post.createdAt)}</p>
+            <h2 style={{ fontSize: '1rem' }}>{post.user?.name}'s {typeLabels[post.postType] || 'Post'}</h2>
+            <p className="caption">{formatTimeAgo(post.createdAt)}</p>
           </div>
         </div>
       </header>
@@ -202,7 +205,7 @@ export function PostDetail() {
       <PostContent post={post} />
 
       {/* Reaction + comment count summary */}
-      <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 12, marginBottom: 4 }}>
+      <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginTop: 16, marginBottom: 8 }}>
         <span className="caption" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           {total > 0 && <>{total} reaction{total !== 1 ? 's' : ''}</>}
         </span>
@@ -212,7 +215,7 @@ export function PostDetail() {
       </div>
 
       {/* Reaction buttons */}
-      <div style={{ display: 'flex', gap: 8, padding: '10px 0', borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{ display: 'flex', gap: 8, padding: '8px 0', borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         {[{ key: 'heart', icon: '❤️', offIcon: '🤍' }, { key: 'like', icon: '👍', offIcon: '👍' }, { key: 'dislike', icon: '👎', offIcon: '👎' }].map(function (r) {
           var isActive = myReaction === r.key;
           var count = counts[r.key] || 0;
@@ -221,9 +224,9 @@ export function PostDetail() {
               key={r.key}
               type="button"
               style={{
-                display: 'flex', alignItems: 'center', gap: 5,
-                padding: '6px 12px', borderRadius: 999,
-                fontSize: '0.85rem', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: 8,
+                padding: '8px 16px', borderRadius: 999,
+                fontSize: '0.875rem', cursor: 'pointer',
                 border: isActive ? 'none' : '1px solid var(--border-glass)',
                 background: isActive ? 'var(--accent-soft)' : 'transparent',
                 color: 'var(--text)',
@@ -233,14 +236,14 @@ export function PostDetail() {
               onPointerDown={() => toggleReaction(r.key)}
             >
               <span style={{ fontSize: 16 }}>{isActive ? r.icon : r.offIcon}</span>
-              {count > 0 && <span style={{ fontSize: 13, fontWeight: 600 }}>{count}</span>}
+              {count > 0 && <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>{count}</span>}
             </button>
           );
         })}
       </div>
 
       {/* Add comment */}
-      <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+      <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
         <input
           className="input"
           placeholder="Add a comment..."
@@ -256,11 +259,11 @@ export function PostDetail() {
 
       {/* Comments */}
       {commentsLoading ? (
-        <div className="list" style={{ marginTop: 12 }}>
+        <div className="list" style={{ marginTop: 16 }}>
           {[0, 1].map((i) => (
             <div key={i} className="skeleton-card skeleton" style={{ animationDelay: (i * 100) + 'ms' }}>
-              <div style={{ display: 'flex', gap: 10 }}>
-                <div className="skeleton skeleton-circle" style={{ width: 36, height: 36 }} />
+              <div style={{ display: 'flex', gap: 8 }}>
+                <div className="skeleton skeleton-circle" style={{ width: 40, height: 40 }} />
                 <div style={{ flex: 1 }}>
                   <div className="skeleton skeleton-line" style={{ width: '40%' }} />
                   <div className="skeleton skeleton-line" style={{ width: '80%' }} />

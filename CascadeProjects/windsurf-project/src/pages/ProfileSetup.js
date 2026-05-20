@@ -8,8 +8,8 @@ const TOTAL_STEPS = 3;
 function ProgressBar({ step, total }) {
   var pct = Math.round((step / total) * 100);
   return (
-    <div style={{ marginBottom: 20 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+    <div style={{ marginBottom: 24 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
         <span className="caption">Step {step} of {total}</span>
         <span className="caption">{pct}%</span>
       </div>
@@ -56,16 +56,16 @@ function SearchableDropdown({ label, caption, options, selected, setSelected, ma
   }
 
   return (
-    <div style={{ marginBottom: 12 }}>
-      <div className="steps-title" style={{ marginBottom: 2 }}>{label}</div>
-      {caption && <div className="steps-caption" style={{ marginBottom: 6 }}>{caption}</div>}
+    <div style={{ marginBottom: 16 }}>
+      <div className="steps-title" style={{ marginBottom: 8 }}>{label}</div>
+      {caption && <div className="steps-caption" style={{ marginBottom: 8 }}>{caption}</div>}
       {selected.length > 0 && (
-        <div className="tag-row" style={{ marginTop: 6, marginBottom: 6 }}>
+        <div className="tag-row" style={{ marginTop: 8, marginBottom: 8 }}>
           {selected.map((item) => (
             <span key={item} className="tag" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
               {item}
               <span
-                style={{ cursor: 'pointer', fontWeight: 'bold', marginLeft: 2, opacity: 0.6, fontSize: 11, lineHeight: 1 }}
+                style={{ cursor: 'pointer', fontWeight: 'bold', marginLeft: 4, opacity: 0.6, fontSize: '0.75rem', lineHeight: 1 }}
                 onClick={(e) => { e.stopPropagation(); removeItem(item); }}
               >✕</span>
             </span>
@@ -85,14 +85,14 @@ function SearchableDropdown({ label, caption, options, selected, setSelected, ma
             position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50,
             background: 'linear-gradient(135deg, rgba(50, 30, 80, 0.95), rgba(38, 49, 74, 0.98))',
             border: '1px solid rgba(232, 228, 222, 0.12)',
-            borderRadius: 10, maxHeight: 180, overflowY: 'auto', marginTop: 4,
+            borderRadius: 12, maxHeight: 180, overflowY: 'auto', marginTop: 8,
             backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
             boxShadow: '0 12px 30px rgba(0,0,0,0.4)',
           }}>
             {filtered.slice(0, 15).map((item) => (
               <div
                 key={item}
-                style={{ padding: '9px 14px', cursor: 'pointer', fontSize: 13, transition: 'background 0.15s ease' }}
+                style={{ padding: '8px 16px', cursor: 'pointer', fontSize: '0.875rem', transition: 'background 0.15s ease' }}
                 onClick={(e) => { e.stopPropagation(); addItem(item); setOpen(false); }}
                 onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
                 onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
@@ -107,7 +107,7 @@ function SearchableDropdown({ label, caption, options, selected, setSelected, ma
             position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50,
             background: 'linear-gradient(135deg, rgba(50, 30, 80, 0.95), rgba(38, 49, 74, 0.98))',
             border: '1px solid rgba(232, 228, 222, 0.12)',
-            borderRadius: 10, padding: '9px 14px', marginTop: 4,
+            borderRadius: 12, padding: '8px 16px', marginTop: 8,
             backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
           }}>
             <span className="caption">No results</span>
@@ -121,19 +121,19 @@ function SearchableDropdown({ label, caption, options, selected, setSelected, ma
 function StepBasics({ name, setName, username, setUsername, city, setCity }) {
   return (
     <>
-      <h3 style={{ marginBottom: 4 }}>Who are you?</h3>
+      <h3 style={{ marginBottom: 8 }}>Who are you?</h3>
       <p className="caption" style={{ marginBottom: 16 }}>Let people know who they're vibing with.</p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div>
-          <div className="steps-title" style={{ marginBottom: 4 }}>Name</div>
+          <div className="steps-title" style={{ marginBottom: 8 }}>Name</div>
           <input className="input" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} />
         </div>
         <div>
-          <div className="steps-title" style={{ marginBottom: 4 }}>Username</div>
+          <div className="steps-title" style={{ marginBottom: 8 }}>Username</div>
           <input className="input" placeholder="@handle" value={username} onChange={(e) => setUsername(e.target.value)} />
         </div>
         <div>
-          <div className="steps-title" style={{ marginBottom: 4 }}>City</div>
+          <div className="steps-title" style={{ marginBottom: 8 }}>City</div>
           <input className="input" placeholder="Your city" value={city} onChange={(e) => setCity(e.target.value)} />
         </div>
       </div>
@@ -144,7 +144,7 @@ function StepBasics({ name, setName, username, setUsername, city, setCity }) {
 function StepMusic({ genres, setGenres, favoriteArtists, setFavoriteArtists }) {
   return (
     <>
-      <h3 style={{ marginBottom: 4 }}>Your music taste</h3>
+      <h3 style={{ marginBottom: 8 }}>Your music taste</h3>
       <p className="caption" style={{ marginBottom: 16 }}>This is how we match you with your people.</p>
       <SearchableDropdown
         label="Top genres"
@@ -171,10 +171,10 @@ function StepMusic({ genres, setGenres, favoriteArtists, setFavoriteArtists }) {
 function StepVibe({ bio, setBio, moods, toggleMood }) {
   return (
     <>
-      <h3 style={{ marginBottom: 4 }}>Your vibe</h3>
+      <h3 style={{ marginBottom: 8 }}>Your vibe</h3>
       <p className="caption" style={{ marginBottom: 16 }}>Tell us a little more about how you listen.</p>
       <div style={{ marginBottom: 16 }}>
-        <div className="steps-title" style={{ marginBottom: 4 }}>Short bio</div>
+        <div className="steps-title" style={{ marginBottom: 8 }}>Short bio</div>
         <textarea
           className="input"
           placeholder="A few words about your vibe"
@@ -185,7 +185,7 @@ function StepVibe({ bio, setBio, moods, toggleMood }) {
         />
       </div>
       <div>
-        <div className="steps-title" style={{ marginBottom: 4 }}>Listening titles</div>
+        <div className="steps-title" style={{ marginBottom: 8 }}>Listening titles</div>
         <div className="steps-caption" style={{ marginBottom: 8 }}>Pick the titles that describe how you listen.</div>
         <div className="tag-row">
           {AVAILABLE_MOODS.map((mood) => {
@@ -276,15 +276,15 @@ export function ProfileSetup() {
 
   return (
     <div className="page">
-      <header className="page-header" style={{ flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 4 }}>
-        <div className="logo-wordmark" style={{ fontSize: '1.1rem', marginBottom: 6 }}>VibeCheck</div>
-        <h2 style={{ fontSize: '1.15rem' }}>Profile setup</h2>
+      <header className="page-header" style={{ flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 8 }}>
+        <div className="logo-wordmark" style={{ fontSize: '1rem', marginBottom: 8 }}>VibeCheck</div>
+        <h2>Profile setup</h2>
         <p className="subtitle">{stepTitles[step - 1]}</p>
       </header>
 
       <ProgressBar step={step} total={TOTAL_STEPS} />
 
-      <section className="section glass-elevated" style={{ marginBottom: 12 }}>
+      <section className="section glass-elevated" style={{ marginBottom: 16 }}>
         {step === 1 && (
           <StepBasics name={name} setName={setName} username={username} setUsername={setUsername} city={city} setCity={setCity} />
         )}
@@ -295,9 +295,9 @@ export function ProfileSetup() {
           <StepVibe bio={bio} setBio={setBio} moods={moods} toggleMood={toggleMood} />
         )}
 
-        {saveError && <p style={{ color: 'var(--danger)', fontSize: '0.85rem', margin: '8px 0 0' }}>{saveError}</p>}
+        {saveError && <p style={{ color: 'var(--danger)', fontSize: '0.875rem', margin: '8px 0 0' }}>{saveError}</p>}
 
-        <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+        <div style={{ display: 'flex', gap: 8, marginTop: 24 }}>
           {step > 1 && (
             <button type="button" className="btn ghost" style={{ flex: 1 }} onClick={() => setStep(step - 1)}>
               Back

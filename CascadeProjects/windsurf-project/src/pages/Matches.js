@@ -24,7 +24,7 @@ export function Matches() {
                   <div className="caption">Top artists: {topArtists}</div>
                 )}
                 {m.sharedMoods && m.sharedMoods.length > 0 && (
-                  <div className="tag-row" style={{ marginTop: 4 }}>
+                  <div className="tag-row" style={{ marginTop: 8 }}>
                     {m.sharedMoods.map((mood) => (
                       <span key={mood} className="tag">
                         {mood}

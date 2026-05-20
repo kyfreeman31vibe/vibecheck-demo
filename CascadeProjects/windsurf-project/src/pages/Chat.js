@@ -54,13 +54,13 @@ export function Chat() {
   return (
     <div className="page chat-page">
       <header className="page-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button type="button" className="btn ghost small" style={{ padding: '6px 8px' }} onClick={() => navigate('/app/messages')}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button type="button" className="btn ghost small" onClick={() => navigate('/app/messages')}>
             <ArrowLeft size={18} />
           </button>
           <div>
-            <h2 style={{ fontSize: '1.1rem' }}>Chat</h2>
-            <p className="subtitle" style={{ fontSize: '0.75rem' }}>{loading ? 'Loading...' : messages.length + ' messages'}</p>
+            <h2 style={{ fontSize: '1rem' }}>Chat</h2>
+            <p className="caption">{loading ? 'Loading...' : messages.length + ' messages'}</p>
           </div>
         </div>
       </header>
@@ -68,7 +68,7 @@ export function Chat() {
         {messages.length === 0 && !loading && (
           <div style={{ textAlign: 'center', padding: '40px 16px' }}>
             <div style={{ fontSize: 32, marginBottom: 8 }}>👋</div>
-            <p style={{ marginBottom: 4 }}>No messages yet</p>
+            <p style={{ marginBottom: 8 }}>No messages yet</p>
             <p className="caption">Say hello to start the conversation!</p>
           </div>
         )}
@@ -80,7 +80,7 @@ export function Chat() {
             }
           >
             <span>{msg.content}</span>
-            {msg.createdAt && <div style={{ fontSize: '0.65rem', opacity: 0.5, marginTop: 3, textAlign: msg.from === 'me' ? 'right' : 'left' }}>{formatMsgTime(msg.createdAt)}</div>}
+            {msg.createdAt && <div style={{ fontSize: '0.75rem', opacity: 0.5, marginTop: 8, textAlign: msg.from === 'me' ? 'right' : 'left' }}>{formatMsgTime(msg.createdAt)}</div>}
           </div>
         ))}
       </div>
@@ -99,7 +99,7 @@ export function Chat() {
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <button className="btn primary" type="button" onClick={handleSend} disabled={sending || !draft.trim()} style={{ padding: '10px 14px' }}>
+        <button className="btn primary" type="button" onClick={handleSend} disabled={sending || !draft.trim()} style={{ padding: '8px 16px' }}>
           {sending ? <span className="btn-spinner" /> : <Send size={16} />}
         </button>
       </div>

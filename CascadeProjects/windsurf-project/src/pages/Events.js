@@ -66,7 +66,7 @@ export function Events() {
         </div>
       </header>
 
-      <section className="section glass" style={{ marginBottom: 12 }}>
+      <section className="section glass" style={{ marginBottom: 16 }}>
         <div className="list-title-row" style={{ marginBottom: 8 }}>
           <div>
             <div className="steps-title">Your city</div>
@@ -83,7 +83,7 @@ export function Events() {
             ))}
           </select>
         </div>
-        <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
           {EVENT_TYPES.map((t) => (
             <button
               key={t}
@@ -115,7 +115,7 @@ export function Events() {
                 <button
                   type="button"
                   className="btn ghost small"
-                  style={{ marginTop: 6 }}
+                  style={{ marginTop: 8 }}
                   onClick={() => toggleExpand(event.id)}
                 >
                   {isExpanded ? 'Hide' : 'Show'} {matchCount} of your matches going

@@ -92,7 +92,7 @@ export function Match() {
           <div><h2>Loading...</h2></div>
         </header>
         <div className="skeleton-card skeleton">
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <div className="skeleton skeleton-circle" style={{ width: 64, height: 64 }} />
             <div style={{ flex: 1 }}>
               <div className="skeleton skeleton-line" style={{ width: '60%' }} />
@@ -100,7 +100,7 @@ export function Match() {
             </div>
           </div>
         </div>
-        <div className="skeleton-card skeleton" style={{ marginTop: 12 }}>
+        <div className="skeleton-card skeleton" style={{ marginTop: 16 }}>
           <div className="skeleton skeleton-line" style={{ width: '40%' }} />
           <div className="skeleton skeleton-line" />
           <div className="skeleton skeleton-line short" />
@@ -132,16 +132,16 @@ export function Match() {
   return (
     <div className="page">
       <header className="page-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button type="button" className="btn ghost small" style={{ padding: '6px 8px' }} onClick={() => navigate(-1)}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button type="button" className="btn ghost small" onClick={() => navigate(-1)}>
             ←
           </button>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <h2 style={{ fontSize: '1.1rem' }}>{user.name}</h2>
-              {demoUser && <span style={{ fontSize: 10, fontWeight: 'bold', background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.5)', padding: '2px 6px', borderRadius: 4 }}>DEMO</span>}
+              <h2 style={{ fontSize: '1rem' }}>{user.name}</h2>
+              {demoUser && <span style={{ fontSize: '0.625rem', fontWeight: 700, background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.5)', padding: '4px 8px', borderRadius: 4, letterSpacing: '0.04em' }}>DEMO</span>}
             </div>
-            <p className="subtitle" style={{ fontSize: '0.75rem' }}>{compat.score}% compatible</p>
+            <p className="caption">{compat.score}% compatible</p>
           </div>
         </div>
       </header>
@@ -149,7 +149,7 @@ export function Match() {
       {/* Profile header */}
       <section className="section glass-elevated profile-header">
         <div className="avatar-ring">
-          <div className="avatar-circle" style={{ width: 60, height: 60, fontSize: 22 }}>
+          <div className="avatar-circle avatar-lg">
             {initials}
           </div>
         </div>
@@ -158,7 +158,7 @@ export function Match() {
           <p className="caption">
             {user.locationPublic ? user.city : 'Location hidden'}
           </p>
-          <p style={{ marginTop: 4 }}>{user.bio}</p>
+          <p style={{ marginTop: 8 }}>{user.bio}</p>
         </div>
       </section>
 
@@ -210,15 +210,15 @@ export function Match() {
       <section className="section glass">
         <h3>Music Highlights</h3>
         <div className="pill small" style={{
-          marginBottom: 10,
+          marginBottom: 8,
           background: compat.score >= 80 ? 'rgba(76, 175, 80, 0.25)' : compat.score >= 60 ? 'rgba(227, 126, 47, 0.25)' : 'rgba(255, 255, 255, 0.08)',
           color: compat.score >= 80 ? '#81c784' : compat.score >= 60 ? 'var(--vc-whiskey-amber)' : 'var(--text-muted)',
         }}>
           {compat.score}% compatibility
         </div>
         <div>
-          <h4 style={{ fontSize: '0.85rem', marginBottom: 4 }}>Top 5 Artists</h4>
-          <div className="tag-row" style={{ marginTop: 4 }}>
+          <h4 style={{ marginBottom: 8 }}>Top 5 Artists</h4>
+          <div className="tag-row" style={{ marginTop: 8 }}>
             {(user.favoriteArtists || []).slice(0, 5).map((a) => (
               <span key={a} className="tag">{a}</span>
             ))}
@@ -226,8 +226,8 @@ export function Match() {
         </div>
         {compat.sharedArtists.length > 0 && (
           <div style={{ marginTop: 8 }}>
-            <h4 style={{ fontSize: '0.85rem', marginBottom: 4 }}>Shared Artists</h4>
-            <div className="tag-row" style={{ marginTop: 4 }}>
+            <h4 style={{ marginBottom: 8 }}>Shared Artists</h4>
+            <div className="tag-row" style={{ marginTop: 8 }}>
               {compat.sharedArtists.map((a) => (
                 <span key={a} className="tag" style={{ fontWeight: 'bold', background: 'var(--accent-soft)', border: '1px solid var(--accent)' }}>{a}</span>
               ))}
@@ -237,7 +237,7 @@ export function Match() {
 
         <hr className="divider" />
 
-        <h4 style={{ fontSize: '0.85rem', marginBottom: 6 }}>Mood Alignment</h4>
+        <h4 style={{ marginBottom: 8 }}>Mood Alignment</h4>
         <div className="tag-row">
           {(user.moods || []).map((mood) => {
             const isShared = compat.sharedMoods.includes(mood);
@@ -253,7 +253,7 @@ export function Match() {
           })}
         </div>
         {compat.sharedMoods.length > 0 && (
-          <p className="caption" style={{ marginTop: 6 }}>
+          <p className="caption" style={{ marginTop: 8 }}>
             You share {compat.sharedMoods.length} mood{compat.sharedMoods.length > 1 ? 's' : ''} in common.
           </p>
         )}
@@ -292,7 +292,7 @@ export function Match() {
       {/* React to their vibe */}
       <section className="section glass">
         <h3>React to their vibe</h3>
-        <div style={{ display: 'flex', gap: 10, marginBottom: 8 }}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
           {EMOJIS.map((emoji) => {
             var isActive = selectedEmoji === emoji;
             return (

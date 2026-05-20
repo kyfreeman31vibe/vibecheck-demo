@@ -40,18 +40,18 @@ export function Messages() {
       </header>
       <div className="list">
         {!loading && conversations.length === 0 && (
-          <div className="section glass" style={{ textAlign: 'center', padding: '28px 16px' }}>
+          <div className="section glass" style={{ textAlign: 'center', padding: '32px 16px' }}>
             <div style={{ fontSize: 32, marginBottom: 8 }}>💬</div>
-            <p style={{ marginBottom: 4 }}>No messages yet</p>
-            <p className="caption" style={{ marginBottom: 12 }}>Connect with someone on Discover to start a conversation</p>
+            <p style={{ marginBottom: 8 }}>No messages yet</p>
+            <p className="caption" style={{ marginBottom: 16 }}>Connect with someone on Discover to start a conversation</p>
             <Link to="/app/discover" className="btn primary" style={{ textDecoration: 'none' }}>Find People</Link>
           </div>
         )}
         {loading && (
-          <div className="list" style={{ gap: 10 }}>
+          <div className="list">
             {[0, 1, 2].map((i) => (
               <div key={i} className="skeleton-card skeleton" style={{ animationDelay: (i * 100) + 'ms' }}>
-                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
                   <div className="skeleton skeleton-circle" style={{ width: 40, height: 40 }} />
                   <div style={{ flex: 1 }}>
                     <div className="skeleton skeleton-line" style={{ width: '50%' }} />
@@ -68,16 +68,16 @@ export function Messages() {
           return (
           <div key={c.id} className="list-item glass glass-interactive">
             <div
-              style={{ display: 'flex', gap: 10, alignItems: 'center', flex: 1, cursor: 'pointer' }}
+              style={{ display: 'flex', gap: 16, alignItems: 'center', flex: 1, cursor: 'pointer' }}
               onClick={() => handleOpenThread(c.id)}
             >
-              <div className="avatar-circle" style={{ width: 36, height: 36, fontSize: 14, flexShrink: 0 }}>{initial}</div>
+              <div className="avatar-circle">{initial}</div>
               <div style={{ flex: 1 }}>
                 <div className="list-title-row">
                   <span className="list-title">{otherName}</span>
                   <span className="caption">{formatTimeAgo(c.lastMessageAt)}</span>
                 </div>
-                <div className="caption" style={{ marginTop: 2 }}>@{c.otherUser.username}</div>
+                <div className="caption" style={{ marginTop: 8 }}>@{c.otherUser.username}</div>
               </div>
             </div>
             <div style={{ position: 'relative' }}>
@@ -96,9 +96,9 @@ export function Messages() {
                     right: 0,
                     top: '100%',
                     zIndex: 10,
-                    padding: '6px 0',
+                    padding: '8px 0',
                     minWidth: 140,
-                    borderRadius: 8,
+                    borderRadius: 12,
                   }}
                 >
                   <button

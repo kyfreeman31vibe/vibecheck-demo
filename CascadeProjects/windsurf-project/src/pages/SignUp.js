@@ -76,13 +76,13 @@ export function SignUp() {
     <div className="app-root">
       <div className="app-shell">
         <div className="page">
-          <header className="page-header" style={{ flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 4 }}>
-            <div className="logo-wordmark" style={{ fontSize: '1.1rem', marginBottom: 8 }}>VibeCheck</div>
+          <header className="page-header" style={{ flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 8 }}>
+            <div className="logo-wordmark" style={{ fontSize: '1rem', marginBottom: 8 }}>VibeCheck</div>
             <h2>Create Account</h2>
             <p className="subtitle">Join VibeCheck and find your people.</p>
           </header>
 
-          <form onSubmit={handleSubmit} className="section glass" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <form onSubmit={handleSubmit} className="section glass" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <input
               className="input"
               type="email"
@@ -127,7 +127,7 @@ export function SignUp() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#fff',
-                  fontSize: 13,
+                  fontSize: '0.875rem',
                   transition: 'background 0.2s ease, border 0.2s ease',
                 }}
               >
@@ -138,7 +138,7 @@ export function SignUp() {
               </span>
             </div>
 
-            {error && <p style={{ color: 'var(--danger)', fontSize: '0.85rem', margin: 0 }}>{error}</p>}
+            {error && <p style={{ color: 'var(--danger)', fontSize: '0.875rem', margin: 0 }}>{error}</p>}
 
             <button type="submit" className="btn primary full-width" disabled={loading}>
               {loading ? <span className="btn-spinner" /> : 'Sign Up'}

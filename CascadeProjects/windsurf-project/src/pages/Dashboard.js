@@ -99,14 +99,14 @@ export function Dashboard() {
       </header>
 
       {showNotifs && (
-        <section className="section glass-elevated" style={{ marginBottom: 12 }}>
-          <div className="list-title-row" style={{ marginBottom: 10 }}>
+        <section className="section glass-elevated" style={{ marginBottom: 16 }}>
+          <div className="list-title-row" style={{ marginBottom: 8 }}>
             <h3>Notifications</h3>
             {notifications.length > 0 && (
               <button
                 type="button"
                 className="btn ghost small"
-                style={{ fontSize: '0.75rem' }}
+                style={{ fontSize: '0.75rem', fontWeight: 400 }}
                 onClick={clearAll}
               >
                 Clear All
@@ -114,8 +114,8 @@ export function Dashboard() {
             )}
           </div>
           {incomingRequests.length > 0 && (
-            <div style={{ marginBottom: 12 }}>
-              <div style={{ fontSize: 12, fontWeight: '600', marginBottom: 8, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Circle Requests</div>
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: '600', marginBottom: 8, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Circle Requests</div>
               {incomingRequests.map((req) => (
                 <div
                   key={req.id}
@@ -123,19 +123,18 @@ export function Dashboard() {
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    padding: '10px 0',
+                    padding: '8px 0',
                     borderBottom: '1px solid rgba(255,255,255,0.06)',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ fontSize: 16 }}>👥</span>
-                    <div style={{ fontSize: 13 }}><strong>{req.sender?.name || 'Someone'}</strong> wants to join your circle</div>
+                    <div style={{ fontSize: '0.875rem' }}><strong>{req.sender?.name || 'Someone'}</strong> wants to join your circle</div>
                   </div>
-                  <div style={{ display: 'flex', gap: 6, flexShrink: 0, marginLeft: 8 }}>
+                  <div style={{ display: 'flex', gap: 8, flexShrink: 0, marginLeft: 8 }}>
                     <button
                       type="button"
                       className="btn small primary"
-                      style={{ padding: '4px 10px', fontSize: 11 }}
                       onClick={() => acceptRequest(req.id, req.senderId)}
                     >
                       Accept
@@ -143,7 +142,6 @@ export function Dashboard() {
                     <button
                       type="button"
                       className="btn small ghost"
-                      style={{ padding: '4px 10px', fontSize: 11 }}
                       onClick={() => rejectRequest(req.id)}
                     >
                       Decline
@@ -154,8 +152,8 @@ export function Dashboard() {
             </div>
           )}
           {notifications.length === 0 && incomingRequests.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '12px 0' }}>
-              <div style={{ fontSize: 24, marginBottom: 4 }}>🔔</div>
+            <div style={{ textAlign: 'center', padding: '16px 0' }}>
+              <div style={{ fontSize: 24, marginBottom: 8 }}>🔔</div>
               <p className="caption">You're all caught up!</p>
             </div>
           )}
@@ -174,13 +172,13 @@ export function Dashboard() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ fontSize: 16 }}>{n.type === 'circle_accepted' ? '✅' : n.type === 'circle_request' ? '👥' : '💬'}</span>
                   <div>
-                    <div style={{ fontSize: 13 }}>{n.text}</div>
-                    <div className="caption" style={{ fontSize: '0.7rem' }}>{n.time}</div>
+                    <div style={{ fontSize: '0.875rem' }}>{n.text}</div>
+                    <div className="caption">{n.time}</div>
                   </div>
                 </div>
                 <button
                   type="button"
-                  style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px', fontSize: 14, lineHeight: 1, flexShrink: 0 }}
+                  style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '8px', fontSize: '0.875rem', lineHeight: 1, flexShrink: 0 }}
                   onClick={() => deleteNotification(n.id)}
                 >
                   ✕
@@ -191,11 +189,11 @@ export function Dashboard() {
         </section>
       )}
 
-      <div style={{ position: 'relative', marginBottom: 12 }}>
-        <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
+      <div style={{ position: 'relative', marginBottom: 16 }}>
+        <Search size={16} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
         <input
           className="input"
-          style={{ paddingLeft: 38, width: '100%' }}
+          style={{ paddingLeft: 40, width: '100%' }}
           placeholder="Search activity feed..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -206,7 +204,7 @@ export function Dashboard() {
         <div className="list">
           {[0, 1, 2].map((i) => (
             <div key={i} className="skeleton-card skeleton" style={{ animationDelay: (i * 100) + 'ms' }}>
-              <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+              <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', padding: 16 }}>
                 <div className="skeleton skeleton-circle" />
                 <div style={{ flex: 1 }}>
                   <div className="skeleton skeleton-line" style={{ width: '70%' }} />
@@ -220,10 +218,10 @@ export function Dashboard() {
       )}
 
       {!postsLoading && filteredPosts.length === 0 && (
-        <div className="section glass" style={{ textAlign: 'center', padding: '28px 16px' }}>
+        <div className="section glass" style={{ textAlign: 'center', padding: '32px 16px' }}>
           <div style={{ fontSize: 32, marginBottom: 8 }}>🎵</div>
-          <p style={{ marginBottom: 4 }}>Your feed is quiet</p>
-          <p className="caption" style={{ marginBottom: 12 }}>Share a Musical Thought to get things started</p>
+          <p style={{ marginBottom: 8 }}>Your feed is quiet</p>
+          <p className="caption" style={{ marginBottom: 16 }}>Share a Musical Thought to get things started</p>
           <Link to="/app/post" className="btn primary" style={{ textDecoration: 'none' }}>Create Post</Link>
         </div>
       )}
@@ -240,7 +238,7 @@ export function Dashboard() {
           if (items.length === 0) return null;
           return (
             <div key={label} style={{ marginBottom: 16 }}>
-              <h3 style={{ marginBottom: 8, fontSize: '1rem' }}>{label}</h3>
+              <h3 style={{ marginBottom: 8 }}>{label}</h3>
               <div className="list">
                 {items.map((item) => {
                   var idx = cardIndex++;
@@ -255,21 +253,21 @@ export function Dashboard() {
 
                   return (
                     <div key={item.id} className="list-item glass glass-interactive feed-card-animate" style={{ animationDelay: (idx * 60) + 'ms' }}>
-                      <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-                        <div className="avatar-circle" style={{ width: 36, height: 36, fontSize: 14, flexShrink: 0 }}>{initial}</div>
+                      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+                        <div className="avatar-circle">{initial}</div>
                         <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: 14 }}>
+                          <div style={{ fontSize: '0.875rem' }}>
                             {label}
                             {(item.postType === 'song' || item.postType === 'playlist') && (
-                              <Link to={'/app/post/' + item.id} style={{ color: 'var(--accent)', marginLeft: 4, textDecoration: 'underline' }}>
+                              <Link to={'/app/post/' + item.id} style={{ color: 'var(--accent)', marginLeft: 8, textDecoration: 'underline' }}>
                                 {detail}
                               </Link>
                             )}
                           </div>
                           {item.postType === 'thought' && (
-                            <div className="caption" style={{ marginTop: 2 }}>{preview}</div>
+                            <div className="caption" style={{ marginTop: 8 }}>{preview}</div>
                           )}
-                          <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 4 }}>
+                          <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginTop: 8 }}>
                             <span className="caption">{formatTimeAgo(item.createdAt)}</span>
                             {(item.reactionCount > 0 || item.commentCount > 0) && (
                               <span className="caption">
@@ -280,7 +278,7 @@ export function Dashboard() {
                             )}
                             <Link
                               to={'/app/post/' + item.id}
-                              style={{ fontSize: '0.8rem', marginLeft: 'auto', color: 'var(--accent)', textDecoration: 'none' }}
+                              style={{ fontSize: '0.75rem', marginLeft: 'auto', color: 'var(--accent)', textDecoration: 'none' }}
                             >
                               View more →
                             </Link>

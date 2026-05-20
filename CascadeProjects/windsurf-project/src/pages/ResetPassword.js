@@ -51,7 +51,7 @@ export function ResetPassword() {
             </div>
           </header>
 
-          <form onSubmit={handleSubmit} className="section glass" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <form onSubmit={handleSubmit} className="section glass" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <input
               className="input"
               type="password"

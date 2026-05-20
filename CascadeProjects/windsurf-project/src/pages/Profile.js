@@ -52,14 +52,14 @@ export function Profile() {
           <h3>{profile.name}</h3>
           <p className="subtitle">@{profile.username}</p>
           <p className="caption">{profile.city}</p>
-          <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
-            <div style={{ textAlign: 'center', padding: '6px 14px', borderRadius: 'var(--radius-lg)', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-glass)' }}>
-              <div style={{ fontWeight: 'bold', fontSize: 17 }}>{circleCount}</div>
-              <div className="caption" style={{ fontSize: '0.7rem' }}>Circle</div>
+          <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
+            <div style={{ textAlign: 'center', padding: '8px 16px', borderRadius: 'var(--radius-lg)', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-glass)' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '1rem' }}>{circleCount}</div>
+              <div className="caption">Circle</div>
             </div>
-            <div style={{ textAlign: 'center', padding: '6px 14px', borderRadius: 'var(--radius-lg)', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-glass)' }}>
-              <div style={{ fontWeight: 'bold', fontSize: 17 }}>{myPlaylists.length}</div>
-              <div className="caption" style={{ fontSize: '0.7rem' }}>Playlists</div>
+            <div style={{ textAlign: 'center', padding: '8px 16px', borderRadius: 'var(--radius-lg)', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border-glass)' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '1rem' }}>{myPlaylists.length}</div>
+              <div className="caption">Playlists</div>
             </div>
           </div>
         </div>
@@ -71,7 +71,7 @@ export function Profile() {
         {profile.bio ? <p>{profile.bio}</p> : <p className="caption">No bio yet. <span style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={() => navigate('/app/setup')}>Edit profile</span> to add one.</p>}
 
         {/* Divider */}
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', margin: '14px 0' }} />
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', margin: '16px 0' }} />
 
         {/* Top Genres */}
         <h3>Top Genres</h3>
@@ -86,15 +86,15 @@ export function Profile() {
         )}
 
         {/* Divider */}
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', margin: '14px 0' }} />
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', margin: '16px 0' }} />
 
         {/* Top Artists */}
         <h3>Top Artists</h3>
         {profile.favoriteArtists.length > 0 ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {profile.favoriteArtists.map((a, i) => (
-              <div key={a} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span style={{ fontWeight: 'bold', fontSize: 14, opacity: 0.5, width: 20, textAlign: 'right' }}>{i + 1}</span>
+              <div key={a} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontWeight: 'bold', fontSize: '0.875rem', opacity: 0.5, width: 24, textAlign: 'right' }}>{i + 1}</span>
                 <span>{a}</span>
               </div>
             ))}
@@ -122,23 +122,23 @@ export function Profile() {
         {circleMembers.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {circleMembers.map((m) => (
-              <Link key={m.id} to={'/app/match/' + m.id} style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: 'inherit', borderRadius: 8, padding: '6px 4px', margin: '-6px -4px', cursor: 'pointer' }} className="glass-interactive">
-                <div className="avatar-circle" style={{ width: 32, height: 32, fontSize: 13, flexShrink: 0 }}>
+              <Link key={m.id} to={'/app/match/' + m.id} style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', color: 'inherit', borderRadius: 12, padding: '8px', margin: '-8px', cursor: 'pointer' }} className="glass-interactive">
+                <div className="avatar-circle avatar-sm">
                   {(m.name || 'U').charAt(0).toUpperCase()}
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 'bold', fontSize: 14 }}>{m.name}</div>
+                  <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>{m.name}</div>
                   <div className="caption">@{m.username}{m.city ? ' · ' + m.city : ''}</div>
                 </div>
-                <span style={{ fontSize: 14, color: 'var(--text-muted)' }}>›</span>
+                <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>›</span>
               </Link>
             ))}
           </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '20px 0' }}>
+          <div style={{ textAlign: 'center', padding: '24px 0' }}>
             <div style={{ fontSize: 32, marginBottom: 8 }}>👥</div>
-            <p style={{ marginBottom: 4 }}>Your Circle is empty</p>
-            <p className="caption" style={{ marginBottom: 12 }}>Find your people on Discover</p>
+            <p style={{ marginBottom: 8 }}>Your Circle is empty</p>
+            <p className="caption" style={{ marginBottom: 16 }}>Find your people on Discover</p>
             <Link to="/app/discover" className="btn primary" style={{ textDecoration: 'none' }}>Discover Users</Link>
           </div>
         )}
@@ -151,7 +151,7 @@ export function Profile() {
             {myPlaylists.map((p) => (
               <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <div style={{ fontWeight: 'bold', fontSize: 14 }}>{p.playlistName}</div>
+                  <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>{p.playlistName}</div>
                   <div className="caption">{(p.playlistSongs || []).length} songs</div>
                 </div>
                 <button className="btn small ghost" onClick={() => navigate('/app/post/' + p.id)}>View</button>
