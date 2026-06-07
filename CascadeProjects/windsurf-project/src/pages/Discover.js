@@ -1,21 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useMatches, DEMO_USERS } from '../hooks/useMatches';
+import { useMatches } from '../hooks/useMatches';
 import { useCircles } from '../hooks/useCircles';
+import { useEvents } from '../hooks/useEvents';
 
-const EVENTS = [
-  { id: 1, name: 'Golden Gate Sunset Sessions', date: 'Fri, Aug 8', location: 'Marina District · San Francisco', type: 'Concert', attendees: 42 },
-  { id: 2, name: 'Lo-Fi Rooftop Listening', date: 'Sat, Aug 16', location: 'SoMa · San Francisco', type: 'Casual', attendees: 28 },
-  { id: 3, name: 'Lake Merritt Night Cypher', date: 'Thu, Aug 14', location: 'Lake Merritt · Oakland', type: 'Casual', attendees: 31 },
-  { id: 5, name: 'Neon Nights Festival', date: 'Sat, Jul 26', location: 'Downtown · Los Angeles', type: 'Festival', attendees: 128 },
-  { id: 6, name: 'Rooftop Lo-Fi Session', date: 'Fri, Aug 2', location: 'Hollywood · Los Angeles', type: 'Casual', attendees: 64 },
-  { id: 7, name: 'Midtown R&B Mixer', date: 'Fri, Aug 1', location: 'Midtown · Atlanta', type: 'Casual', attendees: 54 },
-  { id: 8, name: 'ATL Hip-Hop Block Party', date: 'Sat, Aug 16', location: 'East Atlanta · Atlanta', type: 'Festival', attendees: 91 },
-  { id: 9, name: 'Lakeshore House Music Fest', date: 'Sat, Aug 9', location: 'Lakeshore · Chicago', type: 'Festival', attendees: 110 },
-  { id: 11, name: 'Brooklyn Warehouse Rave', date: 'Fri, Aug 8', location: 'Bushwick · Brooklyn', type: 'Concert', attendees: 75 },
-  { id: 12, name: 'Central Park Acoustic Set', date: 'Sun, Aug 17', location: 'Central Park · New York', type: 'Casual', attendees: 38 },
-  { id: 13, name: 'U Street Groove Night', date: 'Sat, Aug 9', location: 'U Street Corridor · DC', type: 'Concert', attendees: 44 },
-];
 
 function circleButtonLabel(status) {
   if (status === 'accepted') return 'In your circle ✓';
@@ -113,109 +101,121 @@ function UsersTab({ matches, getRequestStatus, isInCircle, onSendRequest }) {
   );
 }
 
-function EventsTab() {
-  var expandedId = null;
-  var setExpandedId;
+function formatEventDate(dateStr) {
+  if (!dateStr) return '';
+  var d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+}
 
-  var ref = React.useState(null);
-  expandedId = ref[0];
-  setExpandedId = ref[1];
+function EventsTab() {
+  var { events, loading, error, city, page, totalPages, search, nextPage, prevPage } = useEvents();
+  var searchRef = React.useState(city || '');
+  var searchVal = searchRef[0];
+  var setSearchVal = searchRef[1];
+  var expandedRef = React.useState(null);
+  var expandedId = expandedRef[0];
+  var setExpandedId = expandedRef[1];
+
+  React.useEffect(function () {
+    if (city && !searchVal) setSearchVal(city);
+  }, [city]);
+
+  function handleSearch(e) {
+    e.preventDefault();
+    if (searchVal.trim()) search(searchVal.trim());
+  }
 
   return (
-    <div className="list">
-      {EVENTS.map(function (event) {
-        var isExpanded = expandedId === event.id;
-        var matched = DEMO_USERS.filter(function (u) {
-          return (u.eventsAttending || []).indexOf(event.id) !== -1;
-        });
-        return (
-          <div key={event.id} className="list-item glass glass-interactive">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div className="list-title" style={{ flex: 1 }}>{event.name}</div>
-              <div style={{ fontSize: '0.75rem', fontWeight: 600, padding: '4px 8px', borderRadius: 8, background: 'rgba(227, 126, 47, 0.15)', color: 'var(--vc-antique-gold)', whiteSpace: 'nowrap', marginLeft: 8, marginRight: 8 }}>{event.date}</div>
-            </div>
-            <div className="caption" style={{ marginTop: 8 }}>{event.location}</div>
-            <div className="list-title-row" style={{ marginTop: 8 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  {['A', 'K', 'J'].map(function (init, i) {
-                    return (
-                      <div key={i} className="avatar-circle" style={{
-                        width: 22, height: 22, fontSize: '0.5rem',
-                        marginLeft: i === 0 ? 0 : -8,
-                        border: '2px solid var(--vc-charcoal-night)',
-                        zIndex: 3 - i,
-                        position: 'relative',
-                      }}>{init}</div>
-                    );
-                  })}
+    <div>
+      <form onSubmit={handleSearch} style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+        <input
+          className="input"
+          placeholder="City name (e.g. Miami)"
+          value={searchVal}
+          onChange={function (e) { setSearchVal(e.target.value); }}
+          style={{ flex: 1 }}
+        />
+        <button type="submit" className="btn small primary">Search</button>
+      </form>
+
+      {loading && <div className="caption" style={{ textAlign: 'center', padding: 24 }}>Loading events...</div>}
+      {error && <div className="caption" style={{ textAlign: 'center', padding: 24, color: 'var(--danger)' }}>{error}</div>}
+      {!loading && !error && events.length === 0 && city && (
+        <div className="caption" style={{ textAlign: 'center', padding: 24 }}>No music events found in {city}. Try another city.</div>
+      )}
+      {!loading && !city && (
+        <div className="caption" style={{ textAlign: 'center', padding: 24 }}>Enter a city above to discover live music events near you.</div>
+      )}
+
+      <div className="list">
+        {events.map(function (event) {
+          var isExpanded = expandedId === event.id;
+          var venueStr = event.venue.name + (event.venue.city ? ' · ' + event.venue.city : '') + (event.venue.state ? ', ' + event.venue.state : '');
+          return (
+            <div key={event.id} className="list-item glass glass-interactive">
+              {event.imageUrl && (
+                <div style={{ borderRadius: 8, overflow: 'hidden', marginBottom: 8, height: 120, background: '#1a1a2e' }}>
+                  <img src={event.imageUrl} alt={event.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
-                <div className="caption">{event.attendees} VibeCheckers going</div>
-              </div>
-              <div className="pill small" style={{
-                background: event.type === 'Concert'
-                  ? 'linear-gradient(135deg, var(--vc-whiskey-amber), var(--vc-antique-gold))'
-                  : event.type === 'Casual'
-                    ? 'rgba(155, 79, 150, 0.35)'
-                    : 'rgba(227, 126, 47, 0.2)',
-                color: event.type === 'Concert'
-                  ? '#fff'
-                  : event.type === 'Casual'
-                    ? '#d4a0d0'
-                    : 'var(--vc-whiskey-amber)',
-              }}>{event.type}</div>
-            </div>
-            {matched.length > 0 && (
-              <div className="caption" style={{ marginTop: 8 }}>
-                {matched.length} VibeCheckers you know are going
-              </div>
-            )}
-            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-              <button
-                type="button"
-                className="btn small ghost"
-                onClick={function () { setExpandedId(isExpanded ? null : event.id); }}
-              >
-                {isExpanded ? 'Hide details' : 'Event details'}
-              </button>
-            </div>
-            {isExpanded && (
-              <div className="glass" style={{ marginTop: 8, padding: 16 }}>
-                <div style={{ marginBottom: 8 }}>
-                  <strong>Venue</strong>
-                  <div className="caption">{event.location}</div>
-                </div>
-                <div style={{ marginBottom: 8 }}>
-                  <strong>Date</strong>
-                  <div className="caption">{event.date}</div>
-                </div>
-                <div style={{ marginBottom: 8 }}>
-                  <strong>Type</strong>
-                  <div className="caption">{event.type}</div>
-                </div>
-                <div style={{ marginBottom: 8 }}>
-                  <strong>Ticketmaster</strong>
-                  <div className="caption" style={{ fontStyle: 'italic' }}>Ticket link placeholder (demo)</div>
-                </div>
-                {matched.length > 0 && (
-                  <div>
-                    <strong>VibeCheckers attending</strong>
-                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>
-                      {matched.map(function (u) {
-                        return (
-                          <Link key={u.id} to={'/app/match/' + u.id} className="pill small" style={{ textDecoration: 'none' }}>
-                            {u.name}
-                          </Link>
-                        );
-                      })}
-                    </div>
+              )}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div className="list-title" style={{ flex: 1 }}>{event.name}</div>
+                {event.date && (
+                  <div style={{ fontSize: '0.75rem', fontWeight: 600, padding: '4px 8px', borderRadius: 8, background: 'rgba(227, 126, 47, 0.15)', color: 'var(--vc-antique-gold)', whiteSpace: 'nowrap', marginLeft: 8 }}>
+                    {formatEventDate(event.date)}
                   </div>
                 )}
               </div>
-            )}
-          </div>
-        );
-      })}
+              <div className="caption" style={{ marginTop: 8 }}>{venueStr}</div>
+              {event.genre && (
+                <div style={{ marginTop: 8 }}>
+                  <span className="pill small" style={{ background: 'rgba(155, 79, 150, 0.35)', color: '#d4a0d0' }}>{event.genre}</span>
+                </div>
+              )}
+              {event.attractions && event.attractions.length > 0 && (
+                <div className="caption" style={{ marginTop: 8 }}>Lineup: {event.attractions.map(function (a) { return a.name; }).join(', ')}</div>
+              )}
+              <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+                <button type="button" className="btn small ghost" onClick={function () { setExpandedId(isExpanded ? null : event.id); }}>
+                  {isExpanded ? 'Hide details' : 'Details'}
+                </button>
+                {event.url && (
+                  <a href={event.url} target="_blank" rel="noopener noreferrer" className="btn small primary" style={{ textDecoration: 'none' }}>Tickets</a>
+                )}
+              </div>
+              {isExpanded && (
+                <div className="glass" style={{ marginTop: 8, padding: 16 }}>
+                  <div style={{ marginBottom: 8 }}>
+                    <strong>Venue</strong>
+                    <div className="caption">{event.venue.name}</div>
+                    {event.venue.address && <div className="caption">{event.venue.address}</div>}
+                  </div>
+                  {event.time && (
+                    <div style={{ marginBottom: 8 }}>
+                      <strong>Time</strong>
+                      <div className="caption">{event.time}</div>
+                    </div>
+                  )}
+                  {event.priceRange && (
+                    <div style={{ marginBottom: 8 }}>
+                      <strong>Price</strong>
+                      <div className="caption">${event.priceRange.min} – ${event.priceRange.max} {event.priceRange.currency}</div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {totalPages > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 16 }}>
+          <button className="btn small ghost" onClick={prevPage} disabled={page === 0}>Prev</button>
+          <span className="caption">Page {page + 1} of {totalPages}</span>
+          <button className="btn small ghost" onClick={nextPage} disabled={page >= totalPages - 1}>Next</button>
+        </div>
+      )}
     </div>
   );
 }
@@ -265,6 +265,17 @@ export function Discover() {
           );
         })}
       </div>
+
+      {tab === 'users' && (
+        <Link to="/app/spotify-match" className="list-item glass glass-interactive" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
+          <span style={{ fontSize: 24 }}>🎧</span>
+          <div style={{ flex: 1 }}>
+            <div className="list-title">Spotify Listening Comparison</div>
+            <div className="caption">Optionally connect Spotify to compare listening history with others.</div>
+          </div>
+          <span style={{ color: 'var(--accent)' }}>→</span>
+        </Link>
+      )}
 
       {tab === 'users' ? (
         <UsersTab matches={matches} getRequestStatus={getRequestStatus} isInCircle={isInCircle} onSendRequest={sendRequest} />

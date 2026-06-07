@@ -12,6 +12,10 @@ const emptyProfile = {
   moods: [],
   intent: 'Friends',
   genres: [],
+  listeningContexts: [],
+  musicDiscovery: [],
+  favoriteDecades: [],
+  concertFrequency: '',
   avatar_url: null,
   location_public: true,
 };
@@ -28,6 +32,10 @@ function rowToProfile(row) {
     moods: row.moods || [],
     intent: row.intent || 'Friends',
     genres: row.genres || [],
+    listeningContexts: row.listening_contexts || [],
+    musicDiscovery: row.music_discovery || [],
+    favoriteDecades: row.favorite_decades || [],
+    concertFrequency: row.concert_frequency || '',
     avatar_url: row.avatar_url || null,
     location_public: row.location_public !== false,
   };
@@ -79,6 +87,10 @@ export function useCurrentUserProfile() {
     if (updates.genres !== undefined) payload.genres = updates.genres;
     if (updates.favoriteArtists !== undefined) payload.favorite_artists = updates.favoriteArtists;
     if (updates.moods !== undefined) payload.moods = updates.moods;
+    if (updates.listeningContexts !== undefined) payload.listening_contexts = updates.listeningContexts;
+    if (updates.musicDiscovery !== undefined) payload.music_discovery = updates.musicDiscovery;
+    if (updates.favoriteDecades !== undefined) payload.favorite_decades = updates.favoriteDecades;
+    if (updates.concertFrequency !== undefined) payload.concert_frequency = updates.concertFrequency;
     if (updates.avatar_url !== undefined) payload.avatar_url = updates.avatar_url;
     if (updates.location_public !== undefined) payload.location_public = updates.location_public;
     payload.updated_at = new Date().toISOString();

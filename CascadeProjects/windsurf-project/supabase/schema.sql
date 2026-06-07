@@ -15,6 +15,10 @@ create table if not exists public.profiles (
   genres text[] default '{}',
   favorite_artists text[] default '{}',
   moods text[] default '{}',
+  listening_contexts text[] default '{}',  -- where/how they listen (gym, commute, studying, cooking, etc.)
+  music_discovery text[] default '{}',     -- how they find music (algorithm, friends, blogs, radio, etc.)
+  favorite_decades text[] default '{}',    -- 70s, 80s, 90s, 2000s, 2010s, 2020s
+  concert_frequency text default '',       -- never, rarely, few_per_year, monthly, weekly
   avatar_url text,
   location_public boolean default true,
   created_at timestamptz default now(),
@@ -337,6 +341,7 @@ create table if not exists public.listening_profiles (
   top_artists jsonb default '[]',        -- array of artist objects from Spotify
   top_tracks jsonb default '[]',         -- array of track objects from Spotify
   recently_played jsonb default '[]',    -- array of recently played track objects
+  sharing_enabled boolean default false, -- user must explicitly opt in to share data for matching
   last_synced_at timestamptz,
   created_at timestamptz default now()
 );
@@ -347,6 +352,11 @@ drop policy if exists "Users can view their own listening profile" on public.lis
 create policy "Users can view their own listening profile"
   on public.listening_profiles for select
   using (auth.uid() = user_id);
+
+drop policy if exists "Authenticated users can view shared listening profiles" on public.listening_profiles;
+create policy "Authenticated users can view shared listening profiles"
+  on public.listening_profiles for select
+  using (auth.uid() is not null and (auth.uid() = user_id or sharing_enabled = true));
 
 drop policy if exists "Users can insert their own listening profile" on public.listening_profiles;
 create policy "Users can insert their own listening profile"

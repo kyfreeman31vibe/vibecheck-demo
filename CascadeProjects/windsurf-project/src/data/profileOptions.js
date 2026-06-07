@@ -2,25 +2,20 @@
 // Genres — comprehensive list including Caribbean & African genres
 // ============================================================
 export const AVAILABLE_GENRES = [
-  'Afrobeats', 'Afro-Fusion', 'Alternative', 'Ambient', 'Amapiano',
-  'Blues', 'Bossa Nova', 'Bounce',
-  'Classical', 'Country', 'Cumbia',
-  'Dance', 'Dancehall', 'Disco', 'Drill', 'Drum & Bass',
-  'EDM', 'Electronic', 'Emo',
+  'Afrobeats', 'Alternative', 'Amapiano',
+  'Classical', 'Country',
+  'Dance', 'Dancehall',
+  'EDM', 'Electronic',
   'Folk', 'Funk',
-  'Garage', 'Gospel', 'Grime', 'Grunge',
-  'Hip-Hop', 'House', 'Hyperpop',
-  'Indie', 'Indie Pop', 'Indie Rock',
-  'Jazz', 'Jersey Club', 'Jungle',
-  'K-Pop',
-  'Latin', 'Latin Pop', 'Latin Trap', 'Lo-Fi',
-  'Metal', 'Moombahton',
-  'Neo-Soul', 'New Wave',
-  'Pop', 'Pop Punk', 'Progressive Rock', 'Punk',
+  'Gospel',
+  'Hip-Hop', 'House',
+  'Indie', 'Jazz',
+  'K-Pop', 'Latin', 'Lo-Fi',
+  'Metal', 'Neo-Soul',
+  'Pop', 'Punk',
   'R&B', 'Rap', 'Reggae', 'Reggaeton', 'Rock',
-  'Ska', 'Soca', 'Soul', 'Synthwave',
-  'Techno', 'Trap', 'Trip-Hop',
-  'UK Garage', 'Underground',
+  'Soca', 'Soul',
+  'Techno', 'Trap',
   'World',
 ];
 
@@ -324,17 +319,61 @@ export const AVAILABLE_MOODS = [
   'Deep Listener',
   'Playlist Curator',
   'Festival Goer',
-  'Vinyl Collector',
   'Late Night Listener',
-  'Shower Singer',
   'Headphones On',
   'Aux Cord DJ',
-  'Concert Regular',
   'Genre Explorer',
-  'Lyric Analyst',
   'Vibe Setter',
-  'Music Discoverer',
   'Car Ride DJ',
-  'Mood Matcher',
   'Background Beats',
+];
+
+// ============================================================
+// Listening Contexts — where/when they listen
+// ============================================================
+export const AVAILABLE_CONTEXTS = [
+  'Working out',
+  'Commuting',
+  'Studying / Focus',
+  'Cooking',
+  'Falling asleep',
+  'Road trips',
+  'Late nights',
+  'Getting ready',
+];
+
+// ============================================================
+// Music Discovery — how they find new music
+// ============================================================
+export const AVAILABLE_DISCOVERY = [
+  'Algorithm recommendations',
+  'Friends sharing songs',
+  'Social media / TikTok',
+  'Radio / Podcasts',
+  'Live shows & festivals',
+  'Playlists by others',
+];
+
+// ============================================================
+// Favorite Decades — what era resonates most
+// ============================================================
+export const AVAILABLE_DECADES = [
+  '60s & earlier',
+  '70s',
+  '80s',
+  '90s',
+  '2000s',
+  '2010s',
+  '2020s',
+];
+
+// ============================================================
+// Concert Frequency — how often they go to live music
+// ============================================================
+export const CONCERT_FREQUENCY_OPTIONS = [
+  { value: 'never', label: 'Never been' },
+  { value: 'rarely', label: 'Once a year or less' },
+  { value: 'few_per_year', label: 'A few times a year' },
+  { value: 'monthly', label: 'About once a month' },
+  { value: 'weekly', label: 'Multiple times a month' },
 ];

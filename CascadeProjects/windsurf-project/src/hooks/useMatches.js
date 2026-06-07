@@ -115,6 +115,7 @@ const DEMO_USERS = [
 export { DEMO_USERS };
 
 function computeCompatibility(current, other) {
+  // --- Core profile matching ---
   const sharedArtists = (other.favoriteArtists || []).filter((a) =>
     (current.favoriteArtists || []).includes(a)
   );
@@ -122,14 +123,42 @@ function computeCompatibility(current, other) {
   const sharedGenres = (other.genres || []).filter((g) => (current.genres || []).includes(g));
   const cityMatch = current.city && other.city && current.city.toLowerCase() === other.city.toLowerCase() ? 1 : 0;
 
-  // If the current user has no profile data yet, use the demo seed score if available
+  // --- Extended profile matching (new dimensions) ---
+  const sharedContexts = (other.listeningContexts || []).filter((c) => (current.listeningContexts || []).includes(c));
+  const sharedDiscovery = (other.musicDiscovery || []).filter((d) => (current.musicDiscovery || []).includes(d));
+  const sharedDecades = (other.favoriteDecades || []).filter((d) => (current.favoriteDecades || []).includes(d));
+  const concertMatch = current.concertFrequency && other.concertFrequency && current.concertFrequency === other.concertFrequency ? 1 : 0;
+
+  // If the current user has no profile data, use the demo seed score if available
   const hasProfileData = (current.favoriteArtists || []).length > 0 || (current.moods || []).length > 0 || (current.genres || []).length > 0;
   if (!hasProfileData && other._demoScore) {
     return { compatibilityScore: other._demoScore, sharedArtists: [], sharedMoods: [] };
   }
 
-  const score = Math.min(100, sharedArtists.length * 18 + sharedMoods.length * 12 + sharedGenres.length * 8 + cityMatch * 5 + 20);
-  return { compatibilityScore: score, sharedArtists, sharedMoods };
+  // --- Weighted scoring (100-point scale) ---
+  // Artists: 15pts each (max 3 counted = 45)
+  // Genres: 6pts each (max 5 counted = 30)
+  // Moods: 8pts each (max 3 counted = 24)
+  // Listening contexts: 4pts each (max 4 = 16)
+  // Discovery methods: 4pts each (max 3 = 12)
+  // Decades: 5pts each (max 3 = 15)
+  // Concert frequency: 8pts if same
+  // City: 5pts if same
+  // Base: 10pts (everyone starts with some compatibility)
+
+  let score = 10; // base
+  score += Math.min(45, sharedArtists.length * 15);
+  score += Math.min(30, sharedGenres.length * 6);
+  score += Math.min(24, sharedMoods.length * 8);
+  score += Math.min(16, sharedContexts.length * 4);
+  score += Math.min(12, sharedDiscovery.length * 4);
+  score += Math.min(15, sharedDecades.length * 5);
+  score += concertMatch * 8;
+  score += cityMatch * 5;
+
+  const finalScore = Math.min(100, Math.max(0, score));
+
+  return { compatibilityScore: finalScore, sharedArtists, sharedMoods };
 }
 
 function profileRowToUser(row) {
@@ -142,6 +171,10 @@ function profileRowToUser(row) {
     favoriteArtists: row.favorite_artists || [],
     moods: row.moods || [],
     genres: row.genres || [],
+    listeningContexts: row.listening_contexts || [],
+    musicDiscovery: row.music_discovery || [],
+    favoriteDecades: row.favorite_decades || [],
+    concertFrequency: row.concert_frequency || '',
     eventsAttending: [],
     recentListening: [],
     playlists: [],

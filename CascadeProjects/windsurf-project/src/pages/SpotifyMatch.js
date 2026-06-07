@@ -8,7 +8,10 @@ function SpotifyConnectCard({ onConnect, connecting }) {
       <div style={{ fontSize: 48, marginBottom: 16 }}>🎧</div>
       <h3>Connect your Spotify</h3>
       <p className="caption" style={{ marginBottom: 16 }}>
-        Link your Spotify account so we can analyze your listening data and find your most compatible music matches.
+        Voluntarily link your Spotify account to compare your listening history with other VibeCheck users who have also opted in.
+      </p>
+      <p className="caption" style={{ marginBottom: 16, fontSize: '0.75rem', opacity: 0.7 }}>
+        Your data is only shared with users you choose to compare with. You can disconnect or disable sharing at any time.
       </p>
       <button
         className="btn primary"
@@ -164,11 +167,12 @@ export function SpotifyMatch() {
     setListeningProfile(myProfile || null);
 
     if (myProfile) {
-      // Fetch other users who have connected Spotify
+      // Fetch other users who have opted in to sharing
       var { data: others } = await supabase
         .from('listening_profiles')
         .select('user_id, display_name, top_artists')
-        .neq('user_id', user.id);
+        .neq('user_id', user.id)
+        .eq('sharing_enabled', true);
 
       setOtherProfiles(others || []);
 
@@ -255,7 +259,7 @@ export function SpotifyMatch() {
       <div className="page">
         <header className="page-header">
           <div>
-            <h2>AI Music Match</h2>
+            <h2>Listening Comparison</h2>
             <p className="subtitle">Loading...</p>
           </div>
         </header>
@@ -277,9 +281,9 @@ export function SpotifyMatch() {
     <div className="page">
       <header className="page-header">
         <div>
-          <h2>AI Music Match</h2>
+          <h2>Listening Comparison</h2>
           <p className="subtitle">
-            Spotify-powered compatibility analysis by Claude AI
+            Compare your music taste with others who've opted in
           </p>
         </div>
       </header>
@@ -302,6 +306,27 @@ export function SpotifyMatch() {
         <SpotifyConnectCard onConnect={handleConnect} connecting={connecting} />
       ) : (
         <>
+          {/* Sharing opt-in toggle */}
+          <section className="section glass" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <div>
+              <div className="list-title">Share listening data</div>
+              <div className="caption">Allow other opted-in users to compare with you.</div>
+            </div>
+            <button
+              className={listeningProfile.sharing_enabled ? 'btn small primary' : 'btn small ghost'}
+              onClick={async function () {
+                var newVal = !listeningProfile.sharing_enabled;
+                await supabase
+                  .from('listening_profiles')
+                  .update({ sharing_enabled: newVal })
+                  .eq('user_id', user.id);
+                setListeningProfile(Object.assign({}, listeningProfile, { sharing_enabled: newVal }));
+              }}
+            >
+              {listeningProfile.sharing_enabled ? 'Sharing On' : 'Sharing Off'}
+            </button>
+          </section>
+
           <ListeningProfileCard profile={listeningProfile} />
 
           {/* Existing AI matches */}
@@ -314,12 +339,12 @@ export function SpotifyMatch() {
             </section>
           )}
 
-          {/* Other Spotify users to match with */}
+          {/* Other users who opted in to sharing */}
           {unmatchedProfiles.length > 0 && (
             <section style={{ marginTop: 16 }}>
-              <h3 style={{ marginBottom: 8 }}>Discover New Matches</h3>
+              <h3 style={{ marginBottom: 8 }}>Compare With Others</h3>
               <p className="caption" style={{ marginBottom: 8 }}>
-                These users have connected Spotify. Click to compute AI compatibility.
+                These users have opted in to sharing their listening data. Compare to see what you have in common.
               </p>
               {unmatchedProfiles.map(function (o) {
                 return (

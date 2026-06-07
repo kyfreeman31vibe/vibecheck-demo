@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCurrentUserProfile } from '../hooks/useCurrentUserProfile';
-import { AVAILABLE_GENRES, AVAILABLE_ARTISTS, AVAILABLE_MOODS } from '../data/profileOptions';
+import { AVAILABLE_GENRES, AVAILABLE_ARTISTS, AVAILABLE_MOODS, AVAILABLE_CONTEXTS, AVAILABLE_DISCOVERY, AVAILABLE_DECADES, CONCERT_FREQUENCY_OPTIONS } from '../data/profileOptions';
 
-const TOTAL_STEPS = 3;
+const TOTAL_STEPS = 4;
 
 function ProgressBar({ step, total }) {
   var pct = Math.round((step / total) * 100);
@@ -148,11 +148,11 @@ function StepMusic({ genres, setGenres, favoriteArtists, setFavoriteArtists }) {
       <p className="caption" style={{ marginBottom: 16 }}>This is how we match you with your people.</p>
       <SearchableDropdown
         label="Top genres"
-        caption="Search and select your favorite genres."
+        caption="Pick up to 5 genres you love."
         options={AVAILABLE_GENRES}
         selected={genres}
         setSelected={setGenres}
-        maxSelections={10}
+        maxSelections={5}
         placeholder="Search genres..."
       />
       <SearchableDropdown
@@ -164,6 +164,75 @@ function StepMusic({ genres, setGenres, favoriteArtists, setFavoriteArtists }) {
         maxSelections={5}
         placeholder="Search artists..."
       />
+    </>
+  );
+}
+
+function StepHabits({ listeningContexts, toggleContext, musicDiscovery, toggleDiscovery, favoriteDecades, toggleDecade, concertFrequency, setConcertFrequency }) {
+  return (
+    <>
+      <h3 style={{ marginBottom: 8 }}>Listening habits</h3>
+      <p className="caption" style={{ marginBottom: 16 }}>Help us understand how you listen so we can find your best matches.</p>
+
+      <div style={{ marginBottom: 16 }}>
+        <div className="steps-title" style={{ marginBottom: 8 }}>When do you listen?</div>
+        <div className="steps-caption" style={{ marginBottom: 8 }}>Select all that apply.</div>
+        <div className="tag-row">
+          {AVAILABLE_CONTEXTS.map((ctx) => {
+            var sel = listeningContexts.includes(ctx);
+            return (
+              <button key={ctx} type="button" className={sel ? 'btn small primary' : 'btn small ghost'} onClick={() => toggleContext(ctx)}>
+                {ctx}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div style={{ marginBottom: 16 }}>
+        <div className="steps-title" style={{ marginBottom: 8 }}>How do you discover music?</div>
+        <div className="tag-row">
+          {AVAILABLE_DISCOVERY.map((d) => {
+            var sel = musicDiscovery.includes(d);
+            return (
+              <button key={d} type="button" className={sel ? 'btn small primary' : 'btn small ghost'} onClick={() => toggleDiscovery(d)}>
+                {d}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div style={{ marginBottom: 16 }}>
+        <div className="steps-title" style={{ marginBottom: 8 }}>Favorite decades</div>
+        <div className="tag-row">
+          {AVAILABLE_DECADES.map((dec) => {
+            var sel = favoriteDecades.includes(dec);
+            return (
+              <button key={dec} type="button" className={sel ? 'btn small primary' : 'btn small ghost'} onClick={() => toggleDecade(dec)}>
+                {dec}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div>
+        <div className="steps-title" style={{ marginBottom: 8 }}>How often do you see live music?</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {CONCERT_FREQUENCY_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              className={concertFrequency === opt.value ? 'btn small primary' : 'btn small ghost'}
+              onClick={() => setConcertFrequency(opt.value)}
+              style={{ textAlign: 'left' }}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
     </>
   );
 }
@@ -186,7 +255,7 @@ function StepVibe({ bio, setBio, moods, toggleMood }) {
       </div>
       <div>
         <div className="steps-title" style={{ marginBottom: 8 }}>Listening titles</div>
-        <div className="steps-caption" style={{ marginBottom: 8 }}>Pick the titles that describe how you listen.</div>
+        <div className="steps-caption" style={{ marginBottom: 8 }}>Pick up to 3 that describe you.</div>
         <div className="tag-row">
           {AVAILABLE_MOODS.map((mood) => {
             var sel = moods.includes(mood);
@@ -219,6 +288,10 @@ export function ProfileSetup() {
   const [bio, setBio] = useState('');
   const [favoriteArtists, setFavoriteArtists] = useState([]);
   const [moods, setMoods] = useState([]);
+  const [listeningContexts, setListeningContexts] = useState([]);
+  const [musicDiscovery, setMusicDiscovery] = useState([]);
+  const [favoriteDecades, setFavoriteDecades] = useState([]);
+  const [concertFrequency, setConcertFrequency] = useState('');
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
   const [synced, setSynced] = useState(null);
@@ -232,6 +305,10 @@ export function ProfileSetup() {
       setBio(profile.bio || '');
       setFavoriteArtists(profile.favoriteArtists || []);
       setMoods(profile.moods || []);
+      setListeningContexts(profile.listeningContexts || []);
+      setMusicDiscovery(profile.musicDiscovery || []);
+      setFavoriteDecades(profile.favoriteDecades || []);
+      setConcertFrequency(profile.concertFrequency || '');
       setSynced(profile.id);
     }
   }, [profile, synced]);
@@ -246,6 +323,16 @@ export function ProfileSetup() {
 
   const [saved, setSaved] = useState(false);
 
+  const toggleContext = (ctx) => {
+    setListeningContexts((prev) => prev.includes(ctx) ? prev.filter((c) => c !== ctx) : [...prev, ctx]);
+  };
+  const toggleDiscovery = (d) => {
+    setMusicDiscovery((prev) => prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]);
+  };
+  const toggleDecade = (dec) => {
+    setFavoriteDecades((prev) => prev.includes(dec) ? prev.filter((x) => x !== dec) : [...prev, dec]);
+  };
+
   const handleSave = async () => {
     setSaving(true);
     setSaveError('');
@@ -258,6 +345,10 @@ export function ProfileSetup() {
       bio,
       favoriteArtists,
       moods,
+      listeningContexts,
+      musicDiscovery,
+      favoriteDecades,
+      concertFrequency,
     });
 
     setSaving(false);
@@ -272,7 +363,7 @@ export function ProfileSetup() {
   var canAdvance = true;
   if (step === 1 && (!name.trim() || !username.trim())) canAdvance = false;
 
-  var stepTitles = ['Your Info', 'Music Taste', 'Your Vibe'];
+  var stepTitles = ['Your Info', 'Music Taste', 'Your Vibe', 'Listening Habits'];
 
   return (
     <div className="page">
@@ -293,6 +384,14 @@ export function ProfileSetup() {
         )}
         {step === 3 && (
           <StepVibe bio={bio} setBio={setBio} moods={moods} toggleMood={toggleMood} />
+        )}
+        {step === 4 && (
+          <StepHabits
+            listeningContexts={listeningContexts} toggleContext={toggleContext}
+            musicDiscovery={musicDiscovery} toggleDiscovery={toggleDiscovery}
+            favoriteDecades={favoriteDecades} toggleDecade={toggleDecade}
+            concertFrequency={concertFrequency} setConcertFrequency={setConcertFrequency}
+          />
         )}
 
         {saveError && <p style={{ color: 'var(--danger)', fontSize: '0.875rem', margin: '8px 0 0' }}>{saveError}</p>}
