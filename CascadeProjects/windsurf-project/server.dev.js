@@ -13,6 +13,7 @@ app.use(express.json());
 const spotifyAuth = require('./api/spotify/auth');
 const spotifyCallback = require('./api/spotify/callback');
 const matchCompute = require('./api/match/compute');
+const matchAiScore = require('./api/match/ai-score');
 const eventsSearch = require('./api/events/search');
 
 app.get('/api/spotify/auth', function (req, res) {
@@ -25,6 +26,10 @@ app.get('/api/spotify/callback', function (req, res) {
 
 app.post('/api/match/compute', function (req, res) {
   return matchCompute(req, res);
+});
+
+app.post('/api/match/ai-score', function (req, res) {
+  return matchAiScore(req, res);
 });
 
 app.get('/api/events/search', function (req, res) {

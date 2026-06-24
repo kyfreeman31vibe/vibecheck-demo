@@ -5,6 +5,7 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -12,6 +13,7 @@ export function AuthProvider({ children }) {
 
     supabase.auth.getSession().then(({ data }) => {
       if (!ignore) {
+        setSession(data.session ?? null);
         setUser(data.session?.user ?? null);
         setLoading(false);
       }
@@ -20,6 +22,7 @@ export function AuthProvider({ children }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session ?? null);
       setUser(session?.user ?? null);
       setLoading(false);
     });
@@ -68,7 +71,7 @@ export function AuthProvider({ children }) {
     return supabase.auth.updateUser({ password: newPassword });
   };
 
-  const value = { user, loading, signUp, signIn, signOut, resetPassword, updatePassword };
+  const value = { user, session, loading, signUp, signIn, signOut, resetPassword, updatePassword };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

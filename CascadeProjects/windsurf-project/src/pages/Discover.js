@@ -59,23 +59,30 @@ function UsersTab({ matches, getRequestStatus, isInCircle, onSendRequest }) {
             </div>
             <div className="caption">Top artists: {topArtists}</div>
             <div className="caption" style={{ marginTop: 8 }}>{u.city}</div>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 8 }}>
-              <div className="pill small" style={{
-                background: m.compatibilityScore >= 80
-                  ? 'rgba(76, 175, 80, 0.25)'
-                  : m.compatibilityScore >= 60
-                    ? 'rgba(227, 126, 47, 0.25)'
-                    : 'rgba(255, 255, 255, 0.08)',
-                color: m.compatibilityScore >= 80
-                  ? '#81c784'
-                  : m.compatibilityScore >= 60
-                    ? 'var(--vc-whiskey-amber)'
-                    : 'var(--text-muted)',
-              }}>{m.compatibilityScore}% compatible</div>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 8, flexWrap: 'wrap' }}>
+              {m.compatibilityScore !== null ? (
+                <div className="pill small" style={{
+                  background: m.compatibilityScore >= 80
+                    ? 'rgba(76, 175, 80, 0.25)'
+                    : m.compatibilityScore >= 60
+                      ? 'rgba(227, 126, 47, 0.25)'
+                      : 'rgba(255, 255, 255, 0.08)',
+                  color: m.compatibilityScore >= 80
+                    ? '#81c784'
+                    : m.compatibilityScore >= 60
+                      ? 'var(--vc-whiskey-amber)'
+                      : 'var(--text-muted)',
+                }}>{m.compatibilityScore}% compatible</div>
+              ) : (
+                <div className="pill small" style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)' }}>Scoring...</div>
+              )}
               {m.sharedArtists.length > 0 && (
                 <span className="caption">Shared: {m.sharedArtists.join(', ')}</span>
               )}
             </div>
+            {m.matchReason && (
+              <div className="caption" style={{ marginTop: 6, fontStyle: 'italic' }}>{m.matchReason}</div>
+            )}
             <div style={{ display: 'flex', gap: 8, marginTop: 8, position: 'relative', zIndex: 10 }}>
               <button
                 type="button"
@@ -225,7 +232,7 @@ export function Discover() {
   var tab = ref[0];
   var setTab = ref[1];
 
-  var { matches } = useMatches();
+  var { matches, loading, scoring } = useMatches();
   var { getRequestStatus, isInCircle, sendRequest } = useCircles();
 
   return (
@@ -278,7 +285,11 @@ export function Discover() {
       )}
 
       {tab === 'users' ? (
-        <UsersTab matches={matches} getRequestStatus={getRequestStatus} isInCircle={isInCircle} onSendRequest={sendRequest} />
+        <>
+          {loading && <div className="caption" style={{ textAlign: 'center', padding: 16 }}>Loading matches...</div>}
+          {scoring && !loading && <div className="caption" style={{ textAlign: 'center', padding: 8, marginBottom: 8 }}>AI is analyzing your compatibility...</div>}
+          {!loading && <UsersTab matches={matches} getRequestStatus={getRequestStatus} isInCircle={isInCircle} onSendRequest={sendRequest} />}
+        </>
       ) : (
         <EventsTab />
       )}
