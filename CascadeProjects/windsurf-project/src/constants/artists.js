@@ -165,6 +165,4 @@ export const TOP_500_ARTISTS = [
   "Fireboy DML", "Ckay", "Omah Lay", "Ayra Starr", "Asake",
   "Afrobeats to the World", "Tiwa Savage", "Yemi Alade",
   "Mr Eazi", "Wande Coal", "Olamide", "Phyno"
-] as const;
-
-export type Artist = typeof TOP_500_ARTISTS[number];
+];

@@ -27,6 +27,7 @@ import { Messages } from './pages/Messages';
 import { Post } from './pages/Post';
 import { PostDetail } from './pages/PostDetail';
 import { NotFound } from './pages/NotFound';
+import { OnboardingQuestionnaire } from './screens/OnboardingQuestionnaire';
 
 function PageFade({ children }) {
   const location = useLocation();
@@ -39,7 +40,7 @@ function PageFade({ children }) {
 
 function AppLayout({ children }) {
   const location = useLocation();
-  const hideNavOnSetup = location.pathname.startsWith('/app/setup');
+  const hideNavOnSetup = location.pathname.startsWith('/app/setup') || location.pathname.startsWith('/app/onboarding');
 
   return (
     <div className="app-root">
@@ -93,6 +94,7 @@ function App() {
                     <Route index element={<Navigate to="dashboard" replace />} />
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="setup" element={<ProfileSetup />} />
+                    <Route path="onboarding" element={<OnboardingQuestionnaire />} />
                     <Route path="profile" element={<Profile />} />
                     <Route path="discover" element={<Discover />} />
                     <Route path="match/:id" element={<Match />} />
