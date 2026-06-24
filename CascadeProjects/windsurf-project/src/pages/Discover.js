@@ -125,7 +125,7 @@ function EventsTab() {
 
   React.useEffect(function () {
     if (city && !searchVal) setSearchVal(city);
-  }, [city]);
+  }, [city, searchVal, setSearchVal]);
 
   function handleSearch(e) {
     e.preventDefault();
